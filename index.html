@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produções dos Alunos — Computação 2026</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f1a;
+      --surface: #161929;
+      --border: #252a42;
+      --accent: #6c63ff;
+      --accent2: #ff6584;
+      --accent3: #43e97b;
+      --accent4: #f7b538;
+      --text: #e8eaf6;
+      --muted: #8890b0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── STARS BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 40%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 75%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 35%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5%  50%, rgba(255,255,255,0.4) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 64px 24px 40px;
+      max-width: 700px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(108, 99, 255, 0.15);
+      border: 1px solid rgba(108, 99, 255, 0.4);
+      color: #a89fff;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #a89fff 0%, #ff6584 50%, #43e97b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* ── GRID ── */
+    .grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      padding: 0 24px 80px;
+      max-width: 1100px;
+      width: 100%;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      border-radius: 16px;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .card.purple:hover  { border-color: var(--accent);  box-shadow: 0 20px 60px rgba(108, 99,255,0.2); }
+    .card.pink:hover    { border-color: var(--accent2); box-shadow: 0 20px 60px rgba(255, 101,132,0.2); }
+    .card.green:hover   { border-color: var(--accent3); box-shadow: 0 20px 60px rgba( 67, 233,123,0.2); }
+    .card.gold:hover    { border-color: var(--accent4); box-shadow: 0 20px 60px rgba(247, 181, 56,0.2); }
+
+    .card-icon {
+      font-size: 2.4rem;
+      line-height: 1;
+    }
+
+    .card-author {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .card.purple .card-author { color: var(--accent); }
+    .card.pink   .card-author { color: var(--accent2); }
+    .card.green  .card-author { color: var(--accent3); }
+    .card.gold   .card-author { color: var(--accent4); }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-top: 4px;
+      transition: gap 0.2s;
+    }
+    .card:hover .card-cta { gap: 10px; }
+    .card.purple .card-cta { color: var(--accent); }
+    .card.pink   .card-cta { color: var(--accent2); }
+    .card.green  .card-cta { color: var(--accent3); }
+    .card.gold   .card-cta { color: var(--accent4); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      color: var(--muted);
+      font-size: 0.8rem;
+      padding-bottom: 40px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="badge">Computação · 2026</div>
+    <h1>Produções dos Alunos</h1>
+    <p>Projetos criados pelos alunos durante as aulas. Clique em um card para abrir o trabalho.</p>
+  </header>
+
+  <div class="grid">
+
+    <!-- Schalom -->
+    <a class="card purple" href="schalom/simulador_do_universo.html">
+      <div class="card-icon">🌌</div>
+      <div class="card-author">Schalom</div>
+      <div class="card-title">Simulador Visual do Universo</div>
+      <div class="card-desc">
+        Uma simulação interativa do cosmos — planetas, estrelas e física gravitacional animados em canvas.
+      </div>
+      <div class="card-cta">Abrir projeto <span>→</span></div>
+    </a>
+
+    <!-- Yoni -->
+    <a class="card pink" href="yoni/index.html">
+      <div class="card-icon">✨</div>
+      <div class="card-author">Yoni</div>
+      <div class="card-title">Pincel Mágico de Partículas</div>
+      <div class="card-desc">
+        Mova o mouse pela tela e crie explosões de partículas coloridas. Arte generativa no browser.
+      </div>
+      <div class="card-cta">Abrir projeto <span>→</span></div>
+    </a>
+
+    <!-- Yossef e Ilan -->
+    <a class="card green" href="yossef%20e%20ilan/simulador_copa_2026%20(1).html">
+      <div class="card-icon">⚽</div>
+      <div class="card-author">Yossef &amp; Ilan</div>
+      <div class="card-title">Simulador Copa 2026</div>
+      <div class="card-desc">
+        Simule a Copa do Mundo 2026 — grupos, confrontos e o caminho até o título.
+      </div>
+      <div class="card-cta">Abrir projeto <span>→</span></div>
+    </a>
+
+    <!-- Todos Alunos -->
+    <a class="card gold" href="todos%20alunos/index.html">
+      <div class="card-icon">🧩</div>
+      <div class="card-author">Todos Alunos</div>
+      <div class="card-title">Projeto Coletivo</div>
+      <div class="card-desc">
+        Acesse a nova página com a produção colaborativa da turma.
+      </div>
+      <div class="card-cta">Abrir projeto <span>→</span></div>
+    </a>
+
+  </div>
+
+  <footer>Aula de Computação · Moishe Mayer · 2026</footer>
+
+</body>
+</html>

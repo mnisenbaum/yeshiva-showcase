@@ -1,0 +1,44 @@
+/* Reseta as margens e esconde barras de rolagem */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #111; /* Fundo bem escuro */
+    overflow: hidden; /* Impede que a tela role */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#meuCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Fica no fundo */
+}
+
+#instrucoes {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    z-index: 2; /* Fica acima do canvas */
+    pointer-events: none; /* O mouse ignora o texto e clica no canvas atrás dele */
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#instrucoes h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+#instrucoes p {
+    font-size: 14px;
+    color: #ccc;
+}

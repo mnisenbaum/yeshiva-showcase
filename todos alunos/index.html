@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Arte da Semelhança</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'om-cream': '#F4F0E6',
+                        'om-paper': '#FCFAF6',
+                        'om-green': '#1A3622',
+                        'om-gold': '#C5A059',
+                        'om-navy': '#1D2A44',
+                        'om-text': '#2C3531',
+                    },
+                    fontFamily: {
+                        'serif': ['"Playfair Display"', 'serif'],
+                        'sans': ['"Inter"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F4F0E6;
+            background-image: radial-gradient(#d4cdba 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .input-om {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #C5A059;
+            padding: 8px 4px;
+            font-family: 'Inter', sans-serif;
+            color: #1A3622;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .input-om:focus {
+            outline: none;
+            border-bottom: 2px solid #1A3622;
+            background: rgba(197, 160, 89, 0.05);
+        }
+        .select-om {
+            appearance: none;
+            background: url('data:image/svg+xml;utf8,<svg fill="%23C5A059" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>') no-repeat right 10px center;
+            background-color: #FCFAF6;
+            border: 1px solid #C5A059;
+            border-radius: 4px;
+            padding: 10px 40px 10px 15px;
+            font-family: 'Inter', sans-serif;
+            color: #1A3622;
+            cursor: pointer;
+        }
+        .select-om:focus {
+            outline: none;
+            border-color: #1A3622;
+        }
+        canvas {
+            background-color: #FCFAF6;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+        }
+    </style>
+</head>
+<body class="text-om-text font-sans antialiased min-h-screen py-10 px-4 sm:px-8">
+
+    <div class="max-w-6xl mx-auto bg-om-paper shadow-2xl rounded-sm overflow-hidden border border-om-gold/40 relative">
+        <!-- Decorative Header Border -->
+        <div class="h-2 w-full bg-om-green flex">
+            <div class="w-1/3 h-full bg-om-gold"></div>
+            <div class="w-1/3 h-full bg-om-navy"></div>
+        </div>
+
+        <div class="p-8 sm:p-12">
+            <header class="text-center mb-12">
+                <p class="text-om-gold uppercase tracking-widest text-xs font-bold mb-3">Estudos Geométricos</p>
+                <h1 class="text-4xl md:text-5xl font-serif text-om-green font-bold mb-4">A Arte da Semelhança</h1>
+                <p class="text-gray-600 max-w-2xl mx-auto font-light leading-relaxed">
+                    Na geometria clássica, dois triângulos são ditos <em>semelhantes</em> quando possuem a mesma forma, ditada pela igualdade de seus ângulos e pela elegância da proporção constante entre seus lados.
+                </p>
+            </header>
+
+            <div class="flex flex-col lg:flex-row gap-12">
+                
+                <!-- Left Column: Base Triangle & Canvas -->
+                <div class="w-full lg:w-1/2 flex flex-col items-center">
+                    <h2 class="text-2xl font-serif text-om-navy mb-2">I. O Triângulo de Referência</h2>
+                    <p class="text-sm text-gray-500 mb-6 text-center max-w-sm">Um triângulo gerado aleatoriamente. Observe seus ângulos e os comprimentos de seus lados.</p>
+                    
+                    <canvas id="baseCanvas" width="400" height="300"></canvas>
+                    
+                    <div id="baseInfo" class="mt-4 w-full max-w-[400px] bg-om-cream p-4 rounded border border-om-gold/30 text-sm grid grid-cols-2 gap-4 text-center">
+                        <div>
+                            <span class="block text-om-gold font-bold mb-1">Lados</span>
+                            <span id="baseSides" class="font-serif"></span>
+                        </div>
+                        <div>
+                            <span class="block text-om-gold font-bold mb-1">Ângulos</span>
+                            <span id="baseAngles" class="font-serif"></span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="generateBaseTriangle()" class="mt-6 px-6 py-2 border border-om-green text-om-green hover:bg-om-green hover:text-white transition-colors duration-300 rounded font-medium text-sm tracking-wide">
+                        GERAR NOVA REFERÊNCIA
+                    </button>
+                </div>
+
+                <!-- Right Column: User Interaction -->
+                <div class="w-full lg:w-1/2 flex flex-col items-center">
+                    <h2 class="text-2xl font-serif text-om-navy mb-2">II. O Seu Desenho</h2>
+                    <p class="text-sm text-gray-500 mb-6 text-center max-w-sm">Escolha um critério de semelhança (AA, LLL ou LAL) e construa o seu próprio triângulo baseando-se no de referência.</p>
+
+                    <div class="w-full max-w-[400px] bg-white p-6 border border-om-gold/30 rounded shadow-sm mb-6">
+                        <label class="block text-xs font-bold text-om-green uppercase tracking-wider mb-2">Critério Geométrico</label>
+                        <select id="caseSelector" class="select-om w-full mb-6" onchange="updateForm()">
+                            <option value="AA">Ângulo-Ângulo (AA)</option>
+                            <option value="LLL">Lado-Lado-Lado (LLL)</option>
+                            <option value="LAL">Lado-Ângulo-Lado (LAL)</option>
+                        </select>
+
+                        <!-- AA Inputs -->
+                        <div id="inputsAA" class="input-group">
+                            <p class="text-xs text-gray-500 mb-4 italic">Insira dois ângulos. Para ser semelhante, use dois ângulos do triângulo de referência.</p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-xs text-om-navy font-semibold">Ângulo 1 (°)</label>
+                                    <input type="number" id="aa_ang1" class="input-om" step="0.1" placeholder="Ex: 45">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-om-navy font-semibold">Ângulo 2 (°)</label>
+                                    <input type="number" id="aa_ang2" class="input-om" step="0.1" placeholder="Ex: 60">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LLL Inputs -->
+                        <div id="inputsLLL" class="input-group hidden">
+                            <p class="text-xs text-gray-500 mb-4 italic">Insira três lados. Multiplique os lados originais por um mesmo valor para obter semelhança.</p>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-xs text-om-navy font-semibold">Lado a</label>
+                                    <input type="number" id="lll_side1" class="input-om" step="0.1" placeholder="Ex: 6">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-om-navy font-semibold">Lado b</label>
+                                    <input type="number" id="lll_side2" class="input-om" step="0.1" placeholder="Ex: 8">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-om-navy font-semibold">Lado c</label>
+                                    <input type="number" id="lll_side3" class="input-om" step="0.1" placeholder="Ex: 10">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LAL Inputs -->
+                        <div id="inputsLAL" class="input-group hidden">
+                            <p class="text-xs text-gray-500 mb-4 italic">Insira dois lados e o ângulo entre eles.</p>
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="text-xs text-om-navy font-semibold">Lado 1</label>
+                                    <input type="number" id="lal_side1" class="input-om" step="0.1" placeholder="Lado">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-om-navy font-semibold">Ângulo (°)</label>
+                                    <input type="number" id="lal_ang" class="input-om" step="0.1" placeholder="Âng.">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-om-navy font-semibold">Lado 2</label>
+                                    <input type="number" id="lal_side2" class="input-om" step="0.1" placeholder="Lado">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="checkAndDrawUserTriangle()" class="w-full mt-6 bg-om-green text-white py-3 rounded hover:bg-om-navy transition-colors duration-300 font-semibold tracking-wider text-sm shadow-md">
+                            CONSTRUIR & AVALIAR
+                        </button>
+                    </div>
+
+                    <!-- User Canvas & Result -->
+                    <div id="userCanvasContainer" class="w-full flex flex-col items-center hidden">
+                        <canvas id="userCanvas" width="400" height="300"></canvas>
+                        
+                        <div id="resultBox" class="mt-6 w-full max-w-[400px] p-5 border-l-4 rounded bg-om-cream">
+                            <h3 id="resultTitle" class="font-serif text-lg font-bold mb-2"></h3>
+                            <p id="resultText" class="text-sm font-light leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Core Math & State ---
+        let baseTriangle = null;
+        let userTriangle = null;
+
+        function round(num, decimals = 1) {
+            return Number(Math.round(num + 'e' + decimals) + 'e-' + decimals);
+        }
+
+        // Calcula ângulos a partir de 3 lados usando Lei dos Cossenos
+        function calculateAngles(a, b, c) {
+            const A = Math.acos((b*b + c*c - a*a)/(2*b*c)) * 180 / Math.PI;
+            const B = Math.acos((a*a + c*c - b*b)/(2*a*c)) * 180 / Math.PI;
+            const C = 180 - A - B;
+            return [round(A), round(B), round(C)];
+        }
+
+        // --- Generation ---
+        function generateBaseTriangle() {
+            let a, b, c;
+            // Garantir desigualdade triangular
+            do {
+                a = Math.floor(Math.random() * 6) + 4; // 4 to 9
+                b = Math.floor(Math.random() * 6) + 4;
+                c = Math.floor(Math.random() * 6) + 4;
+            } while(a + b <= c || a + c <= b || b + c <= a);
+
+            const angles = calculateAngles(a, b, c);
+            baseTriangle = { sides: [a, b, c], angles: angles };
+            
+            document.getElementById('baseSides').innerHTML = `a = ${a}<br>b = ${b}<br>c = ${c}`;
+            document.getElementById('baseAngles').innerHTML = `A = ${angles[0]}°<br>B = ${angles[1]}°<br>C = ${angles[2]}°`;
+            
+            drawTriangle('baseCanvas', baseTriangle, '#1D2A44', 'rgba(197, 160, 89, 0.15)');
+            
+            // Reset user area
+            document.getElementById('userCanvasContainer').classList.add('hidden');
+        }
+
+        // --- Drawing Logic ---
+        function drawTriangle(canvasId, triangle, strokeColor, fillColor) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const [a, b, c] = triangle.sides;
+            const [A_deg, B_deg, C_deg] = triangle.angles;
+            const A_rad = A_deg * Math.PI / 180;
+
+            // V1 na origem (0,0) - Ângulo A
+            const V1 = { x: 0, y: 0 };
+            // V2 no eixo X (c, 0) - Ângulo B
+            const V2 = { x: c, y: 0 };
+            // V3 calculado via trigonometria - Ângulo C
+            const V3 = { x: b * Math.cos(A_rad), y: b * Math.sin(A_rad) };
+
+            // Centralização e Escala
+            const padding = 50;
+            const minX = Math.min(V1.x, V2.x, V3.x);
+            const maxX = Math.max(V1.x, V2.x, V3.x);
+            const minY = Math.min(V1.y, V2.y, V3.y);
+            const maxY = Math.max(V1.y, V2.y, V3.y);
+
+            const scaleX = (canvas.width - 2 * padding) / (maxX - minX);
+            const scaleY = (canvas.height - 2 * padding) / (maxY - minY);
+            const scale = Math.min(scaleX, scaleY);
+
+            const offsetX = (canvas.width - (maxX - minX) * scale) / 2 - minX * scale;
+            const offsetY = (canvas.height - (maxY - minY) * scale) / 2 + maxY * scale; // Invertido para o Canvas (Y desce)
+
+            function transform(p) {
+                return { x: p.x * scale + offsetX, y: offsetY - p.y * scale };
+            }
+
+            const tV1 = transform(V1);
+            const tV2 = transform(V2);
+            const tV3 = transform(V3);
+
+            // Desenhar Forma
+            ctx.beginPath();
+            ctx.moveTo(tV1.x, tV1.y);
+            ctx.lineTo(tV2.x, tV2.y);
+            ctx.lineTo(tV3.x, tV3.y);
+            ctx.closePath();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = strokeColor;
+            ctx.fillStyle = fillColor;
+            ctx.fill();
+            ctx.stroke();
+
+            // Configuração de Texto
+            ctx.fillStyle = '#1A3622';
+            ctx.font = 'bold 14px Inter';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Rotular Lados (c = base, a = direita, b = esquerda)
+            ctx.fillText(`c = ${round(c)}`, (tV1.x + tV2.x)/2, (tV1.y + tV2.y)/2 + 20);
+            ctx.fillText(`a = ${round(a)}`, (tV2.x + tV3.x)/2 + 20, (tV2.y + tV3.y)/2);
+            ctx.fillText(`b = ${round(b)}`, (tV1.x + tV3.x)/2 - 20, (tV1.y + tV3.y)/2);
+
+            // Rotular Ângulos (aproximando posições dos vértices)
+            ctx.fillStyle = '#C5A059';
+            ctx.font = 'italic 13px Playfair Display';
+            ctx.fillText(`${A_deg}°`, tV1.x - 15, tV1.y + 15);
+            ctx.fillText(`${B_deg}°`, tV2.x + 15, tV2.y + 15);
+            ctx.fillText(`${C_deg}°`, tV3.x, tV3.y - 15);
+        }
+
+        // --- UI Interaction ---
+        function updateForm() {
+            const caseSelected = document.getElementById('caseSelector').value;
+            document.querySelectorAll('.input-group').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`inputs${caseSelected}`).classList.remove('hidden');
+        }
+
+        function showError(msg) {
+            const resBox = document.getElementById('resultBox');
+            const resTitle = document.getElementById('resultTitle');
+            const resText = document.getElementById('resultText');
+            document.getElementById('userCanvasContainer').classList.remove('hidden');
+            
+            resBox.className = "mt-6 w-full max-w-[400px] p-5 border-l-4 rounded bg-red-50 border-red-500 text-red-900";
+            resTitle.innerText = "Construção Inválida";
+            resText.innerText = msg;
+            
+            const canvas = document.getElementById('userCanvas');
+            canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function checkAndDrawUserTriangle() {
+            const caseSelected = document.getElementById('caseSelector').value;
+            let sides = [], angles = [];
+
+            try {
+                if (caseSelected === 'AA') {
+                    const ang1 = parseFloat(document.getElementById('aa_ang1').value);
+                    const ang2 = parseFloat(document.getElementById('aa_ang2').value);
+                    if (!ang1 || !ang2 || ang1 <= 0 || ang2 <= 0 || (ang1 + ang2) >= 180) {
+                        return showError("A soma dos dois ângulos deve ser menor que 180° e maiores que 0.");
+                    }
+                    const ang3 = round(180 - ang1 - ang2);
+                    angles = [ang1, ang2, ang3];
+                    // Para desenhar, definimos um lado base fixo e usamos a Lei dos Senos
+                    const c = baseTriangle.sides[2]; // Pega a mesma base para facilitar visualização
+                    const a = c * Math.sin(angles[0] * Math.PI/180) / Math.sin(angles[2] * Math.PI/180);
+                    const b = c * Math.sin(angles[1] * Math.PI/180) / Math.sin(angles[2] * Math.PI/180);
+                    sides = [round(a), round(b), round(c)];
+
+                } else if (caseSelected === 'LLL') {
+                    const a = parseFloat(document.getElementById('lll_side1').value);
+                    const b = parseFloat(document.getElementById('lll_side2').value);
+                    const c = parseFloat(document.getElementById('lll_side3').value);
+                    if (!a || !b || !c || a+b<=c || a+c<=b || b+c<=a) {
+                        return showError("As medidas informadas não formam um triângulo (violam a desigualdade triangular).");
+                    }
+                    sides = [a, b, c];
+                    angles = calculateAngles(a, b, c);
+
+                } else if (caseSelected === 'LAL') {
+                    const s1 = parseFloat(document.getElementById('lal_side1').value);
+                    const ang = parseFloat(document.getElementById('lal_ang').value);
+                    const s2 = parseFloat(document.getElementById('lal_side2').value);
+                    if (!s1 || !s2 || !ang || ang <= 0 || ang >= 180) {
+                        return showError("Valores inválidos. O ângulo deve estar entre 0° e 180°.");
+                    }
+                    // Usa Lei dos Cossenos para o 3º lado
+                    const s3 = Math.sqrt(s1*s1 + s2*s2 - 2*s1*s2*Math.cos(ang * Math.PI/180));
+                    sides = [round(s1), round(s2), round(s3)];
+                    angles = calculateAngles(sides[0], sides[1], sides[2]);
+                }
+
+                userTriangle = { sides: sides, angles: angles };
+                drawTriangle('userCanvas', userTriangle, '#1A3622', 'rgba(26, 54, 34, 0.1)');
+                evaluateSimilarity(caseSelected);
+
+            } catch (e) {
+                showError("Ocorreu um erro nos cálculos. Verifique os valores inseridos.");
+            }
+        }
+
+        function evaluateSimilarity(caseSelected) {
+            // A forma mais robusta de checar semelhança é verificando se os 3 ângulos são iguais
+            const baseSorted = [...baseTriangle.angles].sort((a,b) => a-b);
+            const userSorted = [...userTriangle.angles].sort((a,b) => a-b);
+            
+            // Permitindo pequena margem de erro por arredondamento
+            let isSimilar = true;
+            for(let i=0; i<3; i++) {
+                if (Math.abs(baseSorted[i] - userSorted[i]) > 0.5) {
+                    isSimilar = false;
+                }
+            }
+
+            const resBox = document.getElementById('resultBox');
+            const resTitle = document.getElementById('resultTitle');
+            const resText = document.getElementById('resultText');
+            document.getElementById('userCanvasContainer').classList.remove('hidden');
+
+            if (isSimilar) {
+                resBox.className = "mt-6 w-full max-w-[400px] p-5 border-l-4 rounded bg-om-paper border-om-green text-om-green";
+                resTitle.innerText = "Veredito: São Semelhantes! ✓";
+                
+                if (caseSelected === 'AA') {
+                    resText.innerHTML = `Pelo critério <strong>AA (Ângulo-Ângulo)</strong>, ao garantir que dois ângulos são idênticos aos de referência, o terceiro obrigatoriamente também será. Logo, a forma é matematicamente idêntica!`;
+                } else if (caseSelected === 'LLL') {
+                    const baseS = [...baseTriangle.sides].sort((a,b) => a-b);
+                    const userS = [...userTriangle.sides].sort((a,b) => a-b);
+                    const ratio = (userS[0] / baseS[0]).toFixed(2);
+                    resText.innerHTML = `Pelo critério <strong>LLL (Lado-Lado-Lado)</strong>. Os lados ordenados mantêm uma proporção perfeita! O seu triângulo é uma versão ampliada/reduzida em uma razão de <strong>k ≈ ${ratio}</strong>.`;
+                } else if (caseSelected === 'LAL') {
+                    resText.innerHTML = `Pelo critério <strong>LAL (Lado-Ângulo-Lado)</strong>. Ao prender um ângulo igual e escalar os lados adjacentes pela mesma proporção, a forma geométrica final é perfeitamente preservada.`;
+                }
+            } else {
+                resBox.className = "mt-6 w-full max-w-[400px] p-5 border-l-4 rounded bg-[#fdf5f3] border-[#a03030] text-[#501a1a]";
+                resTitle.innerText = "Veredito: Não são semelhantes. ✗";
+                resText.innerHTML = `Os ângulos calculados do seu triângulo são <strong>${userTriangle.angles.join('°, ')}°</strong>, que divergem dos ângulos do triângulo de referência (<strong>${baseTriangle.angles.join('°, ')}°</strong>). Sem ângulos iguais, as formas diferem irreparavelmente.`;
+            }
+        }
+
+        // Initialize on load
+        window.onload = generateBaseTriangle;
+
+    </script>
+</body>
+</html>

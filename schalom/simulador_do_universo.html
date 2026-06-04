@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Visual do Universo</title>
+    <style>
+        /* Estilos Gerais */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            user-select: none;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        /* Botão para abrir/fechar menu */
+        #btn-toggle-menu {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: rgba(30, 30, 50, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        #btn-toggle-menu:hover {
+            background: rgba(50, 50, 80, 1);
+            border-color: #aaddff;
+        }
+
+        /* Painel de Controle (Menu) */
+        #ui-container {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            background: rgba(15, 15, 25, 0.85);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+            width: 320px;
+            z-index: 90;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        #ui-container.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        h1 {
+            margin: 0 0 15px 0;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #aaddff;
+            text-shadow: 0 0 10px rgba(170, 221, 255, 0.5);
+        }
+
+        h2 {
+            font-size: 0.95rem;
+            margin: 15px 0 8px 0;
+            color: #e0e0ff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 4px;
+        }
+
+        .control-group {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .control-group label {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: #aaddff;
+        }
+
+        /* Abas e Ferramentas */
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .btn-spawn-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        button {
+            padding: 8px 12px;
+            background: rgba(40, 40, 65, 0.8);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: rgba(60, 60, 100, 1);
+            border-color: #aaddff;
+        }
+
+        button.active {
+            background: #444499;
+            border-color: #aaddff;
+            box-shadow: 0 0 8px rgba(170, 221, 255, 0.4);
+        }
+
+        /* Status */
+        .stats {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #bbb;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 10px;
+            line-height: 1.6;
+        }
+
+        /* Tela do Tutorial */
+        #tutorial-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 10, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            backdrop-filter: blur(8px);
+            transition: opacity 0.5s ease;
+        }
+
+        #tutorial-card {
+            background: rgba(20, 20, 35, 0.95);
+            border: 1px solid rgba(170, 221, 255, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            text-align: center;
+        }
+
+        #tutorial-card h2 {
+            font-size: 1.6rem;
+            color: #aaddff;
+            margin-top: 0;
+            border: none;
+        }
+
+        #tutorial-card p {
+            color: #ccc;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-steps {
+            text-align: left;
+            margin: 20px 0;
+            font-size: 0.9rem;
+            color: #ddd;
+        }
+
+        .tutorial-steps li {
+            margin-bottom: 10px;
+        }
+
+        /* Scrollbar customizada para o painel */
+        #ui-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        #ui-container::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Botão de Minimizar Menu -->
+    <button id="btn-toggle-menu">🌌 Menu do Simulador</button>
+
+    <!-- Painel de Controle -->
+    <div id="ui-container">
+        <h1>Simulador do Universo</h1>
+        
+        <h2>Visualização</h2>
+        <div class="btn-grid">
+            <button id="btn-view-universe" class="active">Visão Geral</button>
+            <button id="btn-view-solar">Sistema Solar</button>
+        </div>
+
+        <h2>Física e Tempo</h2>
+        <div class="control-group">
+            <label for="gravity-slider">Gravidade: <span id="grav-value">0.10</span></label>
+            <input type="range" id="gravity-slider" min="0" max="0.5" step="0.01" value="0.10">
+        </div>
+
+        <div class="control-group">
+            <label for="time-slider">Velocidade do Tempo: <span id="time-value">1x</span></label>
+            <input type="range" id="time-slider" min="1" max="5" step="1" value="1">
+        </div>
+
+        <div class="btn-grid">
+            <button id="btn-pause">Pausar</button>
+            <button id="btn-bigbang">Reiniciar</button>
+        </div>
+
+        <h2>Ferramentas de Criação</h2>
+        <p style="font-size: 0.75rem; color: #888; margin: 0 0 8px 0;">Selecione um elemento e clique no espaço para criar:</p>
+        <div class="btn-spawn-grid">
+            <button class="btn-tool active" data-tool="none">Nenhum</button>
+            <button class="btn-tool" data-tool="estrela">Estrela</button>
+            <button class="btn-tool" data-tool="planeta">Planeta</button>
+            <button class="btn-tool" data-tool="buraco-negro">B. Negro</button>
+            <button class="btn-tool" data-tool="buraco-branco">B. Branco</button>
+            <button class="btn-tool" data-tool="supernova">Supernova</button>
+            <button class="btn-tool" data-tool="besta">Besta</button>
+            <button class="btn-tool" data-tool="alien">Alien</button>
+        </div>
+
+        <div class="stats">
+            <strong>Ano Cósmico:</strong> <span id="ano-count" style="color: #aaddff;">0</span> Milhões de Anos<br>
+            <strong>Status:</strong> <span id="cycle-status" style="color: #66ff66;">Estável</span><br>
+            <strong>Elementos Ativos:</strong> <span id="ent-count">0</span>
+        </div>
+    </div>
+
+    <!-- Tela do Tutorial -->
+    <div id="tutorial-overlay">
+        <div id="tutorial-card">
+            <h2>Bem-vindo ao Cosmo! 🚀</h2>
+            <p>Este é o seu simulador do universo particular. Aqui você controla as maiores forças físicas que governam a realidade.</p>
+            <ul class="tutorial-steps">
+                <li>✨ <strong>Visões:</strong> Alterne entre a Visão Geral do Universo (Big Bang e Galáxias) ou explore o nosso Sistema Solar!</li>
+                <li>🛠️ <strong>Criação:</strong> Escolha um elemento cósmico na barra de ferramentas e clique na tela para criar estrelas, buracos negros e até alienígenas!</li>
+                <li>💥 <strong>Ciclo Cósmico:</strong> Ao atingir 15.000 Milhões de anos, o universo sofrerá o Big Crunch e explodirá em um novo Big Bang!</li>
+            </ul>
+            <button id="btn-close-tutorial" style="background: #444499; padding: 12px 24px; font-size: 1rem; border-radius: 8px;">Explorar o Universo</button>
+        </div>
+    </div>
+
+    <canvas id="universe"></canvas>
+
+    <script>
+        // Setup Canvas
+        const canvas = document.getElementById('universe');
+        const ctx = canvas.getContext('2d');
+        
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        // Estado do Simulador
+        let entidades = [];
+        let G = 0.10;
+        let isPaused = false;
+        let anoCosmico = 0;
+        let velocidadeTempo = 1;
+        let activeView = "universe"; // "universe" ou "solar"
+        let currentTool = "none"; // Ferramenta de clique selecionada
+        const MAX_COSMIC_YEARS = 15000; // 15 Bilhões de anos para ciclar o universo
+
+        // Elementos da Interface
+        const uiContainer = document.getElementById('ui-container');
+        const btnToggleMenu = document.getElementById('btn-toggle-menu');
+        const tutorialOverlay = document.getElementById('tutorial-overlay');
+        const btnCloseTutorial = document.getElementById('btn-close-tutorial');
+        const gravSlider = document.getElementById('gravity-slider');
+        const gravValue = document.getElementById('grav-value');
+        const timeSlider = document.getElementById('time-slider');
+        const timeValue = document.getElementById('time-value');
+        const btnPause = document.getElementById('btn-pause');
+        const btnBigBang = document.getElementById('btn-bigbang');
+        const btnViewUniverse = document.getElementById('btn-view-universe');
+        const btnViewSolar = document.getElementById('btn-view-solar');
+        const entCount = document.getElementById('ent-count');
+        const anoCount = document.getElementById('ano-count');
+        const cycleStatus = document.getElementById('cycle-status');
+        const tools = document.querySelectorAll('.btn-tool');
+
+        // Menu Retrátil
+        btnToggleMenu.addEventListener('click', () => {
+            uiContainer.classList.toggle('hidden');
+        });
+
+        // Fechar Tutorial
+        btnCloseTutorial.addEventListener('click', () => {
+            tutorialOverlay.style.opacity = '0';
+            setTimeout(() => tutorialOverlay.style.display = 'none', 500);
+        });
+
+        // Sliders
+        gravSlider.addEventListener('input', (e) => {
+            G = parseFloat(e.target.value);
+            gravValue.innerText = G.toFixed(2);
+        });
+
+        timeSlider.addEventListener('input', (e) => {
+            velocidadeTempo = parseInt(e.target.value);
+            timeValue.innerText = velocidadeTempo + 'x';
+        });
+
+        // Alternadores de View
+        btnViewUniverse.addEventListener('click', () => {
+            activeView = "universe";
+            btnViewUniverse.classList.add('active');
+            btnViewSolar.classList.remove('active');
+            initBigBang();
+        });
+
+        btnViewSolar.addEventListener('click', () => {
+            activeView = "solar";
+            btnViewSolar.classList.add('active');
+            btnViewUniverse.classList.remove('active');
+            initSolarSystem();
+        });
+
+        // Pausa e Reiniciar
+        btnPause.addEventListener('click', () => {
+            isPaused = !isPaused;
+            btnPause.innerText = isPaused ? "Continuar" : "Pausar";
+            btnPause.style.background = isPaused ? "#ffaa00" : "rgba(40, 40, 65, 0.8)";
+            btnPause.style.color = isPaused ? "#000" : "#fff";
+        });
+
+        btnBigBang.addEventListener('click', () => {
+            if (activeView === "universe") {
+                initBigBang();
+            } else {
+                initSolarSystem();
+            }
+        });
+
+        // Ferramentas de Spawn
+        tools.forEach(button => {
+            button.addEventListener('click', () => {
+                tools.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                currentTool = button.getAttribute('data-tool');
+            });
+        });
+
+        // Clique no Canvas para Spawmar Elementos
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (currentTool === "estrela") {
+                entidades.push(new Estrela(x, y, Math.random() * 4 + 1, (Math.random() - 0.5) * 2, (Math.random() - 0.5) * 2));
+            } else if (currentTool === "planeta") {
+                // Procura a estrela mais próxima para orbitar
+                let estrelaProxima = null;
+                let minDist = 99999;
+                for (let ent of entidades) {
+                    if (ent instanceof Estrela) {
+                        let d = Math.hypot(ent.x - x, ent.y - y);
+                        if (d < minDist) {
+                            minDist = d;
+                            estrelaProxima = ent;
+                        }
+                    }
+                }
+                if (estrelaProxima) {
+                    let index = estrelaProxima.planetas.length;
+                    estrelaProxima.planetas.push(new Planeta(estrelaProxima, index));
+                } else {
+                    // Sem estrela perto, orbita no próprio eixo estático
+                    let dummyStar = { x: x, y: y, raioBase: 5, idade: 0, idadeMaxima: 99999 };
+                    let p = new Planeta(dummyStar, 1);
+                    p.x = x; p.y = y;
+                    entidades.push(p);
+                }
+            } else if (currentTool === "buraco-negro") {
+                entidades.push(new BuracoNegro(x, y, 40));
+            } else if (currentTool === "buraco-branco") {
+                entidades.push(new BuracoBranco(x, y, 40));
+            } else if (currentTool === "supernova") {
+                entidades.push(new Supernova(x, y));
+            } else if (currentTool === "besta") {
+                entidades.push(new BestaIntergalactica(x, y));
+            } else if (currentTool === "alien") {
+                entidades.push(new Alien(x, y));
+            }
+        });
+
+        // ==========================================
+        // CLASSES DE ENTIDADES
+        // ==========================================
+
+        class Entidade {
+            constructor(x, y, massa) {
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.massa = massa;
+                this.morta = false;
+            }
+
+            atrair(outra) {
+                if (outra instanceof BuracoBranco) return; // Buracos brancos repelem, não atraem
+
+                let dx = outra.x - this.x;
+                let dy = outra.y - this.y;
+                let distSq = dx * dx + dy * dy;
+                let distReal = Math.sqrt(distSq);
+                
+                if (distReal === 0) return;
+
+                let distLimitada = distReal < 15 ? 15 : distReal;
+                let forca = (G * this.massa * outra.massa) / (distLimitada * distLimitada);
+                
+                let fx = forca * (dx / distReal);
+                let fy = forca * (dy / distReal);
+
+                this.vx += fx / this.massa;
+                this.vy += fy / this.massa;
+            }
+
+            atualizarFisica() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                this.vx *= 0.999;
+                this.vy *= 0.999;
+
+                // Rebatimento suave nas bordas
+                if (this.x <= 0) { this.x = 0; this.vx *= -1; }
+                if (this.x >= width) { this.x = width; this.vx *= -1; }
+                if (this.y <= 0) { this.y = 0; this.vy *= -1; }
+                if (this.y >= height) { this.y = height; this.vy *= -1; }
+            }
+        }
+
+        // Classe Planeta Customizada
+        class Planeta {
+            constructor(estrela, index, customTipo = null) {
+                this.estrela = estrela;
+                this.distancia = estrela.raioBase * 2 + Math.random() * 30 + (index * 25);
+                this.angulo = Math.random() * Math.PI * 2;
+                this.velocidadeBase = (Math.random() * 0.03 + 0.01) * (Math.random() > 0.5 ? 1 : -1);
+                this.tamanho = Math.random() * 2.5 + 1;
+                
+                let chance = Math.random();
+                this.tipo = customTipo || (chance > 0.85 ? "Terra" : (chance > 0.5 ? "Gasoso" : "Rochoso"));
+                this.idade = 0;
+                this.cor = this.obterCorInicial();
+                this.hasAliens = false;
+            }
+
+            obterCorInicial() {
+                if (this.tipo === "Terra") return '#ff5500'; // Magma inicial
+                if (this.tipo === "Gasoso") return `hsl(${Math.random() * 360}, 60%, 50%)`;
+                return '#666'; // Rocha estéril
+            }
+
+            atualizar() {
+                this.idade++;
+                this.angulo += this.velocidadeBase;
+                
+                // Evolução Planetária com o tempo
+                if (this.tipo === "Terra") {
+                    let progressoEstrela = this.estrela.idade / this.estrela.idadeMaxima;
+                    if (progressoEstrela > 0.8) {
+                        this.cor = '#553311'; // Queimado pela gigante vermelha
+                        this.hasAliens = false;
+                    } else if (this.idade > 800) {
+                        this.cor = '#22cc44'; // Vida vegetal / Continentes (Verde)
+                        if (Math.random() < 0.001) this.hasAliens = true; // Chance de desenvolver civilização
+                    } else if (this.idade > 300) {
+                        this.cor = '#1177ff'; // Oceanos de água líquida (Azul)
+                    }
+                } else if (this.tipo === "Rochoso") {
+                    if (this.idade > 200) this.cor = '#888888';
+                }
+            }
+
+            desenhar(ctx, ex, ey) {
+                let px = ex + Math.cos(this.angulo) * this.distancia;
+                let py = ey + Math.sin(this.angulo) * this.distancia;
+
+                ctx.beginPath();
+                ctx.arc(px, py, this.tamanho, 0, Math.PI * 2);
+                ctx.fillStyle = this.cor;
+                ctx.fill();
+
+                // Desenha anéis para planetas Gasosos de forma randômica
+                if (this.tipo === "Gasoso" && this.tamanho > 2.5) {
+                    ctx.beginPath();
+                    ctx.ellipse(px, py, this.tamanho * 2, this.tamanho * 0.6, Math.PI / 6, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                }
+
+                // Indicador alienígena
+                if (this.hasAliens) {
+                    ctx.beginPath();
+                    ctx.arc(px, py, this.tamanho + 3, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(0, 255, 0, 0.4)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Classe Estrela
+        class Estrela extends Entidade {
+            constructor(x, y, massa, vx, vy, isSun = false) {
+                super(x, y, massa);
+                this.vx = vx;
+                this.vy = vy;
+                this.isSun = isSun;
+                
+                this.idade = 0;
+                this.idadeMaxima = isSun ? 999999 : (1200 + Math.random() * 2000); 
+                this.raioBase = Math.sqrt(this.massa) * 1.5;
+                
+                this.planetas = [];
+                if (!isSun && this.massa > 2 && Math.random() > 0.4) {
+                    let numPlanetas = Math.floor(Math.random() * 3) + 1;
+                    for (let i = 0; i < numPlanetas; i++) {
+                        this.planetas.push(new Planeta(this, i));
+                    }
+                }
+            }
+
+            atualizar() {
+                this.idade++;
+                this.atualizarFisica();
+
+                if (this.idade >= this.idadeMaxima && !this.isSun) {
+                    this.morta = true;
+                    // Supernova ao morrer
+                    entidades.push(new Supernova(this.x, this.y, this.massa));
+                } else {
+                    for (let p of this.planetas) {
+                        p.atualizar();
+                    }
+                }
+            }
+
+            desenhar(ctx) {
+                let progresso = this.idade / this.idadeMaxima;
+                let cor, raioAtual;
+
+                if (this.isSun) {
+                    cor = '#ffaa00';
+                    raioAtual = this.raioBase * 1.2;
+                } else if (progresso < 0.4) {
+                    cor = '#aaddff'; 
+                    raioAtual = this.raioBase;
+                } else if (progresso < 0.8) {
+                    cor = '#ffdd44'; 
+                    raioAtual = this.raioBase * 1.1;
+                } else {
+                    cor = '#ff4422'; 
+                    raioAtual = this.raioBase * (1.3 + (progresso - 0.8) * 3); 
+                }
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, Math.max(1.5, raioAtual), 0, Math.PI * 2);
+                ctx.fillStyle = cor;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = cor;
+                ctx.fill();
+                ctx.shadowBlur = 0; 
+
+                for (let p of this.planetas) {
+                    p.desenhar(ctx, this.x, this.y);
+                }
+            }
+        }
+
+        // Classe Buraco Negro (Visual Interestelar Melhorado)
+        class BuracoNegro extends Entidade {
+            constructor(x, y, massa) {
+                super(x, y, massa);
+                this.horizonteEventos = Math.sqrt(this.massa) * 1.8; 
+                this.rotacaoDisco = 0;
+            }
+
+            atualizar() {
+                this.atualizarFisica();
+                this.rotacaoDisco += 0.02;
+                
+                for (let i = entidades.length - 1; i >= 0; i--) {
+                    let outra = entidades[i];
+                    if (outra !== this && !outra.morta && !this.morta) {
+                        let dx = outra.x - this.x;
+                        let dy = outra.y - this.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        
+                        // Atração de horizonte de eventos
+                        if (dist < this.horizonteEventos * 2) {
+                            outra.morta = true; 
+                            this.massa += outra.massa * 0.8;
+                            this.horizonteEventos = Math.sqrt(this.massa) * 1.8; 
+                        }
+                    }
+                }
+            }
+
+            desenhar(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotacaoDisco);
+
+                // Disco de acreção de poeira e gás torcido (Interstellar)
+                let gradienteAcrecao = ctx.createRadialGradient(0, 0, this.horizonteEventos, 0, 0, this.horizonteEventos * 4);
+                gradienteAcrecao.addColorStop(0, 'rgba(0, 0, 0, 1)');
+                gradienteAcrecao.addColorStop(0.1, 'rgba(255, 255, 255, 1)'); // Anel branco incandescente
+                gradienteAcrecao.addColorStop(0.3, 'rgba(255, 120, 0, 0.7)'); // Laranja interestelar
+                gradienteAcrecao.addColorStop(0.6, 'rgba(100, 30, 200, 0.3)'); // Nuvem roxa
+                gradienteAcrecao.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                // Anel achatado brilhante
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.horizonteEventos * 3.5, this.horizonteEventos * 0.7, 0, 0, Math.PI * 2);
+                ctx.fillStyle = gradienteAcrecao;
+                ctx.fill();
+
+                // Anel secundário vertical simulando lente gravitacional
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.horizonteEventos * 0.8, this.horizonteEventos * 3.2, Math.PI/2, 0, Math.PI * 2);
+                ctx.fillStyle = gradienteAcrecao;
+                ctx.fill();
+
+                // Horizonte de Eventos Negro Absoluto
+                ctx.beginPath();
+                ctx.arc(0, 0, this.horizonteEventos, 0, Math.PI * 2);
+                ctx.fillStyle = 'black';
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = '#fff';
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        // Classe Buraco Branco (Física de Repulsão Cósmica)
+        class BuracoBranco extends Entidade {
+            constructor(x, y, massa) {
+                super(x, y, massa);
+                this.campoRepulsao = Math.sqrt(this.massa) * 6;
+            }
+
+            atualizar() {
+                this.atualizarFisica();
+
+                // Repele partículas ao redor
+                for (let outra of entidades) {
+                    if (outra !== this && !outra.morta) {
+                        let dx = outra.x - this.x;
+                        let dy = outra.y - this.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+
+                        if (dist < this.campoRepulsao * 2 && dist > 0) {
+                            // Empurra com força inversamente proporcional à distância
+                            let forcaRepulsao = (G * this.massa * outra.massa) / (dist * dist);
+                            outra.vx += (dx / dist) * forcaRepulsao * 15;
+                            outra.vy += (dy / dist) * forcaRepulsao * 15;
+                        }
+                    }
+                }
+            }
+
+            desenhar(ctx) {
+                // Brilho reverso luminoso
+                let gradiente = ctx.createRadialGradient(this.x, this.y, 2, this.x, this.y, this.campoRepulsao);
+                gradiente.addColorStop(0, '#ffffff');
+                gradiente.addColorStop(0.2, '#ccffff');
+                gradiente.addColorStop(0.6, 'rgba(0, 200, 255, 0.3)');
+                gradiente.addColorStop(1, 'rgba(0,0,0,0)');
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.campoRepulsao, 0, Math.PI * 2);
+                ctx.fillStyle = gradiente;
+                ctx.fill();
+
+                // Centro estelar brilhante
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = '#00ffff';
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        // Classe Supernova
+        class Supernova {
+            constructor(x, y, massaEstrela = 4) {
+                this.x = x;
+                this.y = y;
+                this.raio = 5;
+                this.maxRaio = massaEstrela * 45;
+                this.morta = false;
+                this.particulas = [];
+                
+                // Cria estilhaços incandescentes
+                for (let i = 0; i < 40; i++) {
+                    let angulo = Math.random() * Math.PI * 2;
+                    let speed = Math.random() * 8 + 2;
+                    this.particulas.push({
+                        x: this.x,
+                        y: this.y,
+                        vx: Math.cos(angulo) * speed,
+                        vy: Math.sin(angulo) * speed,
+                        cor: `hsl(${Math.random() * 40 + 10}, 100%, 60%)`, // Cores quentes/explosivas
+                        tamanho: Math.random() * 3 + 1
+                    });
+                }
+            }
+
+            atualizar() {
+                this.raio += 3;
+                if (this.raio > this.maxRaio) {
+                    this.morta = true;
+                    // Deixa um buraco negro pequeno como remanescente
+                    if (Math.random() > 0.4) {
+                        entidades.push(new BuracoNegro(this.x, this.y, 15));
+                    }
+                }
+
+                // Move estilhaços
+                for (let p of this.particulas) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vx *= 0.96; // Desaceleração pelo meio interestelar
+                    p.vy *= 0.96;
+                }
+
+                // Empurra corpos próximos com a onda de choque
+                for (let outra of entidades) {
+                    if (outra !== this && !outra.morta) {
+                        let d = Math.hypot(outra.x - this.x, outra.y - this.y);
+                        if (d < this.raio && d > this.raio - 30) {
+                            outra.vx += ((outra.x - this.x) / d) * 4;
+                            outra.vy += ((outra.y - this.y) / d) * 4;
+                        }
+                    }
+                }
+            }
+
+            desenhar(ctx) {
+                // Onda de choque circular
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.raio, 0, Math.PI * 2);
+                let gradiente = ctx.createRadialGradient(this.x, this.y, this.raio * 0.8, this.x, this.y, this.raio);
+                gradiente.addColorStop(0, 'rgba(255, 100, 0, 0)');
+                gradiente.addColorStop(0.5, 'rgba(255, 50, 0, 0.4)');
+                gradiente.addColorStop(0.8, 'rgba(255, 200, 50, 0.6)');
+                gradiente.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = gradiente;
+                ctx.fill();
+
+                // Desenha os pedaços da explosão
+                for (let p of this.particulas) {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.tamanho, 0, Math.PI * 2);
+                    ctx.fillStyle = p.cor;
+                    ctx.fill();
+                }
+            }
+        }
+
+        // Classe Besta Intergaláctica (Cosmic Whale/Dragon)
+        class BestaIntergalactica extends Entidade {
+            constructor(x, y) {
+                super(x, y, 25);
+                this.anguloMover = Math.random() * Math.PI * 2;
+                this.cor = '#00ffcc';
+                this.tamanho = 18;
+                this.historico = []; // Para fazer um corpo articulado ondulante
+            }
+
+            atualizar() {
+                // Inteligência Artificial Simples: Busca a estrela ou planeta mais próximo para "devorar"
+                let alvo = null;
+                let minDist = 99999;
+                for (let ent of entidades) {
+                    if (ent !== this && !ent.morta && (ent instanceof Estrela || ent instanceof Planeta)) {
+                        let d = Math.hypot(ent.x - this.x, ent.y - this.y);
+                        if (d < minDist) {
+                            minDist = d;
+                            alvo = ent;
+                        }
+                    }
+                }
+
+                if (alvo) {
+                    let anguloDesejado = Math.atan2(alvo.y - this.y, alvo.x - this.x);
+                    this.vx += Math.cos(anguloDesejado) * 0.15;
+                    this.vy += Math.sin(anguloDesejado) * 0.15;
+
+                    // Come a estrela ao se aproximar demais
+                    if (minDist < this.tamanho * 1.5) {
+                        alvo.morta = true;
+                        this.tamanho += 2; // Besta cresce
+                    }
+                } else {
+                    // Sem alvo, apenas vaga aleatoriamente
+                    this.vx += Math.cos(this.anguloMover) * 0.05;
+                    this.vy += Math.sin(this.anguloMover) * 0.05;
+                    if (Math.random() < 0.02) this.anguloMover = Math.random() * Math.PI * 2;
+                }
+
+                this.atualizarFisica();
+                this.vx *= 0.95; // Velocidade controlada
+                this.vy *= 0.95;
+
+                // Registra posições para a cauda
+                this.historico.unshift({ x: this.x, y: this.y });
+                if (this.historico.length > 10) this.historico.pop();
+            }
+
+            desenhar(ctx) {
+                // Desenha a cauda ondulante (corpo de verme estelar)
+                for (let i = 0; i < this.historico.length; i++) {
+                    let p = this.historico[i];
+                    let r = this.tamanho * (1 - i / this.historico.length);
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, Math.max(2, r), 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 255, 204, ${1 - i / this.historico.length})`;
+                    ctx.shadowBlur = 5;
+                    ctx.shadowColor = '#00ffcc';
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+
+                // Desenha olhos brilhantes na cabeça (primeira posição)
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff';
+                ctx.fill();
+            }
+        }
+
+        // Classe Aliens (Cute UFOs)
+        class Alien extends Entidade {
+            constructor(x, y) {
+                super(x, y, 5);
+                this.vx = (Math.random() - 0.5) * 3;
+                this.vy = (Math.random() - 0.5) * 3;
+                this.tempoTroca = 0;
+            }
+
+            atualizar() {
+                this.tempoTroca++;
+                // Manobras erráticas angulares típicas de OVNIs
+                if (this.tempoTroca > 60) {
+                    let angulo = Math.random() * Math.PI * 2;
+                    let vel = Math.random() * 4 + 1;
+                    this.vx = Math.cos(angulo) * vel;
+                    this.vy = Math.sin(angulo) * vel;
+                    this.tempoTroca = 0;
+                }
+
+                this.atualizarFisica();
+            }
+
+            desenhar(ctx) {
+                // Desenha nave em formato de disco
+                ctx.beginPath();
+                ctx.ellipse(this.x, this.y, 8, 3, 0, 0, Math.PI * 2);
+                ctx.fillStyle = '#88aa99';
+                ctx.fill();
+
+                // Cúpula superior
+                ctx.beginPath();
+                ctx.arc(this.x, this.y - 1, 4, Math.PI, 0);
+                ctx.fillStyle = '#00ffcc';
+                ctx.fill();
+
+                // Luzinhas inferiores piscando (usando seno do tempo cósmico)
+                let corLuz = Math.sin(anoCosmico * 0.5) > 0 ? '#ff0055' : '#00ff55';
+                ctx.beginPath();
+                ctx.arc(this.x - 4, this.y + 1, 1, 0, Math.PI * 2);
+                ctx.arc(this.x, this.y + 1, 1, 0, Math.PI * 2);
+                ctx.arc(this.x + 4, this.y + 1, 1, 0, Math.PI * 2);
+                ctx.fillStyle = corLuz;
+                ctx.fill();
+            }
+        }
+
+        // ==========================================
+        // SISTEMAS DE INICIALIZAÇÃO
+        // ==========================================
+
+        function initBigBang() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+            entidades = [];
+            anoCosmico = 0;
+            cycleStatus.innerText = "Estável";
+            cycleStatus.style.color = "#66ff66";
+
+            const centroX = width / 2;
+            const centroY = height / 2;
+
+            for (let i = 0; i < 200; i++) {
+                let massa = Math.random() * 3.5 + 1;
+                let angulo = Math.random() * Math.PI * 2;
+                let velocidadeExplosao = Math.random() * 12 + 2;
+
+                let vx = Math.cos(angulo) * velocidadeExplosao;
+                let vy = Math.sin(angulo) * velocidadeExplosao;
+
+                let x = centroX + (Math.random() - 0.5) * 15;
+                let y = centroY + (Math.random() - 0.5) * 15;
+
+                entidades.push(new Estrela(x, y, massa, vx, vy));
+            }
+
+            // Central Black Hole primordial
+            entidades.push(new BuracoNegro(centroX, centroY, 50));
+        }
+
+        function initSolarSystem() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+            entidades = [];
+            anoCosmico = 0;
+            cycleStatus.innerText = "Sistema Local";
+            cycleStatus.style.color = "#aaddff";
+
+            const centroX = width / 2;
+            const centroY = height / 2;
+
+            // O Sol
+            let sol = new Estrela(centroX, centroY, 60, 0, 0, true);
+            entidades.push(sol);
+
+            // Planetas do Sistema Solar
+            const dadosPlanetas = [
+                { nome: "Mercúrio", cor: "#888", tamanho: 1.5, dist: 40, vel: 0.04 },
+                { nome: "Vênus", cor: "#e3bb76", tamanho: 2.2, dist: 65, vel: 0.03 },
+                { nome: "Terra", cor: "#1177ff", tamanho: 2.5, dist: 95, vel: 0.02, tipo: "Terra" },
+                { nome: "Marte", cor: "#e35b3d", tamanho: 1.8, dist: 130, vel: 0.018 },
+                { nome: "Júpiter", cor: "#d4a373", tamanho: 5.5, dist: 180, vel: 0.01, tipo: "Gasoso" },
+                { nome: "Saturno", cor: "#f4f1de", tamanho: 4.5, dist: 240, vel: 0.007, tipo: "Gasoso" },
+                { nome: "Urano", cor: "#a8dadc", tamanho: 3.5, dist: 300, vel: 0.005, tipo: "Gasoso" },
+                { nome: "Netuno", cor: "#457b9d", tamanho: 3.4, dist: 360, vel: 0.004, tipo: "Gasoso" }
+            ];
+
+            dadosPlanetas.forEach((dp, i) => {
+                let p = new Planeta(sol, i, dp.tipo || "Rochoso");
+                p.cor = dp.cor;
+                p.tamanho = dp.tamanho;
+                p.distancia = dp.dist;
+                p.velocidadeBase = dp.vel;
+                // No caso da terra, acelerar sua evolução inicial para diversão
+                if (dp.nome === "Terra") p.idade = 400;
+                sol.planetas.push(p);
+            });
+        }
+
+        // ==========================================
+        // PROCESSO DO BIG CRUNCH (Transição Cósmica)
+        // ==========================================
+        function processarBigCrunch() {
+            cycleStatus.innerText = "BIG CRUNCH!";
+            cycleStatus.style.color = "#ff3333";
+
+            const centroX = width / 2;
+            const centroY = height / 2;
+
+            // Arrasta de forma forçada tudo em direção ao centro para colapsar
+            for (let ent of entidades) {
+                let dx = centroX - ent.x;
+                let dy = centroY - ent.y;
+                let dist = Math.hypot(dx, dy);
+
+                if (dist > 5) {
+                    ent.vx += (dx / dist) * 1.5;
+                    ent.vy += (dy / dist) * 1.5;
+                } else {
+                    ent.morta = true; // Consumido no núcleo
+                }
+            }
+
+            // Se tudo colapsou no centro, reinicia o Big Bang
+            if (entidades.filter(e => !e.morta).length <= 2) {
+                initBigBang();
+            }
+        }
+
+        // ==========================================
+        // LOOP PRINCIPAL
+        // ==========================================
+        function atualizarFisicaSimulacao() {
+            anoCosmico += 1; 
+
+            // Tratamento do Ciclo Cósmico no modo universo
+            if (activeView === "universe" && anoCosmico >= MAX_COSMIC_YEARS) {
+                processarBigCrunch();
+                return;
+            }
+            
+            // Atração gravitatória recíproca (N-Body)
+            for (let i = 0; i < entidades.length; i++) {
+                for (let j = 0; j < entidades.length; j++) {
+                    if (i !== j) {
+                        entidades[i].atrair(entidades[j]);
+                    }
+                }
+            }
+
+            // Atualiza física e remove mortos
+            for (let i = entidades.length - 1; i >= 0; i--) {
+                entidades[i].atualizar();
+                
+                if (entidades[i].morta) {
+                    entidades.splice(i, 1);
+                }
+            }
+        }
+
+        function animar() {
+            // Rastro cósmico suave
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+            ctx.fillRect(0, 0, width, height);
+
+            if (!isPaused) {
+                for (let step = 0; step < velocidadeTempo; step++) {
+                    atualizarFisicaSimulacao();
+                }
+            }
+
+            // Renderiza tudo na tela
+            for (let e of entidades) {
+                e.desenhar(ctx);
+            }
+
+            // Atualização de dados da UI
+            entCount.innerText = entidades.length;
+            anoCount.innerText = anoCosmico;
+
+            requestAnimationFrame(animar);
+        }
+
+        // Run
+        initBigBang();
+        animar();
+
+    </script>
+</body>
+</html>
