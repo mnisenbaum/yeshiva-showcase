@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meditações Geométricas: Ângulos no Círculo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --burgundy: #5c1d24; /* Púrpura Imperial */
+            --gold: #c5a059;     /* Dourado Romano */
+            --gold-light: #f4ede2;
+            --marble: #fbf9f5;   /* Branco Mármore */
+            --charcoal: #23201d; /* Carvão/Pedra Escura */
+            --stone: #ded9d0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--marble);
+            color: var(--charcoal);
+            line-height: 1.6;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            max-width: 800px;
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 1.5rem;
+            width: 100%;
+        }
+
+        h1 {
+            font-family: 'Cinzel', serif;
+            color: var(--burgundy);
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .quote {
+            font-style: italic;
+            color: #555;
+            font-size: 1.05rem;
+            margin-top: 0.5rem;
+        }
+
+        .author {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            color: var(--gold);
+            letter-spacing: 1px;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        @media (min-width: 850px) {
+            .container {
+                grid-template-columns: 500px 1fr;
+            }
+        }
+
+        .canvas-container {
+            background: white;
+            border: 1px solid var(--stone);
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(35, 32, 29, 0.05);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Moldura interna clássica */
+        .canvas-container::before {
+            content: '';
+            position: absolute;
+            top: 8px; left: 8px; right: 8px; bottom: 8px;
+            border: 1px solid var(--gold);
+            opacity: 0.25;
+            pointer-events: none;
+            border-radius: 8px;
+        }
+
+        canvas {
+            cursor: grab;
+            max-width: 100%;
+            background: #faf8f5;
+            border-radius: 6px;
+        }
+
+        canvas:active {
+            cursor: grabbing;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border-left: 4px solid var(--burgundy);
+            border-radius: 0 12px 12px 0;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+            border-top: 1px solid #eee;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--burgundy);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .metric-box {
+            padding: 1.2rem 1rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-box.central {
+            background-color: rgba(197, 160, 89, 0.08);
+            border: 1px solid rgba(197, 160, 89, 0.25);
+        }
+
+        .metric-box.inscrito {
+            background-color: rgba(92, 29, 36, 0.05);
+            border: 1px solid rgba(92, 29, 36, 0.18);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .metric-box.central .metric-label { color: #8e6c26; }
+        .metric-box.inscrito .metric-label { color: var(--burgundy); }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            font-family: 'Cinzel', serif;
+        }
+
+        .relation-ship {
+            grid-column: 1 / -1;
+            background: var(--charcoal);
+            color: #f1e7d0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Cinzel', serif;
+            text-align: center;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .instructions ul {
+            list-style-type: none;
+        }
+
+        .instructions li {
+            position: relative;
+            padding-left: 1.8rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .instructions li::before {
+            content: '🏛️';
+            position: absolute;
+            left: 0;
+            top: 1px;
+            font-size: 0.95rem;
+        }
+
+        .stoic-insight {
+            background-color: var(--gold-light);
+            border-left: 4px solid var(--gold);
+        }
+
+        .stoic-insight p {
+            font-style: italic;
+            color: #444;
+            position: relative;
+            padding-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Meditações Geométricas</h1>
+        <div class="quote">"Nada tem tanto poder para dilatar a mente quanto a capacidade de examinar, metódica e veridicamente, tudo o que está sob a nossa observação na vida."</div>
+        <span class="author">— Marco Aurélio, Meditações (Livro III)</span>
+    </header>
+
+    <div class="container">
+        <div class="canvas-container">
+            <canvas id="geoCanvas" width="450" height="450"></canvas>
+        </div>
+
+        <div class="panel">
+            <div class="card">
+                <h2>A Razão do Círculo</h2>
+                <div class="metrics">
+                    <div class="metric-box central">
+                        <div class="metric-label">Ângulo Central (AÔB)</div>
+                        <div class="metric-value" id="valCentral">0°</div>
+                    </div>
+                    <div class="metric-box inscrito">
+                        <div class="metric-label">Ângulo Inscrito (ACB)</div>
+                        <div class="metric-value" id="valInscrito">0°</div>
+                    </div>
+                    <div class="relation-ship" id="relationText">
+                        Calculando proporções...
+                    </div>
+                </div>
+            </div>
+
+            <div class="card instructions">
+                <h2>Instruções de Manuseio</h2>
+                <ul>
+                    <li>Arraste as esferas douradas <strong>A</strong> ou <strong>B</strong> para alterar a abertura do arco.</li>
+                    <li>Arraste a esfera púrpura <strong>C</strong> ao longo do perímetro para ver o milagre geométrico acontecer.</li>
+                    <li>Observe que, enquanto <strong>C</strong> estiver fora do arco menor, o ângulo inscrito será sempre exatamente a <strong>metade</strong> do ângulo central!</li>
+                </ul>
+            </div>
+
+            <div class="card stoic-insight">
+                <h2>Reflexão do Imperador</h2>
+                <p id="stoicQuote">Carregando a verdade do Logos...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('geoCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const radius = 150;
+
+        // Ângulos iniciais em radianos
+        let angleA = 0.5;
+        let angleB = 2.5;
+        let angleC = 4.5;
+
+        let activePoint = null;
+
+        const quotes = {
+            major: "“Veja a imutabilidade do Todo: não importa para onde você desloque o ponto da sua perspectiva, as leis universais da razão permanecem constantes e perfeitamente equilibradas em dobro.”",
+            minor: "“Ao cruzar a fronteira do arco, a forma se altera, mas a harmonia geométrica não se perde; ela apenas se adapta para somar a perfeição de um ciclo completo (360°).”"
+        };
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function getPointCoords(angle) {
+            return {
+                x: cx + radius * Math.cos(angle),
+                y: cy + radius * Math.sin(angle)
+            };
+        }
+
+        function dist(p1, p2) {
+            return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
+        }
+
+        function onStart(e) {
+            const pos = getMousePos(e);
+            const pA = getPointCoords(angleA);
+            const pB = getPointCoords(angleB);
+            const pC = getPointCoords(angleC);
+
+            if (dist(pos, pA) < 18) activePoint = 'A';
+            else if (dist(pos, pB) < 18) activePoint = 'B';
+            else if (dist(pos, pC) < 18) activePoint = 'C';
+        }
+
+        function onMove(e) {
+            if (!activePoint) return;
+            if (e.cancelable) e.preventDefault();
+            
+            const pos = getMousePos(e);
+            let angle = Math.atan2(pos.y - cy, pos.x - cx);
+            if (angle < 0) angle += 2 * Math.PI;
+
+            if (activePoint === 'A') angleA = angle;
+            if (activePoint === 'B') angleB = angle;
+            if (activePoint === 'C') angleC = angle;
+
+            draw();
+        }
+
+        function onEnd() {
+            activePoint = null;
+        }
+
+        canvas.addEventListener('mousedown', onStart);
+        canvas.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+
+        canvas.addEventListener('touchstart', onStart, {passive: false});
+        canvas.addEventListener('touchmove', onMove, {passive: false});
+        window.addEventListener('touchend', onEnd);
+
+        function drawNode(p, label, color) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 9, 0, 2 * Math.PI);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.strokeStyle = '#fbf9f5';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Sombra leve sob os nós
+            ctx.shadowBlur = 4;
+            ctx.shadowColor = "rgba(0,0,0,0.15)";
+
+            // Posicionamento inteligente das letras (para fora do círculo)
+            let dx = p.x - cx;
+            let dy = p.y - cy;
+            let len = Math.sqrt(dx*dx + dy*dy);
+            let textX = cx + (len + 22) * (dx/len);
+            let textY = cy + (len + 22) * (dy/len);
+
+            ctx.shadowBlur = 0; // reset
+            ctx.font = "bold 14px 'Cinzel', serif";
+            ctx.fillStyle = '#23201d';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(label, textX, textY);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const pA = getPointCoords(angleA);
+            const pB = getPointCoords(angleB);
+            const pC = getPointCoords(angleC);
+            const pO = { x: cx, y: cy };
+
+            // 1. Circunferência Base (Efeito Mármore Lavado)
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = '#ded9d0';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // 2. Linhas do Ângulo Central (Dourado)
+            ctx.beginPath();
+            ctx.moveTo(pA.x, pA.y);
+            ctx.lineTo(pO.x, pO.y);
+            ctx.lineTo(pB.x, pB.y);
+            ctx.strokeStyle = '#c5a059';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // 3. Linhas do Ângulo Inscrito (Púrpura Imperial Tracejado com Elegância)
+            ctx.beginPath();
+            ctx.moveTo(pA.x, pA.y);
+            ctx.lineTo(pC.x, pC.y);
+            ctx.lineTo(pB.x, pB.y);
+            ctx.strokeStyle = '#5c1d24';
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([5, 4]);
+            ctx.stroke();
+            ctx.setLineDash([]); // Reset do traço
+
+            // 4. Ponto Central O
+            ctx.beginPath();
+            ctx.arc(pO.x, pO.y, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#23201d';
+            ctx.fill();
+            ctx.font = "bold 13px 'Cinzel', serif";
+            ctx.fillText("O", pO.x - 15, pO.y + 4);
+
+            // 5. Desenhar os Nós Interativos
+            drawNode(pA, 'A', '#c5a059');
+            drawNode(pB, 'B', '#c5a059');
+            drawNode(pC, 'C', '#5c1d24');
+
+            // 6. Cálculos Trigonométricos Absolutos
+            let diff = Math.abs(angleB - angleA);
+            if (diff > Math.PI) diff = 2 * Math.PI - diff;
+            let degCentral = Math.round(diff * (180 / Math.PI));
+
+            let vCA = { x: pA.x - pC.x, y: pA.y - pC.y };
+            let vCB = { x: pB.x - pC.x, y: pB.y - pC.y };
+            let dot = vCA.x * vCB.x + vCA.y * vCB.y;
+            let magA = Math.sqrt(vCA.x**2 + vCA.y**2);
+            let magB = Math.sqrt(vCB.x**2 + vCB.y**2);
+            let cosC = Math.max(-1, Math.min(1, dot / (magA * magB)));
+            let degInscribed = Math.round(Math.acos(cosC) * (180 / Math.PI));
+
+            // Atualizar Painel
+            document.getElementById('valCentral').innerText = degCentral + '°';
+            document.getElementById('valInscrito').innerText = degInscribed + '°';
+
+            const relationBox = document.getElementById('relationText');
+            const quoteText = document.getElementById('stoicQuote');
+
+            // Validação da Propriedade Geométrica e Alteração Dinâmica das Meditações
+            if (Math.abs(degCentral - 2 * degInscribed) <= 1) {
+                relationBox.innerHTML = `α = 2 × β &nbsp;•&nbsp; ${degCentral}° = 2 × ${degInscribed}°`;
+                relationBox.style.backgroundColor = 'var(--charcoal)';
+                quoteText.innerText = quotes.major;
+            } else {
+                // Caso o ponto C vá para o arco menor (ângulos suplementares)
+                relationBox.innerHTML = `α + 2β = 360° &nbsp;•&nbsp; ${degCentral}° + ${2 * degInscribed}° = 360°`;
+                relationBox.style.backgroundColor = '#3d1217'; 
+                quoteText.innerText = quotes.minor;
+            }
+        }
+
+        // Execução inicial
+        draw();
+    </script>
+</body>
+</html>
