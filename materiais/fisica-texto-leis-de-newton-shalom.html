@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leis de Newton - Laboratório de Mecânica Analítica</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontes Estilo Steampunk -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Special+Elite&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Configuração e Carregamento do MathJax para Fórmulas LaTeX -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Estilização Geral Temática Steampunk */
+        body {
+            font-family: 'Lora', serif;
+            background-color: #120c06;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(26, 17, 8, 0.9) 0%, rgba(10, 6, 3, 0.98) 100%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3联%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+            color: #ebd1b0;
+        }
+
+        h1, h2, h3, h4, .steampunk-header {
+            font-family: 'Cinzel', serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8), 0 0 10px rgba(197, 137, 64, 0.3);
+        }
+
+        .typewriter-font {
+            font-family: 'Special Elite', monospace;
+        }
+
+        /* Molduras de Cobre, Bronze e rebites */
+        .steampunk-panel {
+            background: linear-gradient(135deg, #261a10 0%, #1c120a 100%);
+            border: 4px solid #8c5a2b;
+            box-shadow: 
+                inset 0 0 20px rgba(0,0,0,0.8),
+                0 10px 25px rgba(0,0,0,0.7),
+                0 0 0 2px #4d3014,
+                0 0 15px rgba(197, 137, 64, 0.2);
+            position: relative;
+        }
+
+        .steampunk-panel::before {
+            content: '';
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            border: 1px solid #c58940;
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        /* Rebites de Bronze nos cantos */
+        .rivet {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle at 30% 30%, #ffd085 0%, #8c5a2b 70%, #3a220b 100%);
+            border-radius: 50%;
+            box-shadow: 1px 1px 2px rgba(0,0,0,0.8), inset -1px -1px 1px rgba(0,0,0,0.6);
+        }
+
+        /* Animação das Engrenagens */
+        @keyframes spin-clockwise {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes spin-counter {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(-360deg); }
+        }
+
+        .gear-spin-cw {
+            animation: spin-clockwise 25s linear infinite;
+        }
+        .gear-spin-ccw {
+            animation: spin-counter 15s linear infinite;
+        }
+
+        /* Alavanca e Válvulas Steampunk */
+        .steam-valve {
+            background: radial-gradient(circle, #c58940 0%, #5e3b14 100%);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.2);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .steam-valve:active {
+            transform: scale(0.9) rotate(45deg);
+        }
+
+        /* Efeito de Vidro do Medidor de Pressão */
+        .gauge-glass {
+            background: radial-gradient(circle at 50% 15%, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 60%), #1c120a;
+            border: 4px solid #8c5a2b;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 10px rgba(197, 137, 64, 0.2);
+        }
+
+        /* Pergaminho antigo para textos explicativos */
+        .parchment {
+            background-color: #f2e3c6;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect fill='%23f2e3c6' width='100' height='100'/%3E%3Cpath d='M0 0h100v100H0z' fill='%23e0cca3' fill-opacity='.3'/%3E%3C/svg%3E");
+            color: #3d240e;
+            border: 2px solid #bda273;
+            box-shadow: inset 0 0 20px rgba(139, 101, 56, 0.3), 3px 3px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Personalização do Slider Steampunk */
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: #4a2f15;
+            height: 8px;
+            border-radius: 4px;
+            border: 1px solid #8c5a2b;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffd085 0%, #8c5a2b 100%);
+            border: 2px solid #4a2f15;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body class="tex2jax_process p-4 md:p-8">
+
+    <!-- Fundo Temático com Engrenagens Flutuantes decorativas -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none overflow-hidden opacity-[0.03] z-0">
+        <i class="fa-solid fa-gear text-[30rem] absolute -top-40 -left-40 gear-spin-cw text-[#c58940]"></i>
+        <i class="fa-solid fa-gear text-[20rem] absolute -bottom-20 -right-20 gear-spin-ccw text-[#c58940]"></i>
+    </div>
+
+    <!-- Container Central -->
+    <div class="max-w-6xl mx-auto relative z-10 space-y-10">
+
+        <!-- CABEÇALHO DA MÁQUINA PRINCIPAL -->
+        <header class="steampunk-panel p-6 md:p-10 text-center rounded-3xl border-double border-8">
+            <!-- Rebites nos Cantos -->
+            <div class="rivet top-3 left-3"></div><div class="rivet top-3 right-3"></div>
+            <div class="rivet bottom-3 left-3"></div><div class="rivet bottom-3 right-3"></div>
+            
+            <div class="flex justify-center items-center gap-4 mb-4">
+                <i class="fa-solid fa-compass-drafting text-[#c58940] text-3xl md:text-5xl"></i>
+                <div class="h-[2px] w-12 md:w-24 bg-gradient-to-r from-transparent to-[#c58940]"></div>
+                <span class="typewriter-font text-xs uppercase tracking-[0.3em] text-[#c58940]">Laboratório Real de Filosofia Natural</span>
+                <div class="h-[2px] w-12 md:w-24 bg-gradient-to-l from-transparent to-[#c58940]"></div>
+                <i class="fa-solid fa-flask-vial text-[#c58940] text-3xl md:text-5xl"></i>
+            </div>
+            
+            <h1 class="text-4xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[#ffd28e] via-[#c58940] to-[#593914] tracking-wider">
+                LEIS DE NEWTON
+            </h1>
+            
+            <div class="mt-4 inline-block bg-[#120c06]/80 px-6 py-2 rounded-full border border-[#8c5a2b] shadow-inner">
+                <span class="typewriter-font text-[#ebd1b0] text-xs md:text-sm">Mecânica Clássica e Dinâmica de Forças</span>
+            </div>
+        </header>
+
+        <!-- SEÇÃO: INTRODUÇÃO RÁPIDA -->
+        <section class="steampunk-panel p-6 md:p-8 rounded-2xl">
+            <div class="rivet top-2.5 left-2.5"></div><div class="rivet top-2.5 right-2.5"></div>
+            <div class="rivet bottom-2.5 left-2.5"></div><div class="rivet bottom-2.5 right-2.5"></div>
+
+            <div class="flex items-center gap-3 mb-6">
+                <span class="flex items-center justify-center w-10 h-10 rounded-full bg-[#c58940]/10 border border-[#c58940]/30 text-[#c58940]">
+                    <i class="fa-solid fa-scroll"></i>
+                </span>
+                <h2 class="text-xl md:text-2xl font-bold text-[#ffd085] tracking-wide">Introdução Rápida</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                <div class="md:col-span-8 space-y-4">
+                    <p class="text-sm md:text-base text-[#e0cbaf] leading-relaxed text-justify">
+                        Sir Isaac Newton foi um físico e matemático inglês do século XVII cuja obra estabeleceu as bases da mecânica clássica; suas três leis explicam como forças influenciam o movimento dos corpos e transformaram a Física ao permitir previsões quantitativas do comportamento de objetos do cotidiano ao espaço. Essas leis são essenciais para resolver problemas envolvendo movimento, equilíbrio e interações entre corpos, e permanecem válidas em grande parte dos fenômenos não relativísticos e não quânticos. Entender as Leis de Newton desenvolve raciocínio físico, capacidade de modelagem e habilidade de resolver exercícios práticos.
+                    </p>
+                </div>
+                
+                <!-- Ilustração Decorativa Steampunk Newton -->
+                <div class="md:col-span-4 flex flex-col items-center justify-center p-4 bg-[#120c06] rounded-xl border border-[#4d3014] relative">
+                    <div class="absolute -top-3 right-4 typewriter-font bg-[#8c5a2b] text-white text-[9px] px-2 py-0.5 rounded-md">Regnum Scientiae</div>
+                    <div class="w-24 h-24 rounded-full bg-[#1c120a] border-4 border-[#8c5a2b] flex items-center justify-center text-4xl mb-3 shadow-inner text-[#ffd085]">
+                        🍎
+                    </div>
+                    <span class="text-center font-bold text-xs text-[#c58940] tracking-wider uppercase typewriter-font">Mecânica de Cobre</span>
+                    <span class="text-[10px] text-slate-500 text-center mt-1">"Hypotheses non fingo"</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- DIAGRAMA INTERATIVO: DIAGRAMA DE CORPO LIVRE (Substitui e embeleza a Imagem 1) -->
+        <section class="steampunk-panel p-6 rounded-2xl border-2">
+            <div class="rivet top-2 left-2"></div><div class="rivet top-2 right-2"></div>
+            <div class="rivet bottom-2 left-2"></div><div class="rivet bottom-2 right-2"></div>
+            
+            <h3 class="text-lg font-bold text-center text-[#ffd085] mb-6 tracking-wide flex items-center justify-center gap-2">
+                <i class="fa-solid fa-arrows-to-dot text-[#c58940]"></i> Diagrama Interativo de Corpo Livre (FBD)
+            </h3>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Painel Esquerdo: Representação Visual Física -->
+                <div class="lg:col-span-8 bg-[#120c06] p-4 rounded-xl border border-[#4d3014] flex flex-col justify-between">
+                    <span class="text-[10px] uppercase tracking-wider text-slate-400 typewriter-font mb-4 block"><i class="fa-solid fa-eye"></i> Exibição do Diagrama de Força e Movimento</span>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center py-6">
+                        <!-- Situação Física -->
+                        <div class="text-center space-y-4 border-r border-[#4d3014]/60 pr-2">
+                            <h4 class="text-xs uppercase font-bold text-[#c58940] typewriter-font">Situação Física</h4>
+                            
+                            <!-- Ilustração minimalista do bloco sendo empurrado -->
+                            <div class="relative w-full h-40 bg-[#171008] border border-[#c58940]/10 rounded-lg flex items-center justify-center overflow-hidden">
+                                <div class="absolute top-2 left-2 text-[9px] text-slate-400">Movimento (Direita)</div>
+                                <div class="absolute top-5 left-1/2 -translate-x-1/2 w-16 h-1 bg-emerald-500 rounded flex items-center justify-end">
+                                    <div class="w-2 h-2 bg-emerald-500 rotate-45 -translate-y-[2px] translate-x-1"></div>
+                                </div>
+                                
+                                <!-- Personagem (Esquema simplificado de alavancas) -->
+                                <div class="absolute left-[15%] bottom-6 flex flex-col items-center">
+                                    <div class="w-4 h-4 rounded-full bg-[#ebd1b0] border border-amber-900"></div>
+                                    <div class="w-1.5 h-12 bg-amber-900 origin-bottom transform rotate-12 flex justify-end">
+                                        <div class="w-12 h-1 bg-amber-950 transform -rotate-[40deg] origin-left translate-y-3"></div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <div class="w-1 h-8 bg-amber-950 transform rotate-12"></div>
+                                        <div class="w-1 h-8 bg-amber-950 transform -rotate-12"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Bloco (Caixa de madeira clássica) -->
+                                <div class="absolute right-[25%] bottom-6 w-20 h-20 bg-[#593914] border-2 border-[#8c5a2b] rounded-lg flex items-center justify-center shadow-md">
+                                    <div class="w-16 h-16 border border-[#c58940]/30 flex items-center justify-center relative">
+                                        <div class="absolute w-[114%] h-[1px] bg-[#c58940]/20 transform rotate-45"></div>
+                                        <div class="absolute w-[114%] h-[1px] bg-[#c58940]/20 transform -rotate-45"></div>
+                                        <span class="text-xs font-bold text-[#ffd085] bg-[#593914] px-1 z-10">Massa (m)</span>
+                                    </div>
+                                </div>
+                                <div class="absolute bottom-0 w-full h-6 bg-[#3d240e] border-t-2 border-[#8c5a2b]"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Vetores de Força (Corpo Livre) -->
+                        <div class="text-center space-y-4">
+                            <h4 class="text-xs uppercase font-bold text-[#c58940] typewriter-font">Diagrama de Forças (Apenas a Caixa)</h4>
+                            
+                            <!-- FBD com vetores -->
+                            <div class="relative w-full h-40 bg-[#171008] border border-[#c58940]/10 rounded-lg flex items-center justify-center">
+                                <!-- Centro de Massa -->
+                                <div class="w-3 h-3 bg-[#ffd085] rounded-full z-20 shadow"></div>
+                                <div class="absolute w-12 h-12 border border-[#c58940]/10 rounded-full"></div>
+                                
+                                <!-- Força Normal (Fn) - Cima -->
+                                <div class="absolute bottom-1/2 left-1/2 -translate-x-1/2 w-1 h-14 bg-[#38bdf8] flex flex-col justify-start items-center origin-bottom">
+                                    <span class="text-[9px] text-[#38bdf8] font-bold absolute -top-5 bg-[#171008] px-1 rounded border border-[#38bdf8]/20">$$F_N$$</span>
+                                    <div class="w-2.5 h-2.5 bg-[#38bdf8] rotate-45 -translate-y-1"></div>
+                                </div>
+                                
+                                <!-- Força Peso (Fg) - Baixo -->
+                                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 w-1 h-14 bg-[#22c55e] flex flex-col justify-end items-center origin-top">
+                                    <span class="text-[9px] text-[#22c55e] font-bold absolute -bottom-5 bg-[#171008] px-1 rounded border border-[#22c55e]/20">$$F_g$$</span>
+                                    <div class="w-2.5 h-2.5 bg-[#22c55e] rotate-45 translate-y-1"></div>
+                                </div>
+                                
+                                <!-- Força Aplicada (Fapp) - Direita -->
+                                <div class="absolute top-1/2 left-1/2 -translate-y-1/2 h-1 w-16 bg-[#ef4444] flex justify-end items-center origin-left">
+                                    <span class="text-[9px] text-[#ef4444] font-bold absolute -right-8 bg-[#171008] px-1 rounded border border-[#ef4444]/20">$$F_{\text{app}}$$</span>
+                                    <div class="w-2.5 h-2.5 bg-[#ef4444] rotate-45 translate-x-1"></div>
+                                </div>
+                                
+                                <!-- Força de Atrito (Ff) - Esquerda -->
+                                <div class="absolute top-1/2 right-1/2 -translate-y-1/2 h-1 w-10 bg-[#a855f7] flex justify-start items-center origin-right">
+                                    <span class="text-[9px] text-[#a855f7] font-bold absolute -left-8 bg-[#171008] px-1 rounded border border-[#a855f7]/20">$$F_f$$</span>
+                                    <div class="w-2.5 h-2.5 bg-[#a855f7] rotate-45 -translate-x-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Painel Direito: Descrição Técnica -->
+                <div class="lg:col-span-4 bg-[#1c120a] p-4 rounded-xl border border-[#c58940]/20 space-y-4">
+                    <div class="border-b border-[#c58940]/10 pb-2">
+                        <span class="typewriter-font text-xs text-[#c58940] uppercase">Guia de Forças</span>
+                    </div>
+                    
+                    <ul class="space-y-3 text-xs">
+                        <li class="flex items-start gap-2">
+                            <span class="inline-block w-3 h-3 rounded-sm bg-[#ef4444] mt-0.5"></span>
+                            <div>
+                                <strong class="text-white">Força Aplicada ($F_{\text{app}}$):</strong> Empurrão exercido pela pessoa.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="inline-block w-3 h-3 rounded-sm bg-[#a855f7] mt-0.5"></span>
+                            <div>
+                                <strong class="text-white">Atrito ($F_f$):</strong> Opõe-se ao movimento relativo entre a caixa e o chão.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="inline-block w-3 h-3 rounded-sm bg-[#38bdf8] mt-0.5"></span>
+                            <div>
+                                <strong class="text-white">Força Normal ($F_N$):</strong> Força de suporte perpendicular vinda da superfície.
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="inline-block w-3 h-3 rounded-sm bg-[#22c55e] mt-0.5"></span>
+                            <div>
+                                <strong class="text-white">Peso ($F_g$):</strong> Força gravitacional puxando o corpo para baixo.
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    <div class="bg-[#120c06] p-3 rounded border border-[#ef4444]/20 space-y-1">
+                        <span class="text-[10px] text-[#ef4444] font-bold uppercase tracking-wider block">Conceito Chave</span>
+                        <p class="text-[11px] text-[#e0cbaf]">
+                            Forças Desequilibradas $\rightarrow$ Aceleração na direção da força resultante (neste caso, para a direita). As forças verticais se cancelam mutuamente.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: PRIMEIRA LEI DE NEWTON -->
+        <section class="steampunk-panel p-6 md:p-8 rounded-2xl border-l-8 border-[#c58940]">
+            <div class="rivet top-2.5 left-2.5"></div><div class="rivet top-2.5 right-2.5"></div>
+            <div class="rivet bottom-2.5 left-2.5"></div><div class="rivet bottom-2.5 right-2.5"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-[#c58940]/10 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-[#c58940]/10 border border-[#c58940]/30 text-[#ffd085] text-xl font-bold font-serif">
+                        I
+                    </span>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-[#ffd085]">Primeira Lei de Newton</h2>
+                        <span class="typewriter-font text-[10px] text-slate-400">Lei da Inércia</span>
+                    </div>
+                </div>
+                
+                <div class="bg-[#120c06] px-4 py-2 rounded-lg border border-[#c58940]/30 text-center">
+                    <span class="text-[10px] text-[#c58940] uppercase tracking-wider block">Fórmula Associada</span>
+                    <span class="text-md font-bold text-white">$$\sum \vec{F} = \vec{0}$$</span>
+                </div>
+            </div>
+
+            <!-- Conteúdo da Primeira Lei -->
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <h4 class="text-xs uppercase tracking-wider text-[#c58940] font-bold typewriter-font">Enunciado Formal</h4>
+                        <blockquote class="p-4 parchment rounded-xl border-l-4 border-[#3d240e] text-sm italic font-medium leading-relaxed">
+                            "Um corpo permanece em repouso ou em movimento retilíneo e uniforme a menos que seja forçado a mudar seu estado por forças resultantes agindo sobre ele."
+                        </blockquote>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <h4 class="text-xs uppercase tracking-wider text-[#c58940] font-bold typewriter-font">Explicação Simples</h4>
+                        <p class="text-sm text-[#e0cbaf] leading-relaxed">
+                            Se a soma das forças que agem sobre um corpo for nula, ele não muda sua velocidade — permanece parado ou segue em linha reta com velocidade constante. A tendência de um corpo manter seu estado de movimento é chamada <strong>inércia</strong>.
+                        </p>
+                        <div class="bg-[#120c06] p-3 rounded-lg border border-[#c58940]/10 text-xs">
+                            <span class="text-[#c58940] font-bold">Variáveis:</span>
+                            <ul class="list-disc list-inside mt-1 space-y-0.5 text-[#ebd1b0]/80">
+                                <li>$\sum \vec{F}$ = soma vetorial de todas as forças aplicadas ao corpo (Força Resultante).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DIAGRAMA DO ÔNIBUS (Representação da Imagem 2 em vetor e interativo) -->
+                <div class="bg-[#120c06] p-4 rounded-xl border border-[#4d3014] space-y-4">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="typewriter-font text-[#c58940] uppercase"><i class="fa-solid fa-bus"></i> Demonstração Dinâmica da Inércia</span>
+                        <span class="text-slate-400 bg-[#1c120a] px-2 py-1 rounded">Efeito de Frenagem</span>
+                    </div>
+
+                    <!-- Diagrama do Ônibus e Passageiros -->
+                    <div class="relative w-full min-h-[220px] bg-[#1a110a] rounded-xl border border-[#c58940]/20 overflow-hidden flex flex-col justify-end p-4">
+                        <!-- Topo: Ilustração de forças -->
+                        <div class="absolute top-4 left-4 right-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                            <div class="bg-red-950/40 border border-red-500/20 px-3 py-1.5 rounded text-xs text-red-300">
+                                <strong>Força de Frenagem:</strong> Aplicada nas rodas $\rightarrow$ Ônibus desacelera.
+                            </div>
+                            <div class="bg-emerald-950/40 border border-emerald-500/20 px-3 py-1.5 rounded text-xs text-emerald-300">
+                                <strong>Efeito de Inércia:</strong> Passageiros mantêm o movimento retilíneo anterior.
+                            </div>
+                        </div>
+
+                        <!-- O Ônibus e Pessoas (Simulação estilizada) -->
+                        <div class="w-full h-28 relative border-t-4 border-[#8c5a2b] mt-10">
+                            <!-- Corpo do Ônibus -->
+                            <div class="absolute inset-x-4 bottom-4 h-24 bg-[#120c06] border-2 border-[#c58940] rounded-xl flex items-center justify-around px-8">
+                                <!-- Passageiro 1 (Empurrado para frente) -->
+                                <div class="flex flex-col items-center transform translate-x-4 transition-all duration-1000">
+                                    <div class="w-5 h-5 rounded-full bg-[#ebd1b0] border border-amber-900"></div>
+                                    <div class="w-1.5 h-10 bg-amber-900 origin-bottom transform rotate-[25deg]"></div>
+                                    <span class="text-[8px] bg-red-900 text-white px-1 rounded absolute -top-4">Projetado!</span>
+                                </div>
+                                <!-- Passageiro 2 (Segurando o ferro) -->
+                                <div class="flex flex-col items-center transform translate-x-3 transition-all duration-1000">
+                                    <div class="w-5 h-5 rounded-full bg-[#ebd1b0] border border-amber-900"></div>
+                                    <div class="w-1.5 h-10 bg-amber-900 origin-bottom transform rotate-[18deg]"></div>
+                                    <span class="text-[8px] bg-[#c58940] text-black px-1 font-bold rounded absolute -top-4">Mantém Velocidade</span>
+                                </div>
+                                <!-- Passageiro 3 -->
+                                <div class="flex flex-col items-center transform translate-x-5 transition-all">
+                                    <div class="w-5 h-5 rounded-full bg-[#ebd1b0] border border-amber-900"></div>
+                                    <div class="w-1.5 h-10 bg-amber-900 origin-bottom transform rotate-[28deg]"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Rodas do Ônibus com engrenagens móveis! -->
+                            <div class="absolute left-12 bottom-0 w-10 h-10 rounded-full bg-[#1c120a] border-4 border-[#8c5a2b] flex items-center justify-center">
+                                <i class="fa-solid fa-gear text-[#c58940] text-2xl gear-spin-cw"></i>
+                            </div>
+                            <div class="absolute right-12 bottom-0 w-10 h-10 rounded-full bg-[#1c120a] border-4 border-[#8c5a2b] flex items-center justify-center">
+                                <i class="fa-solid fa-gear text-[#c58940] text-2xl gear-spin-cw"></i>
+                            </div>
+                        </div>
+
+                        <!-- Chão -->
+                        <div class="w-full h-4 bg-[#3d240e] border-t-2 border-[#8c5a2b]"></div>
+                    </div>
+                    
+                    <div class="text-xs text-[#ebd1b0]/90 leading-relaxed bg-[#1c120a] p-3 rounded border border-[#c58940]/10">
+                        <strong>Resumo do Fenômeno:</strong> Quando o ônibus freia, ele sofre uma força para trás e diminui sua velocidade. Os passageiros, por inércia, tendem a manter o movimento que tinham e são projetados para frente.
+                    </div>
+                </div>
+
+                <!-- Exemplos Práticos -->
+                <div class="space-y-3">
+                    <h4 class="text-xs uppercase tracking-wider text-[#c58940] font-bold typewriter-font">3 Exemplos Práticos do Cotidiano</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-[#1c120a] rounded-xl border border-[#4d3014] text-xs space-y-2">
+                            <span class="text-md">📖</span>
+                            <h5 class="font-bold text-white">Livro sobre a mesa</h5>
+                            <p class="text-slate-400">O livro fica parado porque a força peso é equilibrada pela força normal da mesa; logo $\sum \vec{F} = \vec{0}$.</p>
+                        </div>
+                        <div class="p-4 bg-[#1c120a] rounded-xl border border-[#4d3014] text-xs space-y-2">
+                            <span class="text-md">🚌</span>
+                            <h5 class="font-bold text-white">Ônibus que freia</h5>
+                            <p class="text-slate-400">Passageiros tendem a avançar para frente porque seus corpos mantêm a velocidade — o cinto de segurança aplica força para mudar esse estado.</p>
+                        </div>
+                        <div class="p-4 bg-[#1c120a] rounded-xl border border-[#4d3014] text-xs space-y-2">
+                            <span class="text-md">🥌</span>
+                            <h5 class="font-bold text-white">Bolinha no gelo ideal</h5>
+                            <p class="text-slate-400">Uma bolinha deslizando em uma superfície sem atrito (ideal) segue em movimento retilíneo e uniforme de forma contínua até que uma força atue.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: SEGUNDA LEI DE NEWTON -->
+        <section class="steampunk-panel p-6 md:p-8 rounded-2xl border-l-8 border-[#ef4444]">
+            <div class="rivet top-2.5 left-2.5"></div><div class="rivet top-2.5 right-2.5"></div>
+            <div class="rivet bottom-2.5 left-2.5"></div><div class="rivet bottom-2.5 right-2.5"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-[#c58940]/10 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-[#ef4444]/10 border border-[#ef4444]/30 text-[#ef4444] text-xl font-bold font-serif">
+                        II
+                    </span>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-[#ffd085]">Segunda Lei de Newton</h2>
+                        <span class="typewriter-font text-[10px] text-slate-400">Lei Fundamental da Dinâmica</span>
+                    </div>
+                </div>
+                
+                <div class="bg-[#120c06] px-4 py-2 rounded-lg border border-red-500/30 text-center">
+                    <span class="text-[10px] text-red-400 uppercase tracking-wider block">Equação Fundamental</span>
+                    <span class="text-md font-bold text-white">$$\sum \vec{F} = m \cdot \vec{a}$$</span>
+                </div>
+            </div>
+
+            <!-- Conteúdo da Segunda Lei -->
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <h4 class="text-xs uppercase tracking-wider text-[#c58940] font-bold typewriter-font">Enunciado Formal</h4>
+                        <blockquote class="p-4 parchment rounded-xl border-l-4 border-[#3d240e] text-sm italic font-medium leading-relaxed">
+                            "A aceleração de um corpo é diretamente proporcional à força resultante que atua sobre ele e inversamente proporcional à sua massa."
+                        </blockquote>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <h4 class="text-xs uppercase tracking-wider text-[#c58940] font-bold typewriter-font">Explicação Prática</h4>
+                        <p class="text-sm text-[#e0cbaf] leading-relaxed">
+                            Quanto maior a força líquida aplicada a um objeto, maior sua aceleração; quanto maior a massa do objeto, menor será a aceleração para a mesma força.
+                        </p>
+                        <div class="bg-[#120c06] p-3 rounded-lg border border-[#c58940]/10 text-xs">
+                            <span class="text-[#c58940] font-bold">Definição de Variáveis:</span>
+                            <ul class="list-disc list-inside mt-1 space-y-1 text-[#ebd1b0]/80">
+                                <li>$\sum \vec{F}$ = força resultante aplicada ao corpo (medida em Newtons, $\text{N}$).</li>
+                                <li>$m$ = massa inercial do corpo (medida em quilogramas, $\text{kg}$).</li>
+                                <li>$\vec{a}$ = aceleração resultante do corpo (medida em $\text{m/s}^2$).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIMULADOR DINÂMICO STEAMPUNK: SEGUNDA LEI DE NEWTON (Atividade de Engajamento Extraordinária) -->
+                <div class="bg-[#120c06] p-6 rounded-2xl border border-[#c58940]/30 space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 pb-4 border-b border-[#4d3014]">
+                        <div>
+                            <h4 class="text-sm font-bold text-[#ffd085] flex items-center gap-1.5 uppercase tracking-wider">
+                                <i class="fa-solid fa-calculator text-red-500"></i> Mecanismo Analítico de Forças
+                            </h4>
+                            <p class="text-[11px] text-slate-400">Modifique a massa e a força para observar a aceleração mecânica resultante</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                            <span class="text-[10px] uppercase font-bold typewriter-font text-emerald-400">Máquina Ativa</span>
+                        </div>
+                    </div>
+
+                    <!-- Layout do Simulador -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        <!-- Ajustes de Parâmetro -->
+                        <div class="lg:col-span-4 space-y-4">
+                            <!-- Slider de Massa -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-400">Massa do Vagão ($m$)</span>
+                                    <span class="text-[#ffd085] font-mono"><span id="mass-value">5</span> kg</span>
+                                </div>
+                                <input type="range" id="mass-slider" min="1" max="20" value="5" class="w-full">
+                            </div>
+
+                            <!-- Slider de Força de Propulsão -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-400">Força de Propulsão ($F$)</span>
+                                    <span class="text-[#ef4444] font-mono"><span id="force-value">20</span> N</span>
+                                </div>
+                                <input type="range" id="force-slider" min="0" max="100" value="20" class="w-full">
+                            </div>
+
+                            <!-- Slider de Atrito de Resistência -->
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-400">Força de Atrito ($F_{at}$)</span>
+                                    <span class="text-[#a855f7] font-mono"><span id="friction-value">5</span> N</span>
+                                </div>
+                                <input type="range" id="friction-slider" min="0" max="50" value="5" class="w-full">
+                            </div>
+                        </div>
+
+                        <!-- Visor Analítico (Gauge e Cálculos em Tempo Real) -->
+                        <div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Medidor Redondo de Aceleração -->
+                            <div class="gauge-glass p-4 rounded-xl flex flex-col items-center justify-center text-center relative h-36">
+                                <span class="text-[9px] uppercase tracking-wider text-[#c58940] typewriter-font mb-2">Aceleração Real</span>
+                                <div class="relative w-16 h-16 flex items-center justify-center">
+                                    <!-- Ponteiro do medidor -->
+                                    <div id="gauge-pointer" class="absolute w-1.5 h-10 bg-red-500 rounded-full bottom-1/2 left-1/2 -translate-x-1/2 origin-bottom transition-all duration-300" style="transform: rotate(0deg);"></div>
+                                    <div class="w-4 h-4 bg-[#8c5a2b] rounded-full border border-black z-10"></div>
+                                </div>
+                                <span id="calc-acc-raw" class="text-lg font-black text-white font-mono mt-2">3.00 m/s²</span>
+                            </div>
+
+                            <!-- Memória de Cálculo Físico -->
+                            <div class="bg-[#1c120a] p-4 rounded-xl border border-[#c58940]/10 col-span-2 flex flex-col justify-between h-36">
+                                <span class="text-[10px] uppercase font-bold text-slate-500 typewriter-font"><i class="fa-solid fa-gears"></i> Resolução Física da Máquina</span>
+                                <div class="space-y-1.5 text-xs">
+                                    <div>
+                                        <span class="text-slate-400">Força Resultante:</span>
+                                        <span class="font-mono text-white ml-1">$$F_{\text{res}} = F - F_{at} = <span id="formula-fres">15</span>\text{ N}$$</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400">Aplicação da Segunda Lei:</span>
+                                        <span class="font-mono text-white ml-1">$$a = \frac{F_{\text{res}}}{m} = \frac{<span id="formula-fres-2">15</span>}{<span id="formula-mass">5</span>} = <span id="formula-result">3.0</span>\text{ m/s}^2$$</span>
+                                    </div>
+                                </div>
+                                <button onclick="triggerSteamEffect()" class="w-full py-1.5 bg-[#8c5a2b] hover:bg-[#c58940] active:scale-95 text-xs text-white uppercase tracking-wider font-bold rounded-md transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-smog"></i> Disparar Vapor Analítico
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemplo Resolvido Passo a Passo -->
+                <div class="space-y-3">
+                    <h4 class="text-xs uppercase tracking-wider text-[#c58940] font-bold typewriter-font">Exemplo Resolvido do Documento original</h4>
+                    
+                    <div class="parchment p-6 rounded-xl space-y-4">
+                        <p class="font-bold text-sm">
+                            <span class="text-[#3d240e]">Problema:</span> Uma caixa de $m=5\text{ kg}$ recebe uma força horizontal de $20\text{ N}$; o atrito exerce $5\text{ N}$ na direção oposta. Qual é a aceleração?
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                            <div class="p-3 bg-white/40 rounded border border-amber-900/10">
+                                <strong class="text-[#3d240e] block mb-1">Passo 1 — Força Resultante:</strong>
+                                <span>$$\sum F = 20\text{ N} - 5\text{ N} = 15\text{ N}$$</span>
+                            </div>
+                            <div class="p-3 bg-white/40 rounded border border-amber-900/10">
+                                <strong class="text-[#3d240e] block mb-1">Passo 2 — Isolar aceleração ($a$):</strong>
+                                <span>$$a = \frac{\sum F}{m}$$</span>
+                            </div>
+                            <div class="p-3 bg-white/40 rounded border border-amber-900/10">
+                                <strong class="text-[#3d240e] block mb-1">Passo 3 — Executar cálculo:</strong>
+                                <span>$$a = \frac{15\text{ N}}{5\text{ kg}} = 3\text{ m/s}^2$$</span>
+                            </div>
+                        </div>
+                        <div class="pt-2 border-t border-amber-900/20 text-xs font-extrabold text-[#3d240e]">
+                            Resultado: A aceleração da caixa é de $3\text{ m/s}^2$.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exemplos Práticos da 2a Lei -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="p-4 bg-[#1c120a] rounded-xl border border-[#4d3014] text-xs space-y-2">
+                        <span class="text-md">🛒</span>
+                        <h5 class="font-bold text-white">Carrinho de supermercado</h5>
+                        <p class="text-slate-400">Empurrar um carrinho vazio (menor $m$) exige menos força para obter a mesma aceleração do que um carrinho cheio (maior $m$).</p>
+                    </div>
+                    <div class="p-4 bg-[#1c120a] rounded-xl border border-[#4d3014] text-xs space-y-2">
+                        <span class="text-md">⚽</span>
+                        <h5 class="font-bold text-white">Chute na bola de futebol</h5>
+                        <p class="text-slate-400">Um mesmo chute (força constante) fornece maior aceleração a uma bola juvenil (menor massa) do que a uma bola oficial mais pesada.</p>
+                    </div>
+                    <div class="p-4 bg-[#1c120a] rounded-xl border border-[#4d3014] text-xs space-y-2">
+                        <span class="text-md">🚲</span>
+                        <h5 class="font-bold text-white">Empurrar uma bicicleta</h5>
+                        <p class="text-slate-400">Aplicar uma força constante provoca aceleração; se parar de empurrar, atritos e resistência do ar reduzirão gradativamente a velocidade.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: TERCEIRA LEI DE NEWTON -->
+        <section class="steampunk-panel p-6 md:p-8 rounded-2xl border-l-8 border-[#a855f7]">
+            <div class="rivet top-2.5 left-2.5"></div><div class="rivet top-2.5 right-2.5"></div>
+            <div class="rivet bottom-2.5 left-2.5"></div><div class="rivet bottom-2.5 right-2.5"></div>
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-[#c58940]/10 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="flex items-center justify-center w-12 h-12 rounded-xl bg-[#a855f7]/10 border border-[#a855f7]/30 text-[#a855f7] text-xl font-bold font-serif">
+                        III
+                    </span>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-[#ffd085]">Terceira Lei de Newton</h2>
+                        <span class="typewriter-font text-[10px] text-slate-400">Ação e Reação</span>
+                    </div>
+                </div>
+                
+                <div class="bg-[#120c06] px-4 py-2 rounded-lg border border-purple-500/30 text-center">
+                    <span class="text-[10px] text-purple-400 uppercase tracking-wider block">Vetores Recíprocos</span>
+                    <span class="text-md font-bold text-white">$$\vec{F}_{A \to B} = -\vec{F}_{B \to A}$$</span>
+                </div>
+            </div>
+
+            <!-- Conteúdo da Terceira Lei -->
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-3">
+                        <h4 class="text-xs uppercase tracking-wider text-[#c58940] font-bold typewriter-font">Enunciado Formal</h4>
+                        <blockquote class="p-4 parchment rounded-xl border-l-4 border-[#3d240e] text-sm italic font-medium leading-relaxed">
+                            "Para toda força exercida por um corpo A sobre um corpo B existe uma força igual em módulo e contrária em direção exercida por B sobre A."
+                        </blockquote>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <h4 class="text-xs uppercase tracking-wider text-[#c58940] font-bold typewriter-font">Explicação Descomplicada</h4>
+                        <p class="text-sm text-[#e0cbaf] leading-relaxed">
+                            Forças sempre aparecem em pares: ao empurrar uma parede, você sente a parede "empurrando" você de volta com a mesma intensidade; a ação e a reação atuam obrigatoriamente em corpos diferentes, nunca se cancelando no mesmo corpo.
+                        </p>
+                        <div class="bg-[#120c06] p-3 rounded-lg border border-[#c58940]/10 text-xs">
+                            <span class="text-[#c58940] font-bold">Variáveis Associadas:</span>
+                            <ul class="list-disc list-inside mt-1 space-y-0.5 text-[#ebd1b0]/80">
+                                <li>$\vec{F}_{A \to B}$ = vetor de força aplicado pelo corpo A no corpo B.</li>
+                                <li>$\vec{F}_{B \to A}$ = vetor de força de reação do corpo B sobre o corpo A.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DIAGRAMA: TRÊS LEIS COMPILADAS E AÇÃO-REAÇÃO (Substitui e embeleza a Imagem 3) -->
+                <div class="bg-[#120c06] p-4 rounded-xl border border-[#4d3014] space-y-4">
+                    <span class="typewriter-font text-xs text-[#c58940] uppercase block"><i class="fa-solid fa-chart-column"></i> Diagrama Esquemático de Ação e Reação</span>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
+                        <!-- Exemplo 1: Caminhar -->
+                        <div class="relative min-h-[140px] bg-[#1a110a] rounded-lg border border-[#c58940]/15 p-3 flex flex-col justify-between">
+                            <h5 class="text-xs font-bold text-white uppercase">Caminhar Humano</h5>
+                            <div class="h-16 flex items-center justify-center relative">
+                                <!-- Chão -->
+                                <div class="absolute bottom-1 w-full h-2 bg-[#8c5a2b]"></div>
+                                <!-- Vetor Pé empurra chão para trás -->
+                                <div class="absolute bottom-2 left-[25%] w-10 h-1 bg-red-500 flex items-center justify-start">
+                                    <div class="w-2 h-2 bg-red-500 rotate-45 -translate-x-1"></div>
+                                    <span class="text-[8px] text-red-400 absolute -top-4">Ação (Pé)</span>
+                                </div>
+                                <!-- Vetor Chão empurra pé para frente -->
+                                <div class="absolute bottom-2 left-[45%] w-10 h-1 bg-emerald-500 flex items-center justify-end">
+                                    <div class="w-2 h-2 bg-emerald-500 rotate-45 translate-x-1"></div>
+                                    <span class="text-[8px] text-emerald-400 absolute -bottom-4">Reação (Chão)</span>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-slate-400">O pé empurra o chão para trás; o chão reage empurrando o pé para frente.</p>
+                        </div>
+
+                        <!-- Exemplo 2: Foguete / Propulsão -->
+                        <div class="relative min-h-[140px] bg-[#1a110a] rounded-lg border border-[#c58940]/15 p-3 flex flex-col justify-between">
+                            <h5 class="text-xs font-bold text-white uppercase">Propulsão a Reação</h5>
+                            <div class="h-16 flex items-center justify-center relative">
+                                <!-- Corpo do foguete (estilizado vertical) -->
+                                <div class="w-6 h-10 bg-slate-800 border border-[#c58940] rounded-t-full relative flex items-center justify-center">
+                                    <!-- Reação para Cima -->
+                                    <div class="absolute -top-6 w-1 h-5 bg-emerald-500 flex justify-start items-center">
+                                        <div class="w-2 h-2 bg-emerald-500 rotate-45 -translate-y-1"></div>
+                                    </div>
+                                    <!-- Ação para Baixo -->
+                                    <div class="absolute -bottom-6 w-1 h-5 bg-red-500 flex justify-end items-center">
+                                        <div class="w-2 h-2 bg-red-500 rotate-45 translate-y-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-slate-400">Gases quentes são ejetados para baixo; a força de reação empurra o foguete para cima.</p>
+                        </div>
+
+                        <!-- Exemplo 3: Barco à Remada -->
+                        <div class="relative min-h-[140px] bg-[#1a110a] rounded-lg border border-[#c58940]/15 p-3 flex flex-col justify-between">
+                            <h5 class="text-xs font-bold text-white uppercase">Navegação a Remo</h5>
+                            <div class="h-16 flex items-center justify-center relative">
+                                <!-- Linha da Água -->
+                                <div class="absolute bottom-2 w-full h-[1px] bg-cyan-700"></div>
+                                <!-- Vetores no remo -->
+                                <div class="w-16 h-1 bg-amber-800 rotate-[20deg] relative">
+                                    <!-- Ação na água -->
+                                    <div class="absolute -left-4 -top-2 w-6 h-1 bg-red-500 flex justify-start items-center">
+                                        <div class="w-1.5 h-1.5 bg-red-500 rotate-45 -translate-x-0.5"></div>
+                                    </div>
+                                    <!-- Reação no remo -->
+                                    <div class="absolute -right-4 -bottom-2 w-6 h-1 bg-emerald-500 flex justify-end items-center">
+                                        <div class="w-1.5 h-1.5 bg-emerald-500 rotate-45 translate-x-0.5"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-slate-400">O remo empurra a água para trás; a água reage impulsionando o barco para frente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONCEITOS CHAVE ASSOCIADOS -->
+        <section class="steampunk-panel p-6 md:p-8 rounded-2xl">
+            <div class="rivet top-2.5 left-2.5"></div><div class="rivet top-2.5 right-2.5"></div>
+            <div class="rivet bottom-2.5 left-2.5"></div><div class="rivet bottom-2.5 right-2.5"></div>
+
+            <div class="flex items-center gap-3 mb-6 border-b border-[#c58940]/10 pb-4">
+                <span class="flex items-center justify-center w-10 h-10 rounded-full bg-[#c58940]/10 border border-[#c58940]/30 text-[#ffd085]">
+                    <i class="fa-solid fa-list-check"></i>
+                </span>
+                <h2 class="text-xl md:text-2xl font-bold text-[#ffd085] tracking-wide">Conceitos-chave Associados</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                <!-- Massa vs Peso e Inércia -->
+                <div class="space-y-4">
+                    <div class="p-4 bg-[#1c120a] rounded-xl border border-[#c58940]/10">
+                        <h4 class="font-bold text-[#ffd085] mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-weight-hanging text-[#c58940]"></i> Massa vs. Peso
+                        </h4>
+                        <p class="text-xs text-[#e0cbaf] leading-relaxed">
+                            <strong>Massa</strong> é a quantidade inercial de matéria de um corpo (medida por $m$ em kg e é inalterada independentemente do local); <strong>Peso</strong> é a força gravitacional exercida sobre o corpo, calculada por $$P = m \cdot g$$ onde $g$ é a aceleração da gravidade local (na Terra, $g \approx 9,8\text{ m/s}^2$). Nota: peso é uma força (Newtons), massa não.
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-[#1c120a] rounded-xl border border-[#c58940]/10">
+                        <h4 class="font-bold text-[#ffd085] mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-bolt-lightning text-[#c58940]"></i> Inércia & Força Resultante
+                        </h4>
+                        <p class="text-xs text-[#e0cbaf] leading-relaxed">
+                            <strong>Inércia</strong> é a tendência natural de um corpo de manter seu estado de movimento (repouso ou movimento retilíneo uniforme); corpos com maior massa possuem maior inércia. <strong>Força resultante</strong> é a soma vetorial de todas as forças que atuam sobre um corpo; se $\sum \vec{F} \neq \vec{0}$, o corpo acelera segundo $\sum \vec{F} = m \cdot \vec{a}$.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Atrito Estático e Cinético -->
+                <div class="p-4 bg-[#1c120a] rounded-xl border border-[#c58940]/10 flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-[#ffd085] mb-2 flex items-center gap-1.5">
+                            <i class="fa-solid fa-shield text-[#c58940]"></i> Força de Atrito
+                        </h4>
+                        <p class="text-xs text-[#e0cbaf] leading-relaxed">
+                            O <strong>Atrito</strong> é uma força dissipativa que se opõe ao movimento relativo ou iminência de movimento entre superfícies em contato. Apresenta-se em duas naturezas comuns:
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 my-4">
+                        <div class="bg-[#120c06] p-3 rounded border border-[#c58940]/10 text-center">
+                            <span class="text-[9px] uppercase text-slate-400 block mb-1">Atrito Estático Máximo</span>
+                            <span class="font-mono text-xs font-bold text-white">$$F_{\text{at, máx}} = \mu_s \cdot N$$</span>
+                        </div>
+                        <div class="bg-[#120c06] p-3 rounded border border-[#c58940]/10 text-center">
+                            <span class="text-[9px] uppercase text-slate-400 block mb-1">Atrito Cinético (Dinâmico)</span>
+                            <span class="font-mono text-xs font-bold text-white">$$F_{\text{at}} = \mu_k \cdot N$$</span>
+                        </div>
+                    </div>
+
+                    <div class="text-[11px] text-[#ebd1b0]/80 leading-relaxed pt-2 border-t border-[#4d3014]">
+                        <strong>Variáveis:</strong> $\mu_s$ e $\mu_k$ são coeficientes de atrito estático e cinético, respectivamente (valores adimensionais); $N$ é a força normal de suporte (perpendicular à superfície), comumente expressa por $N = m \cdot g$ em planos perfeitamente horizontais.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DICAS DE PROVA (PEGADINHAS COMUNS E COMO EVITÁ-LAS) -->
+        <section class="steampunk-panel p-6 md:p-8 rounded-2xl border-2 border-dashed border-[#c58940]">
+            <div class="rivet top-2.5 left-2.5"></div><div class="rivet top-2.5 right-2.5"></div>
+            <div class="rivet bottom-2.5 left-2.5"></div><div class="rivet bottom-2.5 right-2.5"></div>
+
+            <div class="flex items-center gap-3 mb-6">
+                <span class="flex items-center justify-center w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </span>
+                <h2 class="text-xl md:text-2xl font-bold text-[#ffd085] tracking-wide">Dicas de Prova: Pegadinhas e Como Evitá-las</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <!-- Pegadinha 1 -->
+                <div class="p-4 bg-[#120c06] rounded-xl border-l-4 border-amber-500 space-y-1">
+                    <h5 class="font-bold text-white">Confundir Massa com Peso</h5>
+                    <p class="text-slate-400">Verifique sempre as unidades do sistema. Massa mede-se em $\text{kg}$, peso em Newtons ($\text{N}$). Se encontrar os parâmetros trocados, lembre-se de reescrever usando a equação $P = m \cdot g$.</p>
+                </div>
+                <!-- Pegadinha 2 -->
+                <div class="p-4 bg-[#120c06] rounded-xl border-l-4 border-amber-500 space-y-1">
+                    <h5 class="font-bold text-white">Ignorar Direções dos Vetores</h5>
+                    <p class="text-slate-400">Forças são vetores geométricos. Adote um referencial de eixos positivo e mantenha os sinais algébricos consistentes durante as contas. Desenhe sempre os vetores antes de iniciar a soma.</p>
+                </div>
+                <!-- Pegadinha 3 -->
+                <div class="p-4 bg-[#120c06] rounded-xl border-l-4 border-amber-500 space-y-1">
+                    <h5 class="font-bold text-white">Esquecer de Mapear Forças</h5>
+                    <p class="text-slate-400">Nunca omita forças dissipativas relevantes (como força de atrito e resistência do ar) ou forças normais. Desenhar um Diagrama de Corpo Livre completo antes de começar evita esquecimentos desastrosos.</p>
+                </div>
+                <!-- Pegadinha 4 -->
+                <div class="p-4 bg-[#120c06] rounded-xl border-l-4 border-amber-500 space-y-1">
+                    <h5 class="font-bold text-white">Erro na Terceira Lei</h5>
+                    <p class="text-slate-400">O par de forças de Ação e Reação atua estritamente em corpos distintos, nunca se anulando mutuamente. Elas só poderiam se anular se estivessem atuando de forma coincidente sobre o mesmo corpo.</p>
+                </div>
+                <!-- Pegadinha 5 -->
+                <div class="p-4 bg-[#120c06] rounded-xl border-l-4 border-amber-500 space-y-1">
+                    <h5 class="font-bold text-white">Ausência de Forças vs. Equilíbrio</h5>
+                    <p class="text-slate-400">Equilíbrio mecânico significa unicamente que a resultante das forças é nula ($\sum \vec{F} = \vec{0}$). Isso não significa que não existam forças individuais no sistema (elas apenas se cancelam).</p>
+                </div>
+                <!-- Pegadinha 6 -->
+                <div class="p-4 bg-[#120c06] rounded-xl border-l-4 border-amber-500 space-y-1">
+                    <h5 class="font-bold text-white">Unidades Diferentes do SI</h5>
+                    <p class="text-slate-400">Sempre converta os valores para o Sistema Internacional (metros, segundos, kg, Newtons). Verifique a consistência dimensional da resposta na etapa final.</p>
+                </div>
+            </div>
+
+            <!-- Como evitar -->
+            <div class="mt-6 p-4 parchment rounded-xl text-xs space-y-1">
+                <strong class="text-[#3d240e] uppercase typewriter-font block">Protocolo de Resolução Recomendado:</strong>
+                <p class="text-[#3d240e] font-medium">
+                    Desenhar o diagrama de corpo livre $\rightarrow$ escolher e marcar os eixos de referência $\rightarrow$ listar todas as forças com suas direções $\rightarrow$ escrever as equações $\sum F = m \cdot a$ de forma independente para cada componente $\rightarrow$ verificar se o resultado faz sentido físico qualitativo.
+                </p>
+            </div>
+        </section>
+
+        <!-- CONCLUSÃO -->
+        <footer class="steampunk-panel p-6 rounded-3xl text-center space-y-3">
+            <div class="rivet top-2.5 left-2.5"></div><div class="rivet top-2.5 right-2.5"></div>
+            <div class="rivet bottom-2.5 left-2.5"></div><div class="rivet bottom-2.5 right-2.5"></div>
+
+            <h3 class="text-lg font-bold text-[#ffd085]">Conclusão</h3>
+            <p class="text-xs md:text-sm text-[#e0cbaf] max-w-3xl mx-auto leading-relaxed">
+                As Três Leis de Newton formam o alicerce para entender como forças causam mudanças no movimento: a Primeira define inércia e equilíbrio, a Segunda relaciona quantitativamente força, massa e aceleração por $\sum \vec{F} = m \cdot \vec{a}$, e a Terceira estabelece pares de forças ação–reação. Dominar desenho de diagramas de forças, distinção entre massa e peso e tratamento vetorial das forças é essencial para resolver problemas e evitar pegadinhas em avaliações.
+            </p>
+            
+            <div class="pt-4 border-t border-[#4d3014]/60 text-[10px] text-slate-500 font-mono">
+                Laboratório Virtual Isaac Newton • Desenvolvido sob princípios vitorianos analíticos
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- SCRIPT DE INTERATIVIDADE DO SIMULADOR -->
+    <script>
+        // Elementos do DOM do simulador
+        const massSlider = document.getElementById('mass-slider');
+        const forceSlider = document.getElementById('force-slider');
+        const frictionSlider = document.getElementById('friction-slider');
+
+        const massValueText = document.getElementById('mass-value');
+        const forceValueText = document.getElementById('force-value');
+        const frictionValueText = document.getElementById('friction-value');
+
+        const calcAccRaw = document.getElementById('calc-acc-raw');
+        const formulaFres = document.getElementById('formula-fres');
+        const formulaFres2 = document.getElementById('formula-fres-2');
+        const formulaMass = document.getElementById('formula-mass');
+        const formulaResult = document.getElementById('formula-result');
+        const gaugePointer = document.getElementById('gauge-pointer');
+
+        // Eventos dos sliders para recalcular dinamicamente
+        function updatePhysics() {
+            const mass = parseFloat(massSlider.value);
+            const force = parseFloat(forceSlider.value);
+            const friction = parseFloat(frictionSlider.value);
+
+            // Atualiza exibição de texto rápida
+            massValueText.innerText = mass;
+            forceValueText.innerText = force;
+            frictionValueText.innerText = friction;
+
+            // Cálculos físicos reais
+            let netForce = force - friction;
+            if (netForce < 0) netForce = 0; // O atrito estático impede o movimento se a força aplicada for menor
+
+            const acceleration = (netForce / mass).toFixed(2);
+
+            // Atualiza os componentes matemáticos
+            formulaFres.innerText = netForce;
+            formulaFres2.innerText = netForce;
+            formulaMass.innerText = mass;
+            formulaResult.innerText = parseFloat(acceleration).toFixed(1);
+            calcAccRaw.innerText = `${acceleration} m/s²`;
+
+            // Atualiza o ângulo do ponteiro físico (mapeado de 0 a 100 m/s2 em um ângulo de -90 a 90 graus)
+            const maxAccForGauge = 20; // limite visual
+            const percentage = Math.min(parseFloat(acceleration) / maxAccForGauge, 1);
+            const angle = (percentage * 180) - 90;
+            gaugePointer.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+        }
+
+        // Listener para interação contínua
+        massSlider.addEventListener('input', updatePhysics);
+        forceSlider.addEventListener('input', updatePhysics);
+        frictionSlider.addEventListener('input', updatePhysics);
+
+        // Disparador de efeito estético de vapor steampunk
+        function triggerSteamEffect() {
+            // Criação de uma pequena animação de fumaça usando áudio imaginário ou alerta estético
+            const randomPitch = Math.random() * 0.4 + 0.8;
+            console.log("Vapor analítico ejetado!");
+            
+            // Força aceleração momentânea piscando os números em dourado
+            calcAccRaw.classList.add('text-[#ffd085]', 'scale-110');
+            setTimeout(() => {
+                calcAccRaw.classList.remove('text-[#ffd085]', 'scale-110');
+            }, 500);
+        }
+
+        // Inicia simulador
+        updatePhysics();
+    </script>
+</body>
+</html>

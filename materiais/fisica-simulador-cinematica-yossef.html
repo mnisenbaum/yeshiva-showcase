@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório Virtual de Cinemática</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#eef2ff', 100: '#e0e7ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), 
+                              radial-gradient(at 50% 0%, hsla(225,39%,30%,0.03) 0, transparent 50%), 
+                              radial-gradient(at 100% 0%, hsla(339,49%,30%,0.03) 0, transparent 50%);
+        }
+        .track-container {
+            background-image: linear-gradient(to right, #cbd5e1 1px, transparent 1px);
+            background-size: 10% 100%;
+        }
+        .object-icon {
+            transition: transform 0.1s ease-out;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+        /* Custom scrollbar para um look limpo */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen pb-12">
+
+    <div class="max-w-7xl mx-auto p-4 md:p-8">
+        
+        <!-- Cabeçalho Moderno -->
+        <header class="mb-10 text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-4">
+            <div>
+                <h1 class="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-600 to-purple-600 tracking-tight">
+                    Cinemática Lab
+                </h1>
+                <p class="text-slate-500 mt-2 font-medium">Explore a relação entre referencial, posição, velocidade e aceleração.</p>
+            </div>
+            <div class="px-4 py-2 bg-white rounded-full shadow-sm border border-slate-200 text-sm font-semibold text-slate-600 flex items-center gap-2">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                Simulador Ativo
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- PAINEL ESQUERDO: Controlos e Simulação -->
+            <div class="lg:col-span-7 space-y-6">
+                
+                <!-- Secção 1: Cenários -->
+                <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
+                    <h2 class="text-sm font-bold tracking-wider text-slate-400 uppercase mb-4">1. Escolher Cenário</h2>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button id="btn-scenario-bus" class="flex-1 relative overflow-hidden group bg-white border-2 border-slate-200 text-slate-600 font-semibold py-4 px-6 rounded-2xl transition-all duration-300 hover:border-brand-400 hover:shadow-md focus:outline-none">
+                            <div class="flex items-center justify-center gap-3">
+                                <span class="text-2xl group-hover:scale-110 transition-transform">🚌</span>
+                                <span>Autocarro <span class="text-xs font-normal bg-slate-100 px-2 py-1 rounded ml-1">MRU</span></span>
+                            </div>
+                        </button>
+                        <button id="btn-scenario-ball" class="flex-1 relative overflow-hidden group bg-white border-2 border-slate-200 text-slate-600 font-semibold py-4 px-6 rounded-2xl transition-all duration-300 hover:border-emerald-400 hover:shadow-md focus:outline-none">
+                            <div class="flex items-center justify-center gap-3">
+                                <span class="text-2xl group-hover:scale-110 transition-transform">⚽</span>
+                                <span>Bola no Pátio <span class="text-xs font-normal bg-slate-100 px-2 py-1 rounded ml-1">MRUA</span></span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Secção 2: Parâmetros -->
+                <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
+                    <h2 class="text-sm font-bold tracking-wider text-slate-400 uppercase mb-4">2. Configurar Variáveis Iniciais</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="relative">
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">Posição Inicial (x₀)</label>
+                            <div class="relative flex items-center">
+                                <input type="number" id="input-x0" value="0" class="block w-full rounded-xl border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-brand-500 sm:text-sm pl-4 pr-8 py-3 transition-colors shadow-sm">
+                                <span class="absolute right-4 text-slate-400 font-medium text-sm">m</span>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">Velocidade (v₀)</label>
+                            <div class="relative flex items-center">
+                                <input type="number" id="input-v0" value="10" class="block w-full rounded-xl border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-brand-500 sm:text-sm pl-4 pr-10 py-3 transition-colors shadow-sm">
+                                <span class="absolute right-4 text-slate-400 font-medium text-sm">m/s</span>
+                            </div>
+                        </div>
+                        <div class="relative">
+                            <label class="block text-xs font-semibold text-slate-500 mb-2">Aceleração (a)</label>
+                            <div class="relative flex items-center">
+                                <input type="number" id="input-a" value="0" class="block w-full rounded-xl border-slate-200 bg-slate-50 text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-brand-500 sm:text-sm pl-4 pr-10 py-3 transition-colors shadow-sm">
+                                <span class="absolute right-4 text-slate-400 font-medium text-sm">m/s²</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secção 3: Visualizador -->
+                <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col gap-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <h2 class="text-sm font-bold tracking-wider text-slate-400 uppercase">3. Pista de Teste</h2>
+                        <div class="flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl">
+                            <button id="btn-play" class="flex items-center gap-2 bg-brand-600 hover:bg-brand-500 text-white font-medium py-2 px-6 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                                Iniciar
+                            </button>
+                            <button id="btn-pause" class="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-medium py-2 px-6 rounded-xl transition-all shadow-md hidden">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                                Pausa
+                            </button>
+                            <button id="btn-reset" class="flex items-center gap-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-medium py-2 px-4 rounded-xl transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="btn-invert-container" class="flex justify-end hidden">
+                        <button id="btn-invert" class="text-xs bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-1.5 px-3 rounded-lg transition-colors flex items-center gap-1 border border-purple-200">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                            Forçar Inversão (v)
+                        </button>
+                    </div>
+
+                    <!-- Ambiente Virtual -->
+                    <div class="relative w-full h-40 bg-gradient-to-b from-sky-50 to-slate-200 border border-slate-300 rounded-2xl overflow-hidden track-container shadow-inner">
+                        
+                        <!-- Marcadores da Comunidade -->
+                        <div class="absolute top-0 bottom-0 left-[10%] border-l-2 border-dashed border-slate-400/50">
+                            <div class="absolute top-2 left-2 bg-white/80 backdrop-blur text-[10px] text-slate-600 font-bold px-2 py-1 rounded shadow-sm">0m (Sinagoga)</div>
+                        </div>
+                        <div class="absolute top-0 bottom-0 left-[70%] border-l-2 border-dashed border-slate-400/50">
+                            <div class="absolute top-2 left-2 bg-white/80 backdrop-blur text-[10px] text-slate-600 font-bold px-2 py-1 rounded shadow-sm">300m (Padaria)</div>
+                        </div>
+                        <div class="absolute top-0 bottom-0 left-[100%] border-l-2 border-dashed border-slate-400/50 hidden md:block">
+                            <div class="absolute top-2 -left-28 bg-white/80 backdrop-blur text-[10px] text-slate-600 font-bold px-2 py-1 rounded shadow-sm">500m (Escola)</div>
+                        </div>
+
+                        <!-- Objeto em Movimento -->
+                        <div id="sim-object" class="absolute top-1/2 -translate-y-1/2 left-[10%] text-5xl object-icon z-10" style="transform: translateX(-50%);">
+                            🚌
+                        </div>
+                        
+                        <!-- Estrada/Chão -->
+                        <div class="absolute bottom-0 left-0 right-0 h-4 bg-slate-800/80 backdrop-blur"></div>
+                        <div class="absolute bottom-4 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                    </div>
+
+                    <!-- Painel de Telemetria (Modern Cards) -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl flex flex-col items-center justify-center">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Tempo (t)</span>
+                            <span id="out-t" class="font-mono font-bold text-lg text-slate-700">0.0 s</span>
+                        </div>
+                        <div class="bg-brand-50 border border-brand-100 p-3 rounded-xl flex flex-col items-center justify-center">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-brand-600">Posição (x)</span>
+                            <span id="out-x" class="font-mono font-bold text-lg text-brand-700">0.0 m</span>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-xl flex flex-col items-center justify-center">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-emerald-600">Velocidade (v)</span>
+                            <span id="out-v" class="font-mono font-bold text-lg text-emerald-700">0.0 m/s</span>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-100 p-3 rounded-xl flex flex-col items-center justify-center">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-purple-600">Deslocamento</span>
+                            <span id="out-disp" class="font-mono font-bold text-lg text-purple-700">0.0 m</span>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-100 p-3 rounded-xl flex flex-col items-center justify-center col-span-2 md:col-span-1">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-amber-600">Distância Total</span>
+                            <span id="out-dist" class="font-mono font-bold text-lg text-amber-700">0.0 m</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL DIREITO: Gráficos -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Gráfico Posição -->
+                <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col h-[calc(50%-12px)]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-sm font-bold tracking-wider text-slate-400 uppercase">Posição vs Tempo</h2>
+                        <span class="px-2 py-1 bg-brand-100 text-brand-700 text-[10px] font-bold rounded-lg uppercase">x = f(t)</span>
+                    </div>
+                    <div class="flex-grow relative bg-slate-50 rounded-2xl border border-slate-200 p-2 overflow-hidden">
+                        <canvas id="canvas-xt" width="400" height="200" class="w-full h-full block"></canvas>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-3 font-medium flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        O declive da curva representa a velocidade.
+                    </p>
+                </div>
+
+                <!-- Gráfico Velocidade -->
+                <div class="bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 flex flex-col h-[calc(50%-12px)]">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-sm font-bold tracking-wider text-slate-400 uppercase">Velocidade vs Tempo</h2>
+                        <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-lg uppercase">v = f(t)</span>
+                    </div>
+                    <div class="flex-grow relative bg-slate-50 rounded-2xl border border-slate-200 p-2 overflow-hidden">
+                        <canvas id="canvas-vt" width="400" height="200" class="w-full h-full block"></canvas>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-3 font-medium flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        A área sombreada representa o deslocamento (Δx).
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Elementos do DOM
+        const inputX0 = document.getElementById('input-x0');
+        const inputV0 = document.getElementById('input-v0');
+        const inputA = document.getElementById('input-a');
+        
+        const btnPlay = document.getElementById('btn-play');
+        const btnPause = document.getElementById('btn-pause');
+        const btnReset = document.getElementById('btn-reset');
+        const btnInvert = document.getElementById('btn-invert');
+        const btnInvertContainer = document.getElementById('btn-invert-container');
+        
+        const btnScenarioBus = document.getElementById('btn-scenario-bus');
+        const btnScenarioBall = document.getElementById('btn-scenario-ball');
+        
+        const simObject = document.getElementById('sim-object');
+        
+        const outT = document.getElementById('out-t');
+        const outX = document.getElementById('out-x');
+        const outV = document.getElementById('out-v');
+        const outDisp = document.getElementById('out-disp');
+        const outDist = document.getElementById('out-dist');
+        
+        const canvasXT = document.getElementById('canvas-xt');
+        const canvasVT = document.getElementById('canvas-vt');
+        const ctxXT = canvasXT.getContext('2d');
+        const ctxVT = canvasVT.getContext('2d');
+
+        // Estado da Simulação
+        let isPlaying = false;
+        let lastTime = 0;
+        let animationId;
+        
+        let state = {
+            t: 0, x: 0, v: 0, a: 0, x0: 0, dist: 0, icon: '🚌'
+        };
+
+        let historyData = [];
+
+        // Constantes Visuais
+        const TRACK_OFFSET_PERCENT = 10; 
+
+        // Estilos para o estado ativo dos botões de cenário
+        const activeBusClasses = ['border-brand-500', 'bg-brand-50', 'ring-4', 'ring-brand-500/10'];
+        const activeBallClasses = ['border-emerald-500', 'bg-emerald-50', 'ring-4', 'ring-emerald-500/10'];
+        const inactiveClasses = ['border-slate-200', 'bg-white'];
+
+        function atualizarEstiloBotoes(tipo) {
+            btnScenarioBus.classList.remove(...activeBusClasses, ...inactiveClasses);
+            btnScenarioBall.classList.remove(...activeBallClasses, ...inactiveClasses);
+            
+            if(tipo === 'bus') {
+                btnScenarioBus.classList.add(...activeBusClasses);
+                btnScenarioBall.classList.add(...inactiveClasses);
+            } else {
+                btnScenarioBall.classList.add(...activeBallClasses);
+                btnScenarioBus.classList.add(...inactiveClasses);
+            }
+        }
+
+        // --- FUNÇÕES DE CONTROLO ---
+        function carregarCenario(tipo) {
+            parar();
+            atualizarEstiloBotoes(tipo);
+            if (tipo === 'bus') {
+                inputX0.value = 0;
+                inputV0.value = 15;
+                inputA.value = 0;
+                state.icon = '🚌';
+                btnInvertContainer.classList.remove('hidden'); 
+            } else if (tipo === 'ball') {
+                inputX0.value = 0;
+                inputV0.value = 40;
+                inputA.value = -8; 
+                state.icon = '⚽';
+                btnInvertContainer.classList.add('hidden'); 
+            }
+            repor();
+        }
+
+        function lerInputs() {
+            state.x0 = parseFloat(inputX0.value) || 0;
+            state.x = state.x0;
+            state.v = parseFloat(inputV0.value) || 0;
+            state.a = parseFloat(inputA.value) || 0;
+        }
+
+        function atualizarDOM() {
+            outT.innerText = state.t.toFixed(1) + ' s';
+            outX.innerText = state.x.toFixed(1) + ' m';
+            outV.innerText = state.v.toFixed(1) + ' m/s';
+            outDisp.innerText = (state.x - state.x0).toFixed(1) + ' m';
+            outDist.innerText = state.dist.toFixed(1) + ' m';
+
+            // Mapeamento visual
+            const mapScale = 80 / 500; 
+            const positionPercent = TRACK_OFFSET_PERCENT + (state.x * mapScale);
+            simObject.style.left = `${Math.min(Math.max(positionPercent, 0), 100)}%`;
+            simObject.innerText = state.icon;
+            
+            if(state.icon === '⚽' && isPlaying) {
+                const rotation = state.x * 2; 
+                simObject.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+            } else {
+                if (state.v < 0 && state.icon === '🚌') {
+                    simObject.style.transform = `translateX(-50%) scaleX(-1)`;
+                } else {
+                    simObject.style.transform = `translateX(-50%) scaleX(1)`;
+                }
+            }
+        }
+
+        function iniciar() {
+            if (!isPlaying) {
+                if (state.t === 0) lerInputs();
+                isPlaying = true;
+                lastTime = performance.now();
+                btnPlay.classList.add('hidden');
+                btnPause.classList.remove('hidden');
+                
+                inputX0.disabled = true; inputV0.disabled = true; inputA.disabled = true;
+                loop(performance.now());
+            }
+        }
+
+        function parar() {
+            isPlaying = false;
+            cancelAnimationFrame(animationId);
+            btnPlay.classList.remove('hidden');
+            btnPause.classList.add('hidden');
+        }
+
+        function repor() {
+            parar();
+            lerInputs();
+            state.t = 0; state.dist = 0;
+            historyData = [{t: state.t, x: state.x, v: state.v}];
+            
+            inputX0.disabled = false; inputV0.disabled = false; inputA.disabled = false;
+            atualizarDOM(); desenharGraficos();
+        }
+
+        function inverterVelocidade() {
+            state.v = -state.v;
+            historyData.push({t: state.t, x: state.x, v: state.v});
+            atualizarDOM(); desenharGraficos();
+        }
+
+        // --- MOTOR DE FÍSICA ---
+        function loop(timestamp) {
+            if (!isPlaying) return;
+            const deltaTime = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+            const simDt = deltaTime;
+
+            if (simDt > 0) {
+                const oldV = state.v;
+                state.v += state.a * simDt;
+                const dx = (oldV * simDt) + (0.5 * state.a * simDt * simDt);
+                state.x += dx;
+                state.dist += Math.abs(dx);
+                state.t += simDt;
+
+                historyData.push({t: state.t, x: state.x, v: state.v});
+                
+                atualizarDOM(); desenharGraficos();
+
+                if (state.t >= 15 || state.x < -100 || state.x > 800) parar();
+            }
+            if (isPlaying) animationId = requestAnimationFrame(loop);
+        }
+
+        // --- GRÁFICOS (Design Atualizado) ---
+        function desenharGraficos() {
+            desenharGrafico(ctxXT, canvasXT, 'x', '#4f46e5', 'm'); // Indigo-600
+            desenharGrafico(ctxVT, canvasVT, 'v', '#10b981', 'm/s'); // Emerald-500
+        }
+
+        function desenharGrafico(ctx, canvas, chaveY, corLinha, unidade) {
+            // Fix resolution blurriness
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * window.devicePixelRatio;
+            canvas.height = rect.height * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            
+            const w = rect.width;
+            const h = rect.height;
+            const padX = 40; const padY = 25;
+
+            ctx.clearRect(0, 0, w, h);
+
+            const maxT = 15; 
+            let minY = 0, maxY = 0;
+            if (chaveY === 'x') {
+                minY = -50; maxY = 550; 
+                if (Math.max(...historyData.map(d=>d.x)) > 550) maxY = Math.max(...historyData.map(d=>d.x)) * 1.1;
+                if (Math.min(...historyData.map(d=>d.x)) < -50) minY = Math.min(...historyData.map(d=>d.x)) * 1.1;
+            } else {
+                minY = -50; maxY = 50;
+                if (Math.max(...historyData.map(d=>Math.abs(d.v))) > 40) {
+                    maxY = Math.max(...historyData.map(d=>Math.abs(d.v))) * 1.2;
+                    minY = -maxY;
+                }
+            }
+
+            const scaleX = (w - padX * 1.5) / maxT;
+            const rangeY = maxY - minY;
+            const scaleY = (h - padY * 2) / (rangeY === 0 ? 1 : rangeY);
+
+            const mapX = (t) => padX + (t * scaleX);
+            const mapY = (val) => h - padY - ((val - minY) * scaleY);
+
+            // Grelha suave de fundo
+            ctx.beginPath();
+            ctx.strokeStyle = '#f1f5f9'; // Slate-100
+            ctx.lineWidth = 1;
+            for(let i=0; i<=5; i++) {
+                let yLine = mapY(minY + (rangeY/5)*i);
+                ctx.moveTo(padX, yLine); ctx.lineTo(w - padX/2, yLine);
+            }
+            for(let i=0; i<=15; i+=3) {
+                let xLine = mapX(i);
+                ctx.moveTo(xLine, padY); ctx.lineTo(xLine, h - padY);
+            }
+            ctx.stroke();
+
+            // Eixos X e Y
+            ctx.beginPath();
+            ctx.strokeStyle = '#94a3b8'; // Slate-400
+            ctx.lineWidth = 1.5;
+            ctx.moveTo(padX, padY / 2); ctx.lineTo(padX, h - padY);
+            const yZero = mapY(0);
+            ctx.moveTo(padX, yZero); ctx.lineTo(w - padX / 2, yZero);
+            ctx.stroke();
+
+            // Textos dos Eixos
+            ctx.fillStyle = '#64748b'; // Slate-500
+            ctx.font = '500 10px Inter, sans-serif';
+            ctx.textAlign = 'right';
+            ctx.fillText('0', padX - 8, yZero + 3);
+            ctx.fillText(maxY.toFixed(0), padX - 8, padY + 8);
+            ctx.fillText(minY.toFixed(0), padX - 8, h - padY);
+            ctx.textAlign = 'left';
+            ctx.fillText('15s', w - padX + 5, yZero + 12);
+
+            // Sombreamento (Área)
+            if (chaveY === 'v' && historyData.length > 1) {
+                ctx.beginPath();
+                ctx.fillStyle = 'rgba(16, 185, 129, 0.15)'; // Emerald transparent
+                ctx.moveTo(mapX(historyData[0].t), mapY(0));
+                for (let i = 0; i < historyData.length; i++) ctx.lineTo(mapX(historyData[i].t), mapY(historyData[i].v));
+                ctx.lineTo(mapX(historyData[historyData.length - 1].t), mapY(0)); 
+                ctx.fill();
+            }
+
+            // Linha de Dados
+            if (historyData.length > 0) {
+                ctx.beginPath();
+                ctx.strokeStyle = corLinha;
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                ctx.moveTo(mapX(historyData[0].t), mapY(historyData[0][chaveY]));
+                for (let i = 1; i < historyData.length; i++) {
+                    ctx.lineTo(mapX(historyData[i].t), mapY(historyData[i][chaveY]));
+                }
+                ctx.stroke();
+
+                // Ponto Atual (Glow effect)
+                const lastPt = historyData[historyData.length - 1];
+                const cx = mapX(lastPt.t); const cy = mapY(lastPt[chaveY]);
+                
+                ctx.beginPath();
+                ctx.fillStyle = corLinha;
+                ctx.globalAlpha = 0.2;
+                ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.globalAlpha = 1.0;
+                ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+        }
+
+        // Lidar com resize da janela para os canvas
+        window.addEventListener('resize', desenharGraficos);
+
+        // Event Listeners
+        btnPlay.addEventListener('click', iniciar);
+        btnPause.addEventListener('click', parar);
+        btnReset.addEventListener('click', repor);
+        btnInvert.addEventListener('click', inverterVelocidade);
+
+        btnScenarioBus.addEventListener('click', () => carregarCenario('bus'));
+        btnScenarioBall.addEventListener('click', () => carregarCenario('ball'));
+
+        inputX0.addEventListener('change', repor);
+        inputV0.addEventListener('change', repor);
+        inputA.addEventListener('change', repor);
+
+        // Init
+        carregarCenario('bus'); 
+    </script>
+</body>
+</html>

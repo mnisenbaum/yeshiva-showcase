@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Crise de 1929 — O colapso que reordenou a economia mundial</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts para um toque histórico/editorial -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Cinzel', 'serif'],
+                    },
+                    colors: {
+                        vintage: {
+                            50: '#FDFBF7',
+                            100: '#F9F6F0',
+                            200: '#EFEAE0',
+                            300: '#DFD5C6',
+                            800: '#3D342E',
+                            900: '#2A231E',
+                        },
+                        navy: {
+                            800: '#1B2A4A',
+                            900: '#0F172A',
+                            DEFAULT: '#1E293B',
+                        },
+                        gold: {
+                            100: '#FEF9C3',
+                            500: '#D97706',
+                            600: '#B45309',
+                            DEFAULT: '#C5A880',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F9F6F0;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #C5A880;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="bg-vintage-100 font-sans text-vintage-900 min-h-screen flex flex-col selection:bg-gold-100 selection:text-navy-900">
+
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="bg-navy-900 text-vintage-100 border-b border-gold/30 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-gold p-1.5 rounded text-navy-900 font-bold font-display text-sm">1929</div>
+                <div>
+                    <h1 class="font-display text-base tracking-wider text-gold">A Crise de 1929</h1>
+                    <p class="text-xs text-vintage-300 font-serif italic">O colapso que reordenou a economia mundial</p>
+                </div>
+            </div>
+            
+            <nav class="flex flex-wrap gap-2 justify-center">
+                <button onclick="switchTab('slides')" id="btn-slides" class="nav-tab active-tab px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 bg-gold text-navy-900 shadow">
+                    📁 Slides da Aula
+                </button>
+                <button onclick="switchTab('simulator')" id="btn-simulator" class="nav-tab px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 hover:bg-navy-800 text-vintage-200">
+                    📈 Simulador de Alavancagem
+                </button>
+                <button onclick="switchTab('quiz')" id="btn-quiz" class="nav-tab px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 hover:bg-navy-800 text-vintage-200">
+                    ✍️ Quiz Interativo
+                </button>
+                <button onclick="switchTab('notes')" id="btn-notes" class="nav-tab px-3 py-1.5 rounded text-sm font-medium transition-all duration-300 hover:bg-navy-800 text-vintage-200">
+                    📝 Notas & Atividades
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- TAB: SLIDES (PRESENTATION MODE) -->
+        <div id="tab-slides" class="tab-content block">
+            <!-- Introdução Rápida -->
+            <div class="bg-white border border-vintage-300 rounded-xl p-6 shadow-sm mb-6 flex flex-col md:flex-row items-center gap-6">
+                <div class="md:w-3/4">
+                    <span class="inline-block bg-navy-800 text-gold-100 text-xs px-2.5 py-1 rounded-full font-semibold uppercase tracking-wider mb-2">Visão Geral</span>
+                    <p class="text-base text-vintage-800 font-serif leading-relaxed">
+                        A Crise de 1929 foi um choque financeiro e económico cujo epicentro foi a Bolsa de Valores de Nova Iorque, mas cujas repercussões atravessaram continentes e décadas. Entre o final de outubro de 1929 e os anos seguintes instalaram‑se desemprego em massa, falências bancárias e queda do comércio internacional, transformando estruturas políticas e sociais.
+                    </p>
+                </div>
+                <div class="md:w-1/4 border-l border-vintage-200 pl-6 text-xs text-vintage-800 space-y-2">
+                    <p><strong>Foco Pedagógico:</strong> Análise crítica, contextualização no Brasil e propostas colaborativas baseadas na solidariedade comunitária.</p>
+                    <p>💡 <em>Use as setas do teclado ou os botões abaixo para navegar pelos slides.</em></p>
+                </div>
+            </div>
+
+            <!-- Slide Display Container -->
+            <div class="bg-navy-900 text-vintage-100 rounded-2xl shadow-xl overflow-hidden border border-gold/30 flex flex-col min-h-[500px] relative transition-all duration-500">
+                <!-- Top Slide Header -->
+                <div class="bg-navy-800/80 px-6 py-4 border-b border-gold/20 flex justify-between items-center">
+                    <span class="text-gold font-display tracking-widest text-sm" id="slide-number-indicator">SLIDE 1 DE 8</span>
+                    <span class="bg-gold/10 text-gold border border-gold/30 text-xs px-2.5 py-1 rounded">Especialização Histórica</span>
+                </div>
+
+                <!-- Slide Content (Dynamically Updated) -->
+                <div class="flex-grow p-8 sm:p-12 flex flex-col justify-center relative overflow-hidden" id="slide-viewport">
+                    <!-- Slide content injection point -->
+                    <div id="slide-inner" class="space-y-6 transition-all duration-300 transform translate-x-0 opacity-100">
+                        <!-- Default Slide 1 content -->
+                    </div>
+                </div>
+
+                <!-- Slide Navigation Controls -->
+                <div class="bg-navy-800/80 px-6 py-4 border-t border-gold/20 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex gap-2">
+                        <button onclick="prevSlide()" class="bg-navy-900 hover:bg-gold hover:text-navy-900 border border-gold/40 text-vintage-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-1">
+                            ← Anterior
+                        </button>
+                        <button onclick="nextSlide()" class="bg-navy-900 hover:bg-gold hover:text-navy-900 border border-gold/40 text-vintage-100 px-4 py-2 rounded-lg text-sm transition-all flex items-center gap-1">
+                            Seguinte →
+                        </button>
+                    </div>
+
+                    <!-- Slide Bullet Tracker -->
+                    <div class="flex gap-1.5" id="slide-dots">
+                        <!-- Dynamic dots -->
+                    </div>
+
+                    <button onclick="toggleAutoplay()" id="btn-autoplay" class="text-xs text-gold hover:underline flex items-center gap-1">
+                        ⏱️ Autoplay: Desligado
+                    </button>
+                </div>
+            </div>
+
+            <!-- Conclusion Box Below Slides (Quick Reference) -->
+            <div class="mt-8 bg-vintage-200 border border-vintage-300 rounded-xl p-6">
+                <h3 class="font-display text-navy-900 text-lg mb-3">Conclusão & Legado Histórico</h3>
+                <p class="text-sm text-vintage-800 leading-relaxed font-serif">
+                    A Crise de 1929 foi resultado de múltiplos fatores interligados: bolha especulativa, alavancagem excessiva, fragilidade bancária e o consequente colapso do comércio internacional. No Brasil, a abrupta queda do café desestabilizou o pacto político da Velha República, servindo de estopim direto para a Revolução de 1930 e o início da Era Vargas. A crise consolidou a lição de que os mercados necessitam de redes de proteção social, regulação prudente e coordenação global para evitar tragédias humanitárias massivas.
+                </p>
+            </div>
+        </div>
+
+        <!-- TAB: SIMULATOR (COMPRA A MARGEM) -->
+        <div id="tab-simulator" class="tab-content hidden">
+            <div class="bg-white border border-vintage-300 rounded-2xl shadow-md p-6 sm:p-8">
+                <div class="max-w-3xl mx-auto text-center mb-8">
+                    <span class="bg-gold-100 text-gold-600 text-xs px-3 py-1 rounded-full font-semibold uppercase">Estudo de Caso do Slide 2</span>
+                    <h2 class="font-display text-3xl text-navy-900 mt-2">Simulador de Alavancagem Financeira</h2>
+                    <p class="text-vintage-800 mt-2 font-serif">
+                        Na década de 1920, a <strong>compra a margem</strong> permitia aos investidores comprar ações pagando apenas uma fração do valor real (ex: 10%) e pedindo o restante emprestado ao corretor. Compreenda como este multiplicador acelerou ganhos, mas causou falências instantâneas quando os preços caíram.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    <!-- Controls Column -->
+                    <div class="lg:col-span-5 bg-vintage-50 p-6 rounded-xl border border-vintage-300 space-y-6">
+                        <h3 class="font-bold text-navy-800 border-b border-vintage-200 pb-2">Configurar Investimento</h3>
+                        
+                        <!-- Capital Próprio -->
+                        <div>
+                            <label class="block text-sm font-semibold text-vintage-800 mb-1">O Teu Capital (Património Próprio):</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-2 text-vintage-800 font-medium">$</span>
+                                <input type="number" id="sim-capital" value="1000" min="100" max="10000" class="pl-7 pr-3 py-1.5 w-full bg-white border border-vintage-300 rounded-md focus:ring-1 focus:ring-gold focus:border-gold">
+                            </div>
+                            <span class="text-xs text-vintage-800 mt-1 block">O dinheiro real que guardaste das tuas poupanças.</span>
+                        </div>
+
+                        <!-- Alavancagem -->
+                        <div>
+                            <label class="block text-sm font-semibold text-vintage-800 mb-1">Rácio de Alavancagem (Crédito):</label>
+                            <select id="sim-leverage" class="w-full bg-white border border-vintage-300 rounded-md py-1.5 px-3 focus:ring-1 focus:ring-gold focus:border-gold">
+                                <option value="1">1x - Sem Empréstimo (Conservador)</option>
+                                <option value="2">2x - 50% Margem (Razoável)</option>
+                                <option value="5">5x - 80% Margem (Especulativo)</option>
+                                <option value="10" selected>10x - 90% Margem (Padrão Wall Street 1929)</option>
+                            </select>
+                            <span class="text-xs text-vintage-800 mt-1 block">A 10x, o teu corretor empresta-te 90% do valor total das ações.</span>
+                        </div>
+
+                        <!-- Variação do Mercado -->
+                        <div>
+                            <label class="block text-sm font-semibold text-vintage-800 mb-2 flex justify-between">
+                                <span>Variação de Preço das Ações:</span>
+                                <span id="market-change-badge" class="font-bold text-emerald-600">+10%</span>
+                            </label>
+                            <input type="range" id="sim-market" min="-60" max="40" value="10" step="5" class="w-full accent-navy">
+                            <div class="flex justify-between text-xs text-vintage-800 mt-1">
+                                <span class="text-red-600 font-bold">-60% (Pânico)</span>
+                                <span>0% (Estável)</span>
+                                <span class="text-emerald-600 font-bold">+40% (Euforia)</span>
+                            </div>
+                        </div>
+
+                        <button onclick="resetSimulation()" class="w-full py-2 bg-navy-800 hover:bg-navy-900 text-vintage-100 rounded-lg text-sm font-semibold transition-all">
+                            Repor Valores Padrão
+                        </button>
+                    </div>
+
+                    <!-- Metrics Dashboard Display -->
+                    <div class="lg:col-span-7 flex flex-col justify-between space-y-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- Investimento Total -->
+                            <div class="bg-navy-900 text-vintage-100 p-4 rounded-xl border border-gold/30 text-center">
+                                <p class="text-xs uppercase text-gold font-medium">Ativo Comprado</p>
+                                <p class="text-2xl font-bold mt-1" id="val-total">$10,000</p>
+                                <p class="text-[10px] text-vintage-300 mt-1">O tamanho da tua carteira</p>
+                            </div>
+
+                            <!-- Empréstimo -->
+                            <div class="bg-white p-4 rounded-xl border border-vintage-300 text-center">
+                                <p class="text-xs uppercase text-vintage-800 font-medium">Dívida de Margem</p>
+                                <p class="text-2xl font-bold mt-1 text-red-600" id="val-debt">$9,000</p>
+                                <p class="text-[10px] text-vintage-800 mt-1">Tens de pagar com juros</p>
+                            </div>
+
+                            <!-- Patrimônio Líquido -->
+                            <div class="bg-white p-4 rounded-xl border border-vintage-300 text-center" id="box-equity">
+                                <p class="text-xs uppercase text-vintage-800 font-medium" id="lbl-equity">Teu Saldo Final</p>
+                                <p class="text-2xl font-bold mt-1 text-emerald-600" id="val-equity">$2,000</p>
+                                <p class="text-[10px] text-vintage-800 mt-1" id="sub-equity">Lucro de +100%</p>
+                            </div>
+                        </div>
+
+                        <!-- Alerta Dinâmico ou Resultado Narrativo -->
+                        <div id="sim-alert" class="p-5 rounded-xl flex items-start gap-3 border transition-all duration-300 bg-emerald-50 border-emerald-200 text-emerald-900">
+                            <span class="text-xl" id="sim-alert-icon">🚀</span>
+                            <div>
+                                <h4 class="font-bold text-sm" id="sim-alert-title">Euforia Financeira!</h4>
+                                <p class="text-xs mt-1 leading-relaxed" id="sim-alert-desc">
+                                    O mercado está em alta. Graças à alavancagem de 10x, uma pequena subida de 10% nas ações duplicou o teu património inicial. Mas tem cuidado, a volatilidade funciona em ambos os sentidos.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Gráfico de Barras Simplificado em HTML -->
+                        <div class="bg-vintage-50 p-4 rounded-xl border border-vintage-300 space-y-3">
+                            <p class="text-xs font-semibold text-vintage-800">Visualização da Alavancagem vs Perda real:</p>
+                            <div class="space-y-2">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span>Valor Total das Ações Adquiridas</span>
+                                        <span id="pct-asset-bar">100%</span>
+                                    </div>
+                                    <div class="w-full bg-vintage-300 h-4 rounded-full overflow-hidden flex">
+                                        <div id="bar-asset-equity" class="bg-emerald-500 h-full transition-all duration-500" style="width: 20%;"></div>
+                                        <div id="bar-asset-debt" class="bg-red-500 h-full transition-all duration-500" style="width: 80%;"></div>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-vintage-800 mt-0.5">
+                                        <span>🟢 O Teu Capital</span>
+                                        <span>🔴 Dívida ao Banco/Corretora</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: QUIZ INTERATIVO -->
+        <div id="tab-quiz" class="tab-content hidden">
+            <div class="bg-white border border-vintage-300 rounded-2xl shadow-md p-6 sm:p-8 max-w-3xl mx-auto">
+                <div class="text-center mb-6">
+                    <span class="bg-gold-100 text-gold-600 text-xs px-3 py-1 rounded-full font-semibold uppercase">Avaliação de Conhecimentos</span>
+                    <h2 class="font-display text-2xl text-navy-900 mt-2">Exercício Prático sobre a Crise de 1929</h2>
+                    <p class="text-vintage-800 text-sm font-serif mt-1">Responda a estas questões-chave baseadas no material letivo fornecido.</p>
+                </div>
+
+                <!-- Quiz Progress -->
+                <div class="w-full bg-vintage-200 h-1.5 rounded-full mb-6 overflow-hidden">
+                    <div id="quiz-progress" class="bg-gold h-full w-1/4 transition-all duration-300"></div>
+                </div>
+
+                <!-- Quiz Card Content -->
+                <div id="quiz-container" class="space-y-6">
+                    <!-- Dynamic Question will be injected here -->
+                </div>
+
+                <!-- Quiz Controls -->
+                <div class="mt-6 flex justify-between items-center border-t border-vintage-200 pt-4">
+                    <span id="quiz-counter" class="text-xs text-vintage-800">Questão 1 de 4</span>
+                    <button id="btn-next-quiz" onclick="nextQuizQuestion()" disabled class="px-5 py-2 rounded-lg text-sm bg-vintage-300 text-vintage-800 cursor-not-allowed font-semibold transition-all">
+                        Próxima Questão
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: ANOTAÇÕES & COLABORAÇÃO -->
+        <div id="tab-notes" class="tab-content hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Coluna Atividades Propostas -->
+                <div class="lg:col-span-7 bg-white border border-vintage-300 rounded-2xl p-6 sm:p-8 shadow-sm">
+                    <h2 class="font-display text-2xl text-navy-900 border-b border-vintage-200 pb-3 mb-4">Atividades Letivas Recomendadas</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-gold pl-4">
+                            <h4 class="font-bold text-navy-800 text-sm">Atividade 1: Comparação Histórica (1929 vs. 2008)</h4>
+                            <p class="text-xs text-vintage-800 mt-1 leading-relaxed">
+                                Investigue as semelhanças regulatórias entre o crash clássico e a crise do Subprime. Como é que o excesso de alavancagem em produtos financeiros derivativos espelhou a compra a margem de 1929?
+                            </p>
+                        </div>
+
+                        <div class="border-l-4 border-gold pl-4">
+                            <h4 class="font-bold text-navy-800 text-sm">Atividade 2: Linha do Tempo da Economia Brasileira</h4>
+                            <p class="text-xs text-vintage-800 mt-1 leading-relaxed">
+                                Organize um fluxograma relacionando: Queda das bolsas em NY → Queda brusca no consumo internacional de café → Declínio da República Velha (oligarquias paulistas) → Revolução de 1930 comandada por Getúlio Vargas.
+                            </p>
+                        </div>
+
+                        <div class="border-l-4 border-gold pl-4">
+                            <h4 class="font-bold text-navy-800 text-sm">Atividade 3: Redes de Apoio e Ética Social</h4>
+                            <p class="text-xs text-vintage-800 mt-1 leading-relaxed">
+                                No auge do desemprego, as comunidades contaram com redes de vizinhança e ética de cooperação. Discuta a relevância de conceitos tradicionais como a <em>Tzedaká</em> (justiça social e apoio comunitário) perante a falência das estruturas públicas estatais.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Form para simular envio de relatório / respostas -->
+                    <div class="mt-8 bg-vintage-50 p-5 rounded-xl border border-vintage-300">
+                        <h4 class="font-bold text-navy-900 text-sm mb-2">Simulação de Entrega do Projeto</h4>
+                        <p class="text-xs text-vintage-800 mb-4">Escolha uma das atividades acima e escreva uma breve resposta para simular a criação de um ficheiro de síntese escolar.</p>
+                        
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-vintage-800 mb-1">Título do Trabalho:</label>
+                                <input type="text" id="work-title" placeholder="Ex: Análise Comparativa das Crises" class="w-full text-xs px-3 py-2 border border-vintage-300 rounded bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-vintage-800 mb-1">Conteúdo/Ensaio Crítico:</label>
+                                <textarea id="work-body" rows="4" placeholder="Escreva a sua análise ou resposta às propostas de debate..." class="w-full text-xs px-3 py-2 border border-vintage-300 rounded bg-white"></textarea>
+                            </div>
+                            <button onclick="submitDraft()" class="px-4 py-2 bg-gold text-navy-900 font-bold text-xs rounded hover:bg-gold-600 transition-all">
+                                Guardar Rascunho no Navegador
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna Bloco de Notas Pessoais -->
+                <div class="lg:col-span-5 bg-vintage-50 border border-vintage-300 rounded-2xl p-6 shadow-sm flex flex-col h-full min-h-[500px]">
+                    <h3 class="font-display text-navy-900 text-lg border-b border-vintage-200 pb-2 mb-4">O Teu Caderno de Estudo</h3>
+                    <p class="text-xs text-vintage-800 mb-4">Anote as suas reflexões, ideias e dados importantes sobre os slides. Estes dados ficam guardados localmente no teu navegador durante a sessão.</p>
+                    
+                    <textarea id="notebook-area" class="flex-grow w-full p-4 border border-vintage-300 rounded-xl bg-white text-sm font-sans focus:ring-1 focus:ring-gold focus:border-gold custom-scrollbar resize-none" placeholder="Escreve aqui notas rápidas sobre as causas da crise, o papel do café no Brasil, o New Deal..."></textarea>
+                    
+                    <div class="mt-4 flex justify-between items-center text-xs text-vintage-800">
+                        <span id="notebook-status">Salvo localmente por defeito.</span>
+                        <button onclick="clearNotebook()" class="text-red-600 hover:underline">Limpar Caderno</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- FOOTER WITH LICENSING AND ETHICS NOTES -->
+    <footer class="bg-navy-900 text-vintage-100 border-t border-gold/30 mt-12 py-8 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="space-y-2 text-center md:text-left">
+                <p class="font-display text-gold tracking-widest">A CRISE DE 1929 — RECURSO EDUCACIONAL</p>
+                <p class="text-vintage-300">Desenvolvido com foco no rigor histórico, análise de dados económicos e valores éticos comunitários.</p>
+            </div>
+            <div class="flex flex-col items-center md:items-end gap-2 text-vintage-300">
+                <p>&copy; 2026 — Roteiro de Aula Crítica.</p>
+                <p class="italic text-[11px] text-gold/80">"A prudência na gestão e a solidariedade local são as verdadeiras redes de resiliência moral."</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- LOGIC SCRIPT FOR ALL INTERACTION -->
+    <script>
+        // Global State
+        let currentTab = 'slides';
+        let currentSlideIndex = 0;
+        let slideInterval = null;
+        let isAutoplayOn = false;
+
+        // Content database reflecting uploaded document precisely
+        const slidesData = [
+            {
+                title: "Slide 1 — Contexto internacional: os \"anos 20\" e a expansão",
+                subtitle: "A ilusória prosperidade antes da tempestade",
+                points: [
+                    "A economia dos EUA cresceu exponencialmente na década de 1920, com forte expansão da produção industrial, urbanização e alargamento das redes de crédito privado.",
+                    "Instalou-se uma cultura de consumo facilitado e a titularização massiva de ativos atraiu investidores de todas as classes para Wall Street.",
+                    "O acúmulo de dívida privada e o crédito fácil inflacionaram ativos financeiros muito além do valor produtivo real das empresas, gerando uma bolha insustentável.",
+                    "A interdependência económica global significava que as nações exportadoras, como o Brasil (altamente dependente do comércio internacional de café), estavam severamente vulneráveis a flutuações em Nova Iorque."
+                ],
+                tag: "CONTEXTO INTERNACIONAL",
+                quote: "O otimismo desregrado escondeu as fissuras estruturais da balança financeira mundial."
+            },
+            {
+                title: "Slide 2 — Mecanismos da especulação e fragilidades",
+                subtitle: "Alavancagem sem freios e concentração de capitais",
+                points: [
+                    "<strong>Compra a margem:</strong> Os investidores adquiriam pacotes de ações pagando apenas uma pequena entrada (às vezes 10%), contraindo empréstimos para cobrir a diferença.",
+                    "Quando os preços começaram a apresentar os primeiros sinais de queda, os corretores emitiram avisos de margem, exigindo liquidação forçada das ações e gerando pânico de vendas.",
+                    "A total ausência de regulação eficiente no mercado de capitais e a falta de garantias de proteção para os depósitos bancários criaram um terreno propício para corridas bancárias.",
+                    "<strong>Concentração de rendimento:</strong> A riqueza acumulou-se de forma desigual, enfraquecendo o poder de compra real da população geral e aumentando o endividamento artificial para manter o consumo."
+                ],
+                tag: "MECANISMOS FINANCEIROS",
+                quote: "A alavancagem funciona como um holofote de lucros no crescimento e um abismo na queda."
+            },
+            {
+                title: "Slide 3 — A queda: dias de pânico e \"virada\" decisiva",
+                subtitle: "O colapso da Bolsa de Valores de Nova Iorque",
+                points: [
+                    "<strong>24 de Outubro de 1929 (Quinta-feira Negra):</strong> Uma debandada de vendedores causou quedas catastróficas. Bancos de investimento tentaram comprar lotes de ações para restaurar a confiança, acalmando o mercado apenas temporariamente.",
+                    "<strong>29 de Outubro de 1929 (Terça-feira Negra):</strong> A maior e mais destrutiva onda de vendas ocorreu, destruindo por completo o valor patrimonial de empresas e arruinando milhares de corretores e cidadãos comuns.",
+                    "O pânico gerou um <strong>efeito-dominó imediato:</strong> As famílias insolventes não conseguiram pagar os empréstimos, forçando milhares de bancos à falência e asfixiando a circulação de crédito."
+                ],
+                tag: "O CRASH",
+                quote: "Num mercado em pânico, o dinheiro desaparece tão rápido quanto a confiança."
+            },
+            {
+                title: "Slide 4 — Propagação global e impactos no Brasil",
+                subtitle: "O contágio económico internacional e o fim da República Velha",
+                points: [
+                    "Os bancos norte-americanos repatriaram capitais investidos na Europa e na América Latina, congelando o comércio e a atividade produtiva em todo o mundo.",
+                    "<strong>No Brasil:</strong> A procura internacional pelo café desabou. Sem compradores externos, as elites cafeicultoras paulistas faliram, obrigando o governo a queimar milhões de sacas de café para suprimir a oferta.",
+                    "Esta crise económica debilitou as bases da oligarquia agrária dominante e abriu espaço político para a <strong>Revolução de 1930</strong>, que levou Getúlio Vargas à liderança do país.",
+                    "Face à escassez de capitais externos, os países em desenvolvimento iniciaram o seu próprio processo de industrialização acelerada por substituição de importações."
+                ],
+                tag: "CONSEQUÊNCIAS NO BRASIL",
+                quote: "O café que sustentava o império político brasileiro dissolveu-se na insolvência de Wall Street."
+            },
+            {
+                title: "Slide 5 — Respostas políticas e económicas",
+                subtitle: "Entre o protecionismo defensivo e a intervenção de emergência",
+                points: [
+                    "Muitos países recorreram inicialmente ao protecionismo fechado, como a famosa <strong>Tarifa Smoot-Hawley (EUA, 1930)</strong>. Em resposta, outras nações retaliaram, provocando uma contração ainda maior no comércio internacional.",
+                    "<strong>O New Deal (1933-1939):</strong> Implementado pelo presidente Franklin D. Roosevelt, este conjunto de programas estatais visou estabilizar o mercado financeiro, regular a bolsa de valores (criando a SEC) e financiar obras públicas massivas para combater o desemprego.",
+                    "Esta abordagem inspirou a perspetiva de regulação macroeconómica que defende a intervenção pontual do Estado para reanimar a procura em tempos de recessão severa.",
+                    "No Brasil, o governo de Vargas nacionalizou setores estratégicos e diversificou a economia industrial, diminuindo a dependência agrária."
+                ],
+                tag: "RESPOSTAS GOVERNAMENTAIS",
+                quote: "A crise revelou que a intervenção económica deve focar-se na retoma da ordem e proteção das famílias."
+            },
+            {
+                title: "Slide 6 — Consequências de longo prazo",
+                subtitle: "A reordenação geopolítica e social do planeta",
+                points: [
+                    "O desemprego continuado e a ruína financeira de milhões de famílias criaram uma crise profunda de legitimidade nas democracias liberais ocidentais.",
+                    "Esta desilusão social serviu de combustível para a ascensão de movimentos e regimes totalitários radicais na Europa, culminando direta e indiretamente no cenário da Segunda Guerra Mundial.",
+                    "Houve uma transformação drástica na perceção de segurança social, levando ao desenvolvimento de sistemas nacionais de pensões, fundos de desemprego e agências de proteção ao consumidor.",
+                    "A criação do seguro de depósitos bancários (FDIC) garantiu que poupanças básicas não se dissolvessem na eventual falência de um único banco."
+                ],
+                tag: "MUDANÇAS ESTRUTURAIS",
+                quote: "A fome e a humilhação do desemprego são os piores inimigos da estabilidade democrática."
+            },
+            {
+                title: "Slide 7 — Debates sobre causas e lições",
+                subtitle: "A análise crítica das causas múltiplas",
+                points: [
+                    "<strong>Causas Monetárias vs. Estruturais:</strong> Alguns historiadores culpam o FED (banco central norte-americano) por contrair a oferta de moeda logo após a crise, enquanto outros focam o desequilíbrio distributivo e o pânico especulativo.",
+                    "A grande lição da Crise de 1929 reside na constatação de que a interdependência sistémica desprovida de redes de amortecimento transforma pequenas fricções em catástrofes sistémicas globais.",
+                    "A prevenção correta de crises requer um equilíbrio entre a liberdade criativa de iniciativa privada e uma regulação prudencial e transparente nos setores bancário e acionista."
+                ],
+                tag: "DEBATE HISTORIOGRÁFICO",
+                quote: "Conhecer a história económica não serve para prever o mercado, mas sim para resguardar a sociedade do pânico."
+            },
+            {
+                title: "Slide 8 — Atividades de análise e colaboração",
+                subtitle: "Propostas de reflexão para o trabalho de grupo",
+                points: [
+                    "<strong>Análise Comparada (1929 vs 2008):</strong> Debate os paralelos entre a compra a margem de 1929 e os empréstimos imobiliários de alto risco (subprime) na crise de 2008.",
+                    "<strong>Simulador e Relação com Brasil:</strong> Desenhe ou analise o percurso do café até à industrialização de substituição impulsionada na era pós-1930.",
+                    "<strong>Ética Social Tradicional:</strong> Discuta como as comunidades tradicionais, redes religiosas e de auxílio comunitário baseadas em princípios de corresponsabilidade familiar e solidariedade (como o princípio bíblico de tzedaká) atuaram para alimentar os necessitados face à paralisia das administrações locais."
+                ],
+                tag: "PLANO DE ATIVIDADE",
+                quote: "A coesão das famílias e a caridade local formam a primeira linha de combate em tempos difíceis."
+            }
+        ];
+
+        // Quiz Database
+        const quizQuestions = [
+            {
+                question: "Qual foi o principal fator financeiro que alimentou a bolha especulativa na Bolsa de Nova Iorque na década de 1920?",
+                options: [
+                    "A compra a margem, que permitia adquirir ações contraindo dívidas altíssimas.",
+                    "O encerramento do comércio internacional com os países europeus.",
+                    "A intervenção excessiva do governo federal no controlo de preços de ações.",
+                    "A escassez de ouro para a conversibilidade da moeda."
+                ],
+                correct: 0,
+                explanation: "A compra a margem permitia aos investidores comprar ações pagando apenas 10% a 20% do preço real e financiando o restante através de corretores. Isto criou uma alavancagem gigante que colapsou quando o mercado caiu."
+            },
+            {
+                question: "Como é que a Crise de 1929 impactou diretamente a política interna do Brasil?",
+                options: [
+                    "Estimulou a valorização histórica e contínua do preço das sacas de café.",
+                    "Causou a falência das elites cafeicultoras, enfraquecendo a República Velha e abrindo caminho para a Revolução de 1930 liderada por Getúlio Vargas.",
+                    "Transformou o Brasil no principal exportador de matérias-primas para os Estados Unidos no New Deal.",
+                    "Provocou a unificação de todas as ligas agrárias sob controlo militar internacional."
+                ],
+                correct: 1,
+                explanation: "O colapso internacional diminuiu drasticamente as compras de café brasileiro, levando as oligarquias paulistas à bancarrota. Isso desmoronou o arranjo da 'política do café com leite', culminando no golpe/revolução de 1930."
+            },
+            {
+                question: "O que era o 'New Deal' e qual era a sua filosofia económica base?",
+                options: [
+                    "Um sistema de privatização absoluta de todos os recursos públicos dos EUA.",
+                    "Um plano de protecionismo aduaneiro radical focado exclusivamente na agricultura.",
+                    "Um pacote de reformas e obras públicas que introduziu regulação e estímulo de procura pelo Estado para revigorar a economia.",
+                    "Um acordo de livre-comércio exclusivo entre o continente americano e os países asiáticos."
+                ],
+                correct: 2,
+                explanation: "O New Deal de FDR adotou uma filosofia keynesiana, que prega o investimento estatal temporário em obras de infraestrutura e regulação financeira para reduzir o desemprego e devolver liquidez ao mercado."
+            },
+            {
+                question: "No contexto ético de solidariedade social de que trata o Slide 8, como atuou a sociedade na ausência de resposta pública de apoio imediato?",
+                options: [
+                    "A população limitou-se a aguardar que os mecanismos automáticos de mercado estabilizassem de forma passiva.",
+                    "Através de redes de ajuda mútua familiar, caridade local e responsabilidade comunitária como ferramentas de subsistência.",
+                    "Todas as famílias migraram de forma imediata para o interior, erradicando a pobreza urbana.",
+                    "Com o apoio generalizado de agências internacionais centralizadas das Nações Unidas."
+                ],
+                correct: 1,
+                explanation: "Antes da construção de redes estatais de apoio estruturado, as redes informais de vizinhos, igrejas, asilos e iniciativas comunitárias suportaram o fardo das frentes de auxílio à pobreza extrema."
+            }
+        ];
+
+        let currentQuizIndex = 0;
+        let selectedQuizOption = null;
+
+        // Tab Switching
+        function switchTab(tabId) {
+            currentTab = tabId;
+            
+            // Toggle active classes on nav buttons
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('bg-gold', 'text-navy-900', 'shadow');
+                btn.classList.add('hover:bg-navy-800', 'text-vintage-200');
+            });
+            
+            const activeBtn = document.getElementById(`btn-${tabId}`);
+            activeBtn.classList.remove('hover:bg-navy-800', 'text-vintage-200');
+            activeBtn.classList.add('bg-gold', 'text-navy-900', 'shadow');
+
+            // Toggle active tab content visibility
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+                content.classList.remove('block');
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('block');
+
+            // Handle unique initializations
+            if (tabId === 'simulator') {
+                updateSimulation();
+            } else if (tabId === 'quiz') {
+                resetQuiz();
+            }
+        }
+
+        // SLIDESHOW LOGIC
+        function renderSlide() {
+            const slide = slidesData[currentSlideIndex];
+            const slideViewport = document.getElementById('slide-inner');
+            
+            // Prepare bullet points list
+            let bulletsHtml = slide.points.map(pt => `
+                <li class="flex items-start gap-3">
+                    <span class="text-gold mt-1.5 flex-shrink-0">📜</span>
+                    <span class="text-base text-vintage-100 font-sans leading-relaxed">${pt}</span>
+                </li>
+            `).join('');
+
+            // Inject the content with clean editorial design
+            slideViewport.innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-gold/20 text-gold border border-gold/40 text-[10px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded">
+                            ${slide.tag}
+                        </span>
+                    </div>
+                    <h2 class="font-display text-2xl sm:text-3xl text-gold border-b border-gold/10 pb-2">${slide.title}</h2>
+                    <h4 class="font-serif italic text-vintage-300 text-sm sm:text-base">${slide.subtitle}</h4>
+                    
+                    <ul class="space-y-4 my-6">
+                        ${bulletsHtml}
+                    </ul>
+
+                    <div class="mt-8 pt-4 border-t border-gold/20 bg-navy-800/40 p-4 rounded-xl border-l-4 border-gold italic text-xs text-vintage-200 font-serif">
+                        "${slide.quote}"
+                    </div>
+                </div>
+            `;
+
+            // Update Indicator
+            document.getElementById('slide-number-indicator').innerText = `SLIDE ${currentSlideIndex + 1} DE ${slidesData.length}`;
+
+            // Update Dots
+            renderDots();
+        }
+
+        function renderDots() {
+            const dotsContainer = document.getElementById('slide-dots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < slidesData.length; i++) {
+                const dot = document.createElement('button');
+                dot.onclick = () => {
+                    currentSlideIndex = i;
+                    renderSlide();
+                };
+                dot.className = `w-2.5 h-2.5 rounded-full transition-all ${i === currentSlideIndex ? 'bg-gold scale-125' : 'bg-navy-800 border border-gold/40 hover:bg-gold/50'}`;
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function nextSlide() {
+            currentSlideIndex = (currentSlideIndex + 1) % slidesData.length;
+            renderSlide();
+        }
+
+        function prevSlide() {
+            currentSlideIndex = (currentSlideIndex - 1 + slidesData.length) % slidesData.length;
+            renderSlide();
+        }
+
+        function toggleAutoplay() {
+            const btn = document.getElementById('btn-autoplay');
+            if (isAutoplayOn) {
+                clearInterval(slideInterval);
+                isAutoplayOn = false;
+                btn.innerText = "⏱️ Autoplay: Desligado";
+                btn.classList.remove('text-emerald-400');
+                btn.classList.add('text-gold');
+            } else {
+                slideInterval = setInterval(nextSlide, 7000);
+                isAutoplayOn = true;
+                btn.innerText = "⏱️ Autoplay: Ligado (7s)";
+                btn.classList.remove('text-gold');
+                btn.classList.add('text-emerald-400');
+            }
+        }
+
+        // SIMULATOR LOGIC
+        const inputCapital = document.getElementById('sim-capital');
+        const selectLeverage = document.getElementById('sim-leverage');
+        const inputMarket = document.getElementById('sim-market');
+
+        function updateSimulation() {
+            const cap = parseFloat(inputCapital.value) || 1000;
+            const lev = parseInt(selectLeverage.value) || 1;
+            const marketChange = parseFloat(inputMarket.value) || 0;
+
+            // Total Invested Assets
+            const totalAssetValue = cap * lev;
+            const initialDebt = totalAssetValue - cap;
+
+            // Post-market change value of the portfolio/assets
+            const finalAssetValue = totalAssetValue * (1 + marketChange / 100);
+            
+            // Debt is fixed and must be paid back
+            const debt = initialDebt;
+
+            // Your equity left after paying back debt
+            let finalEquity = finalAssetValue - debt;
+            if (finalEquity < 0) finalEquity = 0; // Can't go below absolute loss unless you hold infinite negative ledger
+
+            // Percentage change of your equity (Return on Equity - ROE)
+            const roe = cap > 0 ? ((finalEquity - cap) / cap) * 100 : 0;
+
+            // UI elements update
+            document.getElementById('val-total').innerText = `$${totalAssetValue.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+            document.getElementById('val-debt').innerText = `$${debt.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+            document.getElementById('val-equity').innerText = `$${finalEquity.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+
+            // Update range percentage label
+            const marketBadge = document.getElementById('market-change-badge');
+            if (marketChange > 0) {
+                marketBadge.className = "font-bold text-emerald-600";
+                marketBadge.innerText = `+${marketChange}%`;
+            } else if (marketChange < 0) {
+                marketBadge.className = "font-bold text-red-600";
+                marketBadge.innerText = `${marketChange}%`;
+            } else {
+                marketBadge.className = "font-bold text-slate-600";
+                marketBadge.innerText = `0%`;
+            }
+
+            // Equity Block Style and subtexts
+            const boxEquity = document.getElementById('box-equity');
+            const subEquity = document.getElementById('sub-equity');
+            const lblEquity = document.getElementById('lbl-equity');
+
+            if (roe > 0) {
+                boxEquity.className = "bg-emerald-50 p-4 rounded-xl border border-emerald-300 text-center transition-colors";
+                lblEquity.className = "text-xs uppercase text-emerald-800 font-medium";
+                subEquity.className = "text-[10px] text-emerald-600 font-bold mt-1";
+                subEquity.innerText = `Retorno: +${roe.toFixed(0)}%`;
+            } else if (roe < 0) {
+                boxEquity.className = "bg-red-50 p-4 rounded-xl border border-red-300 text-center transition-colors";
+                lblEquity.className = "text-xs uppercase text-red-800 font-medium";
+                subEquity.className = "text-[10px] text-red-600 font-bold mt-1";
+                subEquity.innerText = `Retorno: ${roe.toFixed(0)}%`;
+            } else {
+                boxEquity.className = "bg-white p-4 rounded-xl border border-vintage-300 text-center transition-colors";
+                lblEquity.className = "text-xs uppercase text-vintage-800 font-medium";
+                subEquity.className = "text-[10px] text-vintage-800 mt-1";
+                subEquity.innerText = "Sem alteração";
+            }
+
+            // Margin Bars representation
+            const barEquity = document.getElementById('bar-asset-equity');
+            const barDebt = document.getElementById('bar-asset-debt');
+            const pctBar = document.getElementById('pct-asset-bar');
+            
+            const totalWidth = 100;
+            let equityPct = (finalEquity / (finalAssetValue || 1)) * 100;
+            let debtPct = (debt / (finalAssetValue || 1)) * 100;
+
+            if (finalEquity <= 0) {
+                equityPct = 0;
+                debtPct = 100;
+            }
+
+            barEquity.style.width = `${equityPct}%`;
+            barDebt.style.width = `${debtPct}%`;
+            pctBar.innerText = `Património Líquido: ${equityPct.toFixed(0)}% / Dívida: ${debtPct.toFixed(0)}%`;
+
+            // Informative Alerts Dynamic Generator
+            const alertBox = document.getElementById('sim-alert');
+            const alertIcon = document.getElementById('sim-alert-icon');
+            const alertTitle = document.getElementById('sim-alert-title');
+            const alertDesc = document.getElementById('sim-alert-desc');
+
+            if (finalEquity <= 0) {
+                alertBox.className = "p-5 rounded-xl flex items-start gap-3 border bg-red-100 border-red-300 text-red-900 transition-all duration-300";
+                alertIcon.innerText = "🚨";
+                alertTitle.innerText = "MARGIN CALL! Falência Prática!";
+                alertDesc.innerText = `A queda de ${Math.abs(marketChange)}% consumiu por completo o teu capital inicial de $${cap}. A tua corretora vendeu à força todas as tuas ações no mercado livre para estancar o prejuízo. Perdeste todo o teu património e estás fora do mercado!`;
+            } else if (marketChange < 0 && lev > 2) {
+                alertBox.className = "p-5 rounded-xl flex items-start gap-3 border bg-amber-50 border-amber-300 text-amber-900 transition-all duration-300";
+                alertIcon.innerText = "⚠️";
+                alertTitle.innerText = "Alerta de Risco Severo";
+                alertDesc.innerText = `O mercado desceu ligeiramente (${Math.abs(marketChange)}%), mas a tua elevada alavancagem de ${lev}x multiplicou a tua perda para ${Math.abs(roe).toFixed(0)}%. O teu património líquido encolheu rapidamente. Corres o risco de ver a tua posição liquidada forçosamente.`;
+            } else if (marketChange > 20 && lev >= 5) {
+                alertBox.className = "p-5 rounded-xl flex items-start gap-3 border bg-emerald-100 border-emerald-300 text-emerald-900 transition-all duration-300";
+                alertIcon.innerText = "🤑";
+                alertTitle.innerText = "Lucros de Euforia Irracional!";
+                alertDesc.innerText = `Parabéns pelos teus ganhos expressivos de +${roe.toFixed(0)}%. No entanto, recorda o ano de 1929: esta riqueza gerada sem sustentabilidade física ou produção real gerou picos artificiais de liquidez que alimentaram as maiores perdas da história quando o sentimento mudou.`;
+            } else {
+                alertBox.className = "p-5 rounded-xl flex items-start gap-3 border bg-slate-100 border-slate-300 text-slate-900 transition-all duration-300";
+                alertIcon.innerText = "☕";
+                alertTitle.innerText = "Investimento Controlado";
+                alertDesc.innerText = "A alavancagem moderada reduz o perigo de insolvência por margin calls em oscilações pequenas. Continua a testar os limites regulatórios alterando as opções no menu esquerdo.";
+            }
+        }
+
+        function resetSimulation() {
+            inputCapital.value = 1000;
+            selectLeverage.value = "10";
+            inputMarket.value = 10;
+            updateSimulation();
+        }
+
+        // Add event listeners for simulator
+        inputCapital.addEventListener('input', updateSimulation);
+        selectLeverage.addEventListener('change', updateSimulation);
+        inputMarket.addEventListener('input', updateSimulation);
+
+
+        // QUIZ LOGIC
+        function resetQuiz() {
+            currentQuizIndex = 0;
+            selectedQuizOption = null;
+            document.getElementById('btn-next-quiz').disabled = true;
+            document.getElementById('btn-next-quiz').className = "px-5 py-2 rounded-lg text-sm bg-vintage-300 text-vintage-800 cursor-not-allowed font-semibold transition-all";
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            const container = document.getElementById('quiz-container');
+            const quest = quizQuestions[currentQuizIndex];
+            
+            // Progress Bar & Counter
+            const progressPct = ((currentQuizIndex + 1) / quizQuestions.length) * 100;
+            document.getElementById('quiz-progress').style.width = `${progressPct}%`;
+            document.getElementById('quiz-counter').innerText = `Questão ${currentQuizIndex + 1} de ${quizQuestions.length}`;
+
+            // Build Options HTML
+            const optionsHtml = quest.options.map((opt, idx) => `
+                <button onclick="selectOption(${idx})" id="opt-${idx}" class="quiz-opt w-full text-left p-4 rounded-xl border border-vintage-300 hover:border-gold hover:bg-vintage-50 transition-all duration-200 text-sm flex items-start gap-3">
+                    <span class="font-bold text-gold text-sm mt-0.5">${String.fromCharCode(65 + idx)})</span>
+                    <span>${opt}</span>
+                </button>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="space-y-4">
+                    <h3 class="font-serif font-bold text-lg text-navy-900 leading-relaxed">${quest.question}</h3>
+                    <div class="space-y-3">
+                        ${optionsHtml}
+                    </div>
+                    <div id="quiz-feedback" class="hidden p-4 rounded-xl text-xs leading-relaxed border transition-all">
+                        <!-- Explanation Text -->
+                    </div>
+                </div>
+            `;
+
+            // Reset next button state
+            const nextBtn = document.getElementById('btn-next-quiz');
+            nextBtn.disabled = true;
+            nextBtn.innerText = currentQuizIndex === quizQuestions.length - 1 ? "Ver Resultado Final" : "Submeter Resposta";
+            nextBtn.className = "px-5 py-2 rounded-lg text-sm bg-vintage-300 text-vintage-800 cursor-not-allowed font-semibold transition-all";
+        }
+
+        function selectOption(index) {
+            // If already evaluated, don't allow changing
+            if (document.getElementById('quiz-feedback').classList.contains('block')) return;
+
+            selectedQuizOption = index;
+            
+            // Highlight selected button
+            document.querySelectorAll('.quiz-opt').forEach(btn => {
+                btn.classList.remove('border-gold', 'bg-gold-100/30', 'ring-1', 'ring-gold');
+            });
+            
+            const selectedBtn = document.getElementById(`opt-${index}`);
+            selectedBtn.classList.add('border-gold', 'bg-gold-100/30', 'ring-1', 'ring-gold');
+
+            // Enable submit
+            const nextBtn = document.getElementById('btn-next-quiz');
+            nextBtn.disabled = false;
+            nextBtn.className = "px-5 py-2 rounded-lg text-sm bg-gold text-navy-900 hover:bg-gold-600 font-semibold transition-all shadow-md";
+        }
+
+        function nextQuizQuestion() {
+            const feedbackBox = document.getElementById('quiz-feedback');
+            const quest = quizQuestions[currentQuizIndex];
+            
+            // Evaluate state
+            if (!feedbackBox.classList.contains('block')) {
+                // Show Answer Assessment Mode
+                feedbackBox.classList.remove('hidden');
+                feedbackBox.classList.add('block');
+
+                // Style all choices based on correction
+                quest.options.forEach((_, idx) => {
+                    const btn = document.getElementById(`opt-${idx}`);
+                    if (idx === quest.correct) {
+                        btn.className = "quiz-opt w-full text-left p-4 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-900 text-sm flex items-start gap-3 font-medium";
+                    } else if (idx === selectedQuizOption) {
+                        btn.className = "quiz-opt w-full text-left p-4 rounded-xl border border-red-500 bg-red-50 text-red-900 text-sm flex items-start gap-3";
+                    } else {
+                        btn.className = "quiz-opt w-full text-left p-4 rounded-xl border border-vintage-200 opacity-60 text-sm flex items-start gap-3 cursor-not-allowed";
+                    }
+                });
+
+                if (selectedQuizOption === quest.correct) {
+                    feedbackBox.className = "p-4 rounded-xl text-xs leading-relaxed border bg-emerald-50 border-emerald-300 text-emerald-900";
+                    feedbackBox.innerHTML = `<strong>🟢 Resposta Correta!</strong> ${quest.explanation}`;
+                } else {
+                    feedbackBox.className = "p-4 rounded-xl text-xs leading-relaxed border bg-red-50 border-red-300 text-red-900";
+                    feedbackBox.innerHTML = `<strong>🔴 Resposta Incorreta.</strong> ${quest.explanation}`;
+                }
+
+                const nextBtn = document.getElementById('btn-next-quiz');
+                nextBtn.innerText = currentQuizIndex === quizQuestions.length - 1 ? "Ver Relatório Final" : "Próxima Questão";
+            } else {
+                // Advance to next index or complete quiz
+                if (currentQuizIndex < quizQuestions.length - 1) {
+                    currentQuizIndex++;
+                    selectedQuizOption = null;
+                    renderQuizQuestion();
+                } else {
+                    showQuizResults();
+                }
+            }
+        }
+
+        function showQuizResults() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = `
+                <div class="text-center py-8 space-y-4">
+                    <span class="text-5xl">🏆</span>
+                    <h3 class="font-display text-2xl text-navy-900">Exercício Concluído!</h3>
+                    <p class="text-sm text-vintage-800 max-w-md mx-auto leading-relaxed">
+                        Excelente trabalho em concluir a nossa avaliação sobre a grande crise mundial. Continua a utilizar os outros menus para simular alavancagens e anotar as tuas respostas de reflexão social.
+                    </p>
+                    <button onclick="resetQuiz()" class="px-6 py-2.5 bg-navy-900 text-vintage-100 rounded-lg hover:bg-gold hover:text-navy-900 font-bold text-sm transition-all shadow">
+                        Reiniciar Questionário
+                    </button>
+                </div>
+            `;
+            document.getElementById('btn-next-quiz').style.display = 'none';
+        }
+
+
+        // LOCALSTORAGE NOTEBOOK ACTIONS
+        const notebook = document.getElementById('notebook-area');
+        const statusLabel = document.getElementById('notebook-status');
+
+        // Load saved text from local storage (session-wide)
+        if (localStorage.getItem('study_notebook')) {
+            notebook.value = localStorage.getItem('study_notebook');
+        }
+
+        notebook.addEventListener('input', () => {
+            localStorage.setItem('study_notebook', notebook.value);
+            statusLabel.innerText = "A guardar alterações...";
+            setTimeout(() => {
+                statusLabel.innerText = "Alterações salvas localmente.";
+            }, 800);
+        });
+
+        function clearNotebook() {
+            notebook.value = '';
+            localStorage.removeItem('study_notebook');
+            statusLabel.innerText = "Caderno limpo.";
+        }
+
+        // Simulation draft handling
+        function submitDraft() {
+            const title = document.getElementById('work-title').value;
+            const body = document.getElementById('work-body').value;
+
+            if (!title || !body) {
+                alert("Por favor preencha os dois campos de rascunho de forma a emular a entrega!");
+                return;
+            }
+
+            // Append directly to notebook for easy visual confirmation
+            const notesCurrentValue = notebook.value;
+            const logEntry = `\n\n--- RASCUNHO DE ATIVIDADE SUBMETIDO ---\nTÍTULO: ${title}\nCONTEÚDO:\n${body}\n---------------------------------------`;
+            notebook.value = notesCurrentValue + logEntry;
+            localStorage.setItem('study_notebook', notebook.value);
+
+            // Clean fields
+            document.getElementById('work-title').value = '';
+            document.getElementById('work-body').value = '';
+            
+            alert("Rascunho acoplado ao seu Bloco de Notas pessoal de estudo com sucesso!");
+        }
+
+
+        // INITIAL LOAD SEQUENCE
+        window.onload = function() {
+            renderSlide();
+        };
+    </script>
+</body>
+</html>

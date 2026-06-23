@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Estudos Interativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,0.01) 0, transparent 50%),
+                              radial-gradient(at 50% 0%, hsla(225,39%,30%,0.02) 0, transparent 50%);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-50 px-4 py-4 shadow-sm">
+        <div class="max-w-6xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-indigo-500/20">
+                    <i class="fa-solid fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight text-slate-900">Portal Acadêmico</h1>
+                    <p class="text-xs text-slate-500 font-medium">Textos de Apoio & Laboratórios Virtuais</p>
+                </div>
+            </div>
+            <div class="px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-600 border border-slate-200">
+                Letivo 2026
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl w-full mx-auto p-4 md:p-8 flex-grow">
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xl shadow-slate-100/50 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl p-3 bg-blue-50 text-blue-600 rounded-2xl border border-blue-100">⚛️</span>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900">Física</h2>
+                                <p class="text-xs text-slate-400 font-medium tracking-wide uppercase">Cinemática & Leis de Newton</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        Explore o movimento dos corpos, aceleração, vetores e as forças fundamentais da mecânica clássica através de teoria analítica e laboratórios vetoriais ativos.
+                    </p>
+                </div>
+
+                <div class="space-y-3 pt-4 border-t border-slate-100">
+                    <div class="grid grid-cols-2 gap-3 text-center">
+                        <a href="fisica-texto-cinematica-yossef.html" class="p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-xl text-xs font-semibold text-slate-700 hover:text-blue-700 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-lines text-blue-500 text-sm"></i> Texto (Cinemática)
+                        </a>
+                        <a href="fisica-simulador-cinematica-yossef.html" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-xl text-xs font-semibold text-slate-700 hover:text-indigo-700 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-chart-line text-indigo-500 text-sm"></i> Lab (Cinemática)
+                        </a>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3 text-center">
+                        <a href="fisica-texto-leis-de-newton-shalom.html" class="p-3 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 rounded-xl text-xs font-semibold text-slate-700 hover:text-blue-700 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-book text-blue-500 text-sm"></i> Texto (Newton)
+                        </a>
+                        <a href="fisica-simulador-leis-de-newton-shalom.html" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-xl text-xs font-semibold text-slate-700 hover:text-indigo-700 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-gauge text-indigo-500 text-sm"></i> Lab (Newton)
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xl shadow-slate-100/50 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl p-3 bg-amber-50 text-amber-600 rounded-2xl border border-amber-100">🏛️</span>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900">História</h2>
+                                <p class="text-xs text-slate-400 font-medium tracking-wide uppercase">A Grande Depressão</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        Analise a quebra econômica global de 1929, os mecanismos de bolhas de crédito e alavancagem financeira, o New Deal e os impactos estruturais na política e no cenário do café no Brasil.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100 text-center">
+                    <a href="historia-texto-crise-29-ilan.html" class="p-3 bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-400 rounded-xl text-xs font-semibold text-slate-700 hover:text-amber-800 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-file-invoice-dollar text-amber-600 text-sm"></i> Texto & Quiz
+                    </a>
+                    <a href="historia-simulador-crise-29-ilan.html" class="p-3 bg-slate-50 hover:bg-stone-100 border border-slate-200 hover:border-stone-400 rounded-xl text-xs font-semibold text-slate-700 hover:text-stone-900 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-building-columns text-stone-600 text-sm"></i> Simulador de Crise
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xl shadow-slate-100/50 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl p-3 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100">📐</span>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900">Matemática</h2>
+                                <p class="text-xs text-slate-400 font-medium tracking-wide uppercase">Geometria Métrica</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        Estude as relações métricas no triângulo retângulo, projeções de catetos, Teorema de Pitágoras e teste suas habilidades matemáticas no Modo Desafio interativo.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100 text-center">
+                    <a href="matematica-texto-triangulo-retangulo-yoni.html" class="p-3 bg-slate-50 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-400 rounded-xl text-xs font-semibold text-slate-700 hover:text-emerald-800 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book text-emerald-600 text-sm"></i> Texto (Triângulo)
+                    </a>
+                    <a href="matematica-simulador-triangulo-retangulo-yoni.html" class="p-3 bg-slate-50 hover:bg-teal-50 border border-slate-200 hover:border-teal-400 rounded-xl text-xs font-semibold text-slate-700 hover:text-teal-800 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-vector-square text-teal-600 text-sm"></i> Simulador (Triângulo)
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xl shadow-slate-100/50 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl p-3 bg-purple-50 text-purple-600 rounded-2xl border border-purple-100">🇬🇧</span>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900">Inglês</h2>
+                                <p class="text-xs text-slate-400 font-medium tracking-wide uppercase">Life Skills & Time Management</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        Aprimore o vocabulário e a leitura em língua inglesa discutindo técnicas estratégicas de gerenciamento de tempo (Time Blocking, Matriz Eisenhower) aplicadas à rotina de estudos.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100 text-center">
+                    <a href="ingles-texto-time-yossi.html" class="p-3 bg-slate-50 hover:bg-purple-50 border border-slate-200 hover:border-purple-400 rounded-xl text-xs font-semibold text-slate-700 hover:text-purple-800 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book-open text-purple-600 text-sm"></i> Strategic Text
+                    </a>
+                    <a href="ingles-simulador-time-yossi.html" class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-400 rounded-xl text-xs font-semibold text-slate-700 hover:text-indigo-800 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-calendar-days text-indigo-600 text-sm"></i> TimeMaster Planner
+                    </a>
+                </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-xl shadow-slate-100/50 flex flex-col justify-between md:col-span-2">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl p-3 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100">🇧🇷</span>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-900">Português</h2>
+                                <p class="text-xs text-slate-400 font-medium tracking-wide uppercase">Análise Sintática</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-500 leading-relaxed mb-6">
+                        Aprofunde-se nas estruturas sintáticas da língua portuguesa, classificação de termos e análise de orações com conteúdo teórico e prática interativa.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4 border-t border-slate-100 text-center">
+                    <a href="portugues-texto-sintaxe-moises.html" class="p-3 bg-slate-50 hover:bg-rose-50 border border-slate-200 hover:border-rose-400 rounded-xl text-xs font-semibold text-slate-700 hover:text-rose-800 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book text-rose-600 text-sm"></i> Texto (Sintaxe)
+                    </a>
+                    <a href="portugues-simulador-sintaxe-moises.html" class="p-3 bg-slate-50 hover:bg-pink-50 border border-slate-200 hover:border-pink-400 rounded-xl text-xs font-semibold text-slate-700 hover:text-pink-800 transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-pen-fancy text-pink-600 text-sm"></i> Simulador (Sintaxe)
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 text-center">
+        <div class="max-w-6xl mx-auto px-4">
+            <p class="font-medium text-slate-300">Ambiente Unificado de Aprendizagem Digital</p>
+            <p class="mt-1 text-slate-500">Desenvolvido com foco em alta performance, usabilidade responsiva e metodologias pedagógicas ativas.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

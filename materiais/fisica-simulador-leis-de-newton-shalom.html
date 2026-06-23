@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratório de Newton: Simulador Premium de Forças</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js para gráficos em tempo real -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #0f172a;
+        }
+        /* Custom ranges styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #334155;
+            height: 8px;
+            border-radius: 4px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -6px;
+            background-color: #3b82f6;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+            transition: transform 0.1s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        /* Grid background helper for coordinate effect */
+        .physics-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col">
+
+    <!-- Header / Navbar -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="bg-blue-600 text-white p-2.5 rounded-lg shadow-lg shadow-blue-500/20">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-300 bg-clip-text text-transparent">LABORATÓRIO DE NEWTON</h1>
+                <p class="text-xs text-slate-400">Simulador Interativo Avançado de Força e Inércia</p>
+            </div>
+        </div>
+
+        <!-- Presets Educacionais -->
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-1">Presets:</span>
+            <button onclick="applyPreset('inercia')" class="bg-slate-800 hover:bg-slate-700 text-blue-400 hover:text-blue-300 border border-slate-700/60 rounded-lg px-3 py-1.5 text-xs font-semibold transition flex items-center gap-1.5">
+                <span>1ª Lei (Inércia)</span>
+            </button>
+            <button onclick="applyPreset('aceleracao')" class="bg-slate-800 hover:bg-slate-700 text-emerald-400 hover:text-emerald-300 border border-slate-700/60 rounded-lg px-3 py-1.5 text-xs font-semibold transition flex items-center gap-1.5">
+                <span>2ª Lei (Aceleração)</span>
+            </button>
+            <button onclick="applyPreset('atrito_limite')" class="bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 border border-slate-700/60 rounded-lg px-3 py-1.5 text-xs font-semibold transition flex items-center gap-1.5">
+                <span>Atrito Limite</span>
+            </button>
+            <button onclick="resetSimulation()" class="bg-red-950/40 hover:bg-red-900/60 text-red-400 border border-red-900/50 rounded-lg px-3 py-1.5 text-xs font-semibold transition flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H12v3"></path></svg>
+                <span>Resetar</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-grow p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Canvas, Real-time Graph -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- Canvas Container -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative">
+                <div class="px-4 py-3 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+                    <span class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                        <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Ambiente de Movimento Dinâmico
+                    </span>
+                    <span class="text-xs text-slate-500 font-mono" id="coordinateTracker">X: 10.0m | Y: 0.0m</span>
+                </div>
+                
+                <div class="relative physics-grid">
+                    <canvas id="mainCanvas" width="800" height="340" class="w-full h-auto"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico Dinâmico -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-2">
+                    <h3 class="text-sm font-semibold text-slate-300">Gráfico de Telemetria Dinâmica (Tempo Real)</h3>
+                    <div class="flex gap-4 text-xs font-semibold">
+                        <span class="text-blue-400">● Velocidade (m/s)</span>
+                        <span class="text-amber-400">● Aceleração (m/s²)</span>
+                    </div>
+                </div>
+                <div class="h-44">
+                    <canvas id="chartCanvas"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Column: Control Panel & Telemetry -->
+        <div class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Telemetria Avançada -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl">
+                <h3 class="text-base font-bold text-slate-200 mb-4 border-b border-slate-800 pb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+                    Painel de Telemetria (Análise Vetorial)
+                </h3>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    
+                    <!-- Peso Card -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-lg">
+                        <div class="text-xs text-slate-400 font-medium">Peso (<span class="italic font-serif">P = m · g</span>)</div>
+                        <div class="text-lg font-mono font-bold text-emerald-400 mt-1" id="telWeight">0.0 <span class="text-xs font-sans text-slate-400">N</span></div>
+                    </div>
+
+                    <!-- Normal Card -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-lg">
+                        <div class="text-xs text-slate-400 font-medium">Força Normal (<span class="italic font-serif">N</span>)</div>
+                        <div class="text-lg font-mono font-bold text-blue-400 mt-1" id="telNormal">0.0 <span class="text-xs font-sans text-slate-400">N</span></div>
+                    </div>
+
+                    <!-- Força Aplicada Card -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-lg">
+                        <div class="text-xs text-slate-400 font-medium">Aplicada (<span class="italic font-serif">F<sub>app</sub></span>)</div>
+                        <div class="text-lg font-mono font-bold text-red-500 mt-1" id="telFapp">0.0 <span class="text-xs font-sans text-slate-400">N</span></div>
+                    </div>
+
+                    <!-- Força de Atrito Card -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-lg">
+                        <div class="text-xs text-slate-400 font-medium">Atrito (<span class="italic font-serif">F<sub>at</sub></span>)</div>
+                        <div class="text-lg font-mono font-bold text-purple-400 mt-1" id="telFat">0.0 <span class="text-xs font-sans text-slate-400">N</span></div>
+                    </div>
+
+                    <!-- Força Resultante Card -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-lg col-span-2 relative overflow-hidden">
+                        <div class="absolute right-3 top-3 h-2 w-2 rounded-full bg-orange-500"></div>
+                        <div class="text-xs text-slate-400 font-medium">Resultante (<span class="italic font-serif">ΣF</span>)</div>
+                        <div class="text-xl font-mono font-bold text-orange-500 mt-1" id="telFnet">0.0 <span class="text-xs font-sans text-slate-400">N</span></div>
+                    </div>
+
+                    <!-- Aceleração Card -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-lg">
+                        <div class="text-xs text-slate-400 font-medium">Aceleração (<span class="italic font-serif">a</span>)</div>
+                        <div class="text-lg font-mono font-bold text-amber-400 mt-1" id="telAcc">0.00 <span class="text-xs font-sans text-slate-400">m/s²</span></div>
+                    </div>
+
+                    <!-- Velocidade Card -->
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3 rounded-lg">
+                        <div class="text-xs text-slate-400 font-medium">Velocidade (<span class="italic font-serif">v</span>)</div>
+                        <div class="text-lg font-mono font-bold text-sky-400 mt-1" id="telVel">0.00 <span class="text-xs font-sans text-slate-400">m/s</span></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Controles do Laboratório -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl flex flex-col gap-5">
+                <h3 class="text-base font-bold text-slate-200 border-b border-slate-800 pb-2 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    Ajuste de Parâmetros
+                </h3>
+
+                <!-- Tipo de Superfície -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Material da Superfície</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="setSurface('gelo')" id="btnGelo" class="surface-btn border bg-slate-950 border-slate-800 hover:border-slate-700 py-2 px-3 rounded-lg text-xs font-medium text-slate-300 transition text-left flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-cyan-100 shadow shadow-cyan-300"></span> Gelo Ideal
+                        </button>
+                        <button onclick="setSurface('madeira')" id="btnMadeira" class="surface-btn border bg-slate-950 border-slate-800 hover:border-slate-700 py-2 px-3 rounded-lg text-xs font-medium text-slate-300 transition text-left flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-amber-700"></span> Madeira Polida
+                        </button>
+                        <button onclick="setSurface('concreto')" id="btnConcreto" class="surface-btn border bg-slate-950 border-slate-800 hover:border-slate-700 py-2 px-3 rounded-lg text-xs font-medium text-slate-300 transition text-left flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gray-500"></span> Concreto Seco
+                        </button>
+                        <button onclick="setSurface('custom')" id="btnCustom" class="surface-btn border bg-slate-950 border-slate-800 hover:border-slate-700 py-2 px-3 rounded-lg text-xs font-medium text-slate-300 transition text-left flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gradient-to-r from-red-400 to-indigo-400"></span> Customizado
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Coeficiente de Atrito Slider -->
+                <div id="frictionSliderContainer" class="hidden opacity-0 transition-opacity duration-300">
+                    <div class="flex justify-between text-sm font-medium mb-1.5">
+                        <span class="text-slate-300">Coef. Atrito Estático (<span class="italic font-serif">&mu;<sub>s</sub></span>)</span>
+                        <span id="labelMuS" class="text-purple-400 font-mono font-bold">0.00</span>
+                    </div>
+                    <div class="flex justify-between text-xs font-medium mb-1">
+                        <span class="text-slate-400">Coef. Atrito Cinético (<span class="italic font-serif">&mu;<sub>k</sub></span>)</span>
+                        <span id="labelMuK" class="text-purple-300 font-mono">0.00</span>
+                    </div>
+                    <input type="range" id="inputFriction" min="0" max="1" step="0.01" value="0.2" class="w-full">
+                </div>
+
+                <!-- Massa Slider -->
+                <div>
+                    <div class="flex justify-between text-sm font-medium mb-1">
+                        <span class="text-slate-300">Massa do Objeto (<span class="italic font-serif">m</span>)</span>
+                        <span id="labelMass" class="text-blue-400 font-mono font-bold">10 kg</span>
+                    </div>
+                    <input type="range" id="inputMass" min="1" max="30" step="1" value="10" class="w-full">
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                        <span>1 kg (Papelão)</span>
+                        <span>15 kg (Madeira)</span>
+                        <span>30 kg (Aço)</span>
+                    </div>
+                </div>
+
+                <!-- Força Aplicada Slider -->
+                <div>
+                    <div class="flex justify-between text-sm font-medium mb-1">
+                        <span class="text-slate-300">Força Aplicada (<span class="italic font-serif">F<sub>app</sub></span>)</span>
+                        <span id="labelFapp" class="text-red-400 font-mono font-bold">0 N</span>
+                    </div>
+                    <input type="range" id="inputFapp" min="-120" max="120" step="1" value="0" class="w-full">
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1">
+                        <span>← Empurrar Esquerda (-120N)</span>
+                        <span>Empurrar Direita (+120N) →</span>
+                    </div>
+                </div>
+
+                <!-- Botão de Empurrão de Impulso Instantâneo -->
+                <div class="flex gap-2">
+                    <button onclick="applyImpulse(-25)" class="flex-1 bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700 py-2 px-1 rounded-lg text-xs font-bold transition">
+                        ⚡ Impulso Esq.
+                    </button>
+                    <button onclick="applyImpulse(25)" class="flex-1 bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700 py-2 px-1 rounded-lg text-xs font-bold transition">
+                        ⚡ Impulso Dir.
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer de Referência Científica -->
+    <footer class="bg-slate-950 text-slate-500 text-xs text-center py-4 border-t border-slate-900 mt-auto">
+        <p>Laboratório baseado na obra de Mecânica Clássica de Isaac Newton. Forças representadas vetorialmente em escala $1\text{ N} = 1.8\text{ pixels}$. Limites das paredes colidem de forma elástica ($e = 0.8$).</p>
+    </footer>
+
+    <!-- Scripts e Lógica de Física -->
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Inputs DOM
+        const inputMass = document.getElementById('inputMass');
+        const inputFapp = document.getElementById('inputFapp');
+        const inputFriction = document.getElementById('inputFriction');
+        const frictionSliderContainer = document.getElementById('frictionSliderContainer');
+
+        // Labels DOM
+        const labelMass = document.getElementById('labelMass');
+        const labelFapp = document.getElementById('labelFapp');
+        const labelMuS = document.getElementById('labelMuS');
+        const labelMuK = document.getElementById('labelMuK');
+        const tracker = document.getElementById('coordinateTracker');
+
+        // Telemetria DOM
+        const telWeight = document.getElementById('telWeight');
+        const telNormal = document.getElementById('telNormal');
+        const telFapp = document.getElementById('telFapp');
+        const telFat = document.getElementById('telFat');
+        const telFnet = document.getElementById('telFnet');
+        const telAcc = document.getElementById('telAcc');
+        const telVel = document.getElementById('telVel');
+
+        // Constantes da Simulação
+        const g = 9.8; // Aceleração Gravitacional m/s^2
+        const dt = 1/60; // Delta tempo (para 60 FPS)
+        const scalePx = 40; // Quantidade de pixels correspondente a 1 metro de movimento real
+
+        // Estado da Física do Bloco
+        let x = 10.0; // Posição do bloco (em metros de 0 a 20)
+        let v = 0.0; // Velocidade (m/s)
+        let a = 0.0; // Aceleração (m/s^2)
+        let surfaceType = 'gelo'; // gelo, madeira, concreto, custom
+        let muK = 0.0; // Coeficiente de atrito cinético
+        let muS = 0.0; // Coeficiente de atrito estático
+        
+        let m = parseFloat(inputMass.value);
+        let F_app = parseFloat(inputFapp.value);
+        let F_at = 0.0;
+        let F_net = 0.0;
+        let Normal = m * g;
+        let Peso = m * g;
+
+        // Histórico de Dados para o Gráfico
+        const maxChartDataPoints = 80;
+        const speedHistory = Array(maxChartDataPoints).fill(0);
+        const accHistory = Array(maxChartDataPoints).fill(0);
+        const labelHistory = Array(maxChartDataPoints).fill('');
+
+        // Inicializar Chart.js
+        const ctxChart = document.getElementById('chartCanvas').getContext('2d');
+        const telemetryChart = new Chart(ctxChart, {
+            type: 'line',
+            data: {
+                labels: labelHistory,
+                datasets: [
+                    {
+                        label: 'Velocidade (m/s)',
+                        data: speedHistory,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.05)',
+                        fill: true,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Aceleração (m/s²)',
+                        data: accHistory,
+                        borderColor: '#fbbf24',
+                        backgroundColor: 'rgba(251, 191, 36, 0.05)',
+                        fill: true,
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { display: false },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                        ticks: { color: '#94a3b8', font: { size: 10 } }
+                    }
+                }
+            }
+        });
+
+        // Configurar a Superfície
+        function setSurface(type) {
+            surfaceType = type;
+            
+            // Remover estilos ativos de todos os botões
+            document.querySelectorAll('.surface-btn').forEach(btn => {
+                btn.classList.remove('border-blue-500', 'bg-blue-950/20', 'text-white');
+                btn.classList.add('border-slate-800', 'bg-slate-950', 'text-slate-300');
+            });
+
+            // Ativar botão selecionado
+            let activeBtn;
+            if (type === 'gelo') {
+                activeBtn = document.getElementById('btnGelo');
+                muK = 0.00;
+                frictionSliderContainer.classList.add('hidden');
+                frictionSliderContainer.classList.remove('opacity-100');
+            } else if (type === 'madeira') {
+                activeBtn = document.getElementById('btnMadeira');
+                muK = 0.20;
+                frictionSliderContainer.classList.add('hidden');
+                frictionSliderContainer.classList.remove('opacity-100');
+            } else if (type === 'concreto') {
+                activeBtn = document.getElementById('btnConcreto');
+                muK = 0.50;
+                frictionSliderContainer.classList.add('hidden');
+                frictionSliderContainer.classList.remove('opacity-100');
+            } else if (type === 'custom') {
+                activeBtn = document.getElementById('btnCustom');
+                muK = parseFloat(inputFriction.value);
+                frictionSliderContainer.classList.remove('hidden');
+                setTimeout(() => frictionSliderContainer.classList.add('opacity-100'), 10);
+            }
+
+            activeBtn.classList.remove('border-slate-800', 'bg-slate-950', 'text-slate-300');
+            activeBtn.classList.add('border-blue-500', 'bg-blue-950/20', 'text-white');
+
+            // Atrito estático é tipicamente ~30% maior que o cinético
+            muS = muK * 1.30;
+            updateLabelsAndVariables();
+        }
+
+        // Atualizar todas as variáveis a partir dos Sliders
+        function updateLabelsAndVariables() {
+            m = parseFloat(inputMass.value);
+            F_app = parseFloat(inputFapp.value);
+            
+            if (surfaceType === 'custom') {
+                muK = parseFloat(inputFriction.value);
+                muS = muK * 1.30;
+            }
+
+            labelMass.innerText = `${m} kg`;
+            labelFapp.innerText = `${F_app} N`;
+            labelMuK.innerText = muK.toFixed(2);
+            labelMuS.innerText = muS.toFixed(2);
+
+            Peso = m * g;
+            Normal = Peso; // Num plano totalmente plano horizontal
+        }
+
+        // Impulso Instantâneo
+        function applyImpulse(val) {
+            // Um impulso altera a velocidade instantaneamente (Δv = J / m)
+            // Consideramos val como uma força impulsiva de curta duração
+            v += val / m;
+        }
+
+        // Presets Físicos Científicos
+        function applyPreset(name) {
+            if (name === 'inercia') {
+                // 1ª Lei de Newton: superfície sem atrito, objeto deslizando livremente em M.R.U
+                setSurface('gelo');
+                inputMass.value = 10;
+                inputFapp.value = 0;
+                x = 4.0;
+                v = 6.0; // Velocidade inicial constante
+                a = 0.0;
+            } else if (name === 'aceleracao') {
+                // 2ª Lei de Newton: aceleração constante sob força resultante
+                setSurface('madeira');
+                inputMass.value = 12;
+                inputFapp.value = 75; // Força de 75N, atrito será de 0.20 * 12 * 9.8 = 23.5N, Resultante = 51.5N
+                x = 2.0;
+                v = 0.0;
+            } else if (name === 'atrito_limite') {
+                // Atrito Estático Limite: Força aplicada muito alta, quase movendo
+                setSurface('concreto'); // muS = 0.65
+                inputMass.value = 15; // Normal = 147N, Força estática limite = 0.65 * 147 = 95.55 N
+                // Vamos aplicar 90N para ficar bem próximo do limite de rompimento
+                inputFapp.value = 90;
+                x = 10.0;
+                v = 0.0;
+            }
+            updateLabelsAndVariables();
+        }
+
+        function resetSimulation() {
+            x = 10.0;
+            v = 0.0;
+            a = 0.0;
+            inputMass.value = 10;
+            inputFapp.value = 0;
+            inputFriction.value = 0.20;
+            setSurface('gelo');
+            updateLabelsAndVariables();
+        }
+
+        // Loop de Cálculo da Física Realista
+        function simulatePhysics() {
+            updateLabelsAndVariables();
+
+            let maxStaticFriction = muS * Normal;
+            let kineticFriction = muK * Normal;
+
+            if (Math.abs(v) < 0.01) {
+                // O bloco está em repouso
+                v = 0.0;
+                
+                if (Math.abs(F_app) <= maxStaticFriction) {
+                    // Força aplicada não supera o atrito estático
+                    F_at = -F_app;
+                    F_net = 0.0;
+                    a = 0.0;
+                } else {
+                    // Quebra de inércia estática: Entra em movimento deslizante
+                    F_at = -Math.sign(F_app) * kineticFriction;
+                    F_net = F_app + F_at;
+                    a = F_net / m;
+                }
+            } else {
+                // Bloco está em movimento cinético
+                F_at = -Math.sign(v) * kineticFriction;
+                
+                // Evita que o atrito desacelere além do repouso e faça o bloco andar ao contrário
+                let idealFnet = F_app + F_at;
+                let nextV = v + (idealFnet / m) * dt;
+                
+                if (Math.sign(nextV) !== Math.sign(v) && Math.abs(F_app) <= kineticFriction) {
+                    // Se a velocidade passaria por zero e a força aplicada não segura o movimento
+                    v = 0.0;
+                    a = 0.0;
+                    F_net = 0.0;
+                    F_at = -F_app;
+                } else {
+                    F_net = idealFnet;
+                    a = F_net / m;
+                    v = nextV;
+                }
+            }
+
+            // Atualiza posição baseado na física integrativa de Euler
+            x += v * dt;
+
+            // Tratamento de Paredes de Colisão Elástica (Fronteiras)
+            const boxWidthMeters = (60 + (m * 1.5)) / scalePx;
+            const leftBoundary = boxWidthMeters / 2;
+            const rightBoundary = 20 - (boxWidthMeters / 2);
+
+            if (x < leftBoundary) {
+                x = leftBoundary;
+                v = -v * 0.8; // Colisão elástica com 80% de conservação de momento
+                createWallImpactParticle(leftBoundary * scalePx, true);
+            } else if (x > rightBoundary) {
+                x = rightBoundary;
+                v = -v * 0.8; // Colisão elástica
+                createWallImpactParticle(rightBoundary * scalePx, false);
+            }
+        }
+
+        // Efeito Visual de Impacto de Energia na Parede
+        let wallImpacts = [];
+        function createWallImpactParticle(xPos, isLeft) {
+            wallImpacts.push({
+                x: isLeft ? 10 : canvas.width - 10,
+                y: canvas.height / 2 + 50,
+                radius: 1,
+                opacity: 1.0,
+                color: '#ef4444'
+            });
+        }
+
+        // Atualizar Informações da Telemetria no Layout
+        function updateTelemetryDisplay() {
+            telWeight.innerHTML = `${Peso.toFixed(1)} <span class="text-xs font-sans text-slate-400">N</span>`;
+            telNormal.innerHTML = `${Normal.toFixed(1)} <span class="text-xs font-sans text-slate-400">N</span>`;
+            telFapp.innerHTML = `${F_app.toFixed(1)} <span class="text-xs font-sans text-slate-400">N</span>`;
+            telFat.innerHTML = `${F_at.toFixed(1)} <span class="text-xs font-sans text-slate-400">N</span>`;
+            telFnet.innerHTML = `${F_net.toFixed(1)} <span class="text-xs font-sans text-slate-400">N</span>`;
+            telAcc.innerHTML = `${a.toFixed(2)} <span class="text-xs font-sans text-slate-400">m/s²</span>`;
+            telVel.innerHTML = `${v.toFixed(2)} <span class="text-xs font-sans text-slate-400">m/s</span>`;
+            
+            tracker.innerText = `X: ${x.toFixed(1)}m | Y: 0.0m`;
+        }
+
+        // Atualização do Gráfico do Laboratório
+        let chartTickCounter = 0;
+        function updateChartData() {
+            chartTickCounter++;
+            if (chartTickCounter % 4 === 0) { // Atualiza o gráfico a cada 4 frames para alto desempenho
+                speedHistory.push(v);
+                speedHistory.shift();
+
+                accHistory.push(a);
+                accHistory.shift();
+
+                telemetryChart.update('none'); // Update sem animação lenta
+            }
+        }
+
+        // Desenhar setas de força vetoriais estilizadas
+        function drawVectorArrow(fromX, fromY, size, angle, color, label) {
+            if (Math.abs(size) < 1.0) return; // Não desenha se for quase nula
+
+            const headlen = 10; 
+            const toX = fromX + size * Math.cos(angle);
+            const toY = fromY + size * Math.sin(angle);
+            const currentAngle = Math.atan2(toY - fromY, toX - fromX);
+
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 4;
+            ctx.stroke();
+
+            // Seta
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(currentAngle - Math.PI / 6), toY - headlen * Math.sin(currentAngle - Math.PI / 6));
+            ctx.lineTo(toX - headlen * Math.cos(currentAngle + Math.PI / 6), toY - headlen * Math.sin(currentAngle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+
+            // Texto do Rótulo
+            ctx.font = "bold 12px sans-serif";
+            ctx.fillStyle = color;
+            const textOffset = 18;
+            ctx.fillText(label, toX + textOffset * Math.cos(currentAngle) - 15, toY + textOffset * Math.sin(currentAngle) + 4);
+        }
+
+        // Motor de Renderização Principal (Estética Avançada)
+        function drawCanvasContent() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const centerY = canvas.height / 2 + 50;
+            const screenX = x * scalePx;
+
+            // 1. Renderização do Grid Milimetrado de Estudo
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < canvas.width; i += 20) {
+                ctx.beginPath();
+                ctx.moveTo(i, 0);
+                ctx.lineTo(i, centerY);
+                ctx.stroke();
+            }
+
+            // 2. Renderização da Superfície Ativa (Muda cor/textura com o Tipo)
+            let surfaceGrad = ctx.createLinearGradient(0, centerY, 0, canvas.height);
+            if (surfaceType === 'gelo') {
+                surfaceGrad.addColorStop(0, '#7dd3fc'); // Ciano brilhante
+                surfaceGrad.addColorStop(1, '#0c4a6e');
+            } else if (surfaceType === 'madeira') {
+                surfaceGrad.addColorStop(0, '#b45309'); // Marrom madeira
+                surfaceGrad.addColorStop(1, '#451a03');
+            } else if (surfaceType === 'concreto') {
+                surfaceGrad.addColorStop(0, '#64748b'); // Cinza concreto
+                surfaceGrad.addColorStop(1, '#1e293b');
+            } else {
+                surfaceGrad.addColorStop(0, '#4f46e5'); // Customizado (Violeta futurista)
+                surfaceGrad.addColorStop(1, '#311042');
+            }
+            ctx.fillStyle = surfaceGrad;
+            ctx.fillRect(0, centerY, canvas.width, canvas.height - centerY);
+
+            // Detalhes extras da textura do chão
+            ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(canvas.width, centerY);
+            ctx.stroke();
+
+            // Texturas específicas
+            if (surfaceType === 'gelo') {
+                // Desenhar algumas trincas brilhantes no gelo
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.lineWidth = 1.5;
+                for (let i = 0; i < canvas.width; i += 160) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, centerY + 5);
+                    ctx.lineTo(i + 20, centerY + 25);
+                    ctx.lineTo(i + 45, centerY + 30);
+                    ctx.stroke();
+                }
+            } else if (surfaceType === 'madeira') {
+                // Veios de madeira no solo
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)';
+                ctx.lineWidth = 3;
+                for (let i = 0; i < canvas.width; i += 120) {
+                    ctx.beginPath();
+                    ctx.arc(i, centerY + 30, 40, 0, Math.PI);
+                    ctx.stroke();
+                }
+            } else if (surfaceType === 'concreto') {
+                // Pontinhos/asperezas de concreto
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                for (let i = 0; i < canvas.width; i += 30) {
+                    ctx.fillRect(i + (Math.sin(i)*10), centerY + 15, 2, 2);
+                    ctx.fillRect(i + (Math.cos(i)*15), centerY + 35, 1.5, 1.5);
+                }
+            }
+
+            // 3. Desenhar Barreiras de Colisão Elástica nas Extremidades
+            ctx.fillStyle = '#dc2626';
+            ctx.fillRect(0, centerY - 60, 10, 60); // Parede esquerda
+            ctx.fillRect(canvas.width - 10, centerY - 60, 10, 60); // Parede direita
+
+            ctx.fillStyle = 'rgba(220, 38, 38, 0.2)';
+            ctx.fillRect(0, 0, 10, canvas.height);
+            ctx.fillRect(canvas.width - 10, 0, 10, canvas.height);
+
+            // 4. Desenhar o Bloco com Visual Baseado na sua Massa
+            const boxSize = 60 + (m * 1.5);
+            const boxY = centerY - boxSize;
+            const boxX = screenX - (boxSize / 2);
+
+            let blockColor, borderColor, detailsColor;
+            let materialLabel = "";
+
+            if (m <= 5) {
+                // Papelão (Muito leve)
+                blockColor = '#d97706'; // Amarelo escuro / Papelão
+                borderColor = '#78350f';
+                detailsColor = '#b45309';
+                materialLabel = "PAPELÃO";
+            } else if (m <= 15) {
+                // Madeira (Intermediário)
+                blockColor = '#854d0e'; // Marrom robusto
+                borderColor = '#451a03';
+                detailsColor = '#ca8a04';
+                materialLabel = "MADEIRA";
+            } else {
+                // Aço Maciço (Pesado)
+                blockColor = '#475569'; // Cinza metálico escuro
+                borderColor = '#0f172a';
+                detailsColor = '#94a3b8';
+                materialLabel = "AÇO PESADO";
+            }
+
+            // Corpo do bloco
+            ctx.fillStyle = blockColor;
+            ctx.fillRect(boxX, boxY, boxSize, boxSize);
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 3;
+            ctx.strokeRect(boxX, boxY, boxSize, boxSize);
+
+            // Texturas internas dos blocos de material
+            ctx.strokeStyle = detailsColor;
+            ctx.lineWidth = 1.5;
+            if (m <= 5) {
+                // Fita adesiva colada de caixa de papelão
+                ctx.fillStyle = 'rgba(120, 53, 15, 0.2)';
+                ctx.fillRect(boxX + boxSize/2 - 6, boxY, 12, boxSize);
+                ctx.strokeRect(boxX + boxSize/2 - 6, boxY, 12, boxSize);
+            } else if (m <= 15) {
+                // Listras de caixote de madeira estruturado
+                ctx.beginPath();
+                ctx.moveTo(boxX + 5, boxY + 5);
+                ctx.lineTo(boxX + boxSize - 5, boxY + boxSize - 5);
+                ctx.moveTo(boxX + boxSize - 5, boxY + 5);
+                ctx.lineTo(boxX + 5, boxY + boxSize - 5);
+                ctx.stroke();
+            } else {
+                // Rebites metálicos nos quatro cantos (Aço)
+                ctx.fillStyle = '#cbd5e1';
+                const offsetR = 6;
+                ctx.beginPath();
+                ctx.arc(boxX + offsetR, boxY + offsetR, 3, 0, Math.PI*2);
+                ctx.arc(boxX + boxSize - offsetR, boxY + offsetR, 3, 0, Math.PI*2);
+                ctx.arc(boxX + offsetR, boxY + boxSize - offsetR, 3, 0, Math.PI*2);
+                ctx.arc(boxX + boxSize - offsetR, boxY + boxSize - offsetR, 3, 0, Math.PI*2);
+                ctx.fill();
+                
+                // Brilho metálico angular
+                let gradientMet = ctx.createLinearGradient(boxX, boxY, boxX + boxSize, boxY + boxSize);
+                gradientMet.addColorStop(0, 'rgba(255,255,255,0.15)');
+                gradientMet.addColorStop(0.5, 'rgba(255,255,255,0)');
+                gradientMet.addColorStop(1, 'rgba(0,0,0,0.25)');
+                ctx.fillStyle = gradientMet;
+                ctx.fillRect(boxX, boxY, boxSize, boxSize);
+            }
+
+            // Identificação de texto no corpo do bloco
+            ctx.font = "bold 9px monospace";
+            ctx.fillStyle = 'rgba(255,255,255,0.6)';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${materialLabel}`, screenX, boxY + boxSize/2 - 4);
+            ctx.fillText(`${m} kg`, screenX, boxY + boxSize/2 + 8);
+            ctx.textAlign = 'left'; // Reset
+
+            // Centro de Gravidade / Massa (Ponto de ancoragem vetorial)
+            const cmY = boxY + boxSize/2;
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(screenX, cmY, 4, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 5. Desenhar Vetores de Forças com escala adaptada (1N = 1.8px)
+            const arrowScale = 1.8;
+
+            // Peso (Verde, apontando para Baixo)
+            drawVectorArrow(screenX, cmY, Peso * arrowScale, Math.PI / 2, '#10b981', `P`);
+
+            // Força Normal (Azul, apontando para Cima)
+            drawVectorArrow(screenX, cmY, Normal * arrowScale, -Math.PI / 2, '#3b82f6', `N`);
+
+            // Força Aplicada (Vermelha)
+            if (Math.abs(F_app) > 0) {
+                const angle = F_app > 0 ? 0 : Math.PI;
+                drawVectorArrow(screenX, cmY, Math.abs(F_app) * arrowScale, angle, '#ef4444', `F_app`);
+            }
+
+            // Força de Atrito (Roxa)
+            if (Math.abs(F_at) > 0) {
+                const angle = F_at > 0 ? 0 : Math.PI;
+                drawVectorArrow(screenX, cmY, Math.abs(F_at) * arrowScale, angle, '#c084fc', `F_at`);
+            }
+
+            // Força Resultante (Laranja, desenhada acima do bloco para isolamento visual)
+            if (Math.abs(F_net) > 0.1) {
+                const angle = F_net > 0 ? 0 : Math.PI;
+                drawVectorArrow(screenX, boxY - 20, Math.abs(F_net) * arrowScale, angle, '#f97316', `ΣF`);
+            }
+
+            // 6. Atualizar Partículas de Impacto na Parede
+            wallImpacts.forEach((part, index) => {
+                ctx.beginPath();
+                ctx.arc(part.x, part.y, part.radius, 0, Math.PI*2);
+                ctx.fillStyle = `rgba(239, 68, 68, ${part.opacity})`;
+                ctx.fill();
+                
+                part.radius += 2.5;
+                part.opacity -= 0.05;
+                
+                if (part.opacity <= 0) wallImpacts.splice(index, 1);
+            });
+        }
+
+        // Loop Principal do Simulador
+        function mainLoop() {
+            simulatePhysics();
+            updateTelemetryDisplay();
+            updateChartData();
+            drawCanvasContent();
+            requestAnimationFrame(mainLoop);
+        }
+
+        // Eventos de Entrada e Inicialização
+        window.onload = function() {
+            setSurface('gelo');
+            mainLoop();
+        };
+
+        // Redimensionar e adaptar canvas ao tamanho físico do container de modo fluido
+        window.addEventListener('resize', () => {
+            // Apenas para recalcular o desenho interno caso necessário
+            drawCanvasContent();
+        });
+
+        // Event Listeners nos Sliders para Interação Fluida
+        inputMass.addEventListener('input', updateLabelsAndVariables);
+        inputFapp.addEventListener('input', updateLabelsAndVariables);
+        inputFriction.addEventListener('input', updateLabelsAndVariables);
+
+    </script>
+</body>
+</html>

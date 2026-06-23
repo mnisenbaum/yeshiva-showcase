@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-PT" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SintaxeLab - O Decodificador de Chavruta</title>
+    <!-- Tailwind CSS para um design moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        /* Efeito de brilho subtil para estados ativos */
+        .glow-active {
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-full flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- Cabeçalho Principal -->
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50 px-4 py-4 sm:px-6">
+        <div class="max-w-7-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/20">
+                    S
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+                        SintaxeLab
+                    </h1>
+                    <p class="text-xs text-slate-400">O Decodificador de Chavruta & Sintaxe Subordinada</p>
+                </div>
+            </div>
+            
+            <!-- Indicador Global de Progresso -->
+            <div class="flex items-center gap-4 bg-slate-900/90 px-4 py-2 rounded-lg border border-slate-800">
+                <div class="text-xs text-slate-400">
+                    Pontuação: <span id="global-score" class="text-indigo-400 font-bold text-sm">0</span> pts
+                </div>
+                <div class="h-4 w-px bg-slate-800"></div>
+                <div class="text-xs text-slate-400">
+                    Progresso: <span id="global-progress" class="text-emerald-400 font-bold text-sm">1/5</span>
+                </div>
+                <div class="h-4 w-px bg-slate-800"></div>
+                <button onclick="resetSimulator()" class="text-xs text-rose-400 hover:text-rose-300 font-medium transition">
+                    Reiniciar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Painel de Controlo & Jogo (Esquerda) -->
+        <section class="lg:col-span-8 flex flex-col gap-6">
+            
+            <!-- Barra de Passos da Análise (Fases) -->
+            <div class="grid grid-cols-4 gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-center">
+                <div id="step-1" class="py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 bg-indigo-600 text-white">
+                    <span class="block sm:inline">1.</span> OP & OS
+                </div>
+                <div id="step-2" class="py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 text-slate-400">
+                    <span class="block sm:inline">2.</span> Conector
+                </div>
+                <div id="step-3" class="py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 text-slate-400">
+                    <span class="block sm:inline">3.</span> Classificar
+                </div>
+                <div id="step-4" class="py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 text-slate-400">
+                    <span class="block sm:inline">4.</span> Injeção
+                </div>
+            </div>
+
+            <!-- Ecrã da Frase Ativa -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6 sm:p-8 relative overflow-hidden flex flex-col justify-between min-h-[320px]">
+                <!-- Background decorativo / Efeito de rede lógica -->
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-950/20 via-transparent to-transparent pointer-events-none"></div>
+                
+                <!-- Info do Passo -->
+                <div class="relative z-10 flex items-center justify-between">
+                    <span id="phase-badge" class="px-3 py-1 rounded-full text-xs font-bold tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase">
+                        Fase 1: Isolamento do Núcleo
+                    </span>
+                    <span class="text-xs text-slate-500 font-medium">Análise de Chavruta</span>
+                </div>
+
+                <!-- Painel da Frase Interativa -->
+                <div class="relative z-10 my-8">
+                    <h3 id="phase-instruction" class="text-sm text-slate-400 mb-4 font-medium">
+                        Selecione o segmento que corresponde à <strong class="text-indigo-400">Oração Principal (OP)</strong>.
+                    </h3>
+                    
+                    <!-- Contentor das palavras interativas -->
+                    <div id="sentence-container" class="flex flex-wrap gap-2 text-lg sm:text-xl md:text-2xl font-medium tracking-wide py-4">
+                        <!-- Gerado via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Painel de Ações / Inputs Especiais Dinâmicos por Fase -->
+                <div id="dynamic-action-zone" class="relative z-10 border-t border-slate-900 pt-6">
+                    <!-- Gerado dinamicamente para cada fase -->
+                </div>
+            </div>
+
+            <!-- Painel de Feedback e Explicação Crítica -->
+            <div id="feedback-panel" class="hidden bg-slate-950 border rounded-2xl p-6 transition-all duration-300">
+                <div class="flex items-start gap-4">
+                    <div id="feedback-icon-container" class="h-10 w-10 rounded-xl flex items-center justify-center shrink-0">
+                        <!-- Icon correto/incorreto -->
+                    </div>
+                    <div class="flex-1">
+                        <h4 id="feedback-title" class="text-base font-bold">Excelente dedução!</h4>
+                        <p id="feedback-text" class="text-sm text-slate-400 mt-1 leading-relaxed">
+                            A oração principal carrega a tese do argumento de estudo.
+                        </p>
+                        <!-- Explicação da chavruta/yeshiva -->
+                        <div id="feedback-analogy" class="mt-3 bg-indigo-950/20 border border-indigo-900/30 p-3 rounded-lg text-xs text-indigo-300">
+                            <!-- Analogia com a Yeshiva -->
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button id="next-btn" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold shadow-lg shadow-indigo-600/25 transition-all">
+                        Avançar
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Sidebar Auxiliar e Teoria Prática (Direita) -->
+        <aside class="lg:col-span-4 flex flex-col gap-6">
+            
+            <!-- Guia de Consulta Rápida -->
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-6">
+                <h3 class="text-sm font-bold text-slate-200 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    Mapa de Sintaxe Ativo
+                </h3>
+                
+                <div class="space-y-4">
+                    <details class="group bg-slate-900/50 rounded-xl border border-slate-800/80 overflow-hidden" open>
+                        <summary class="p-3 text-xs font-semibold text-slate-300 cursor-pointer hover:bg-slate-900 flex justify-between items-center transition">
+                            <span>Orações Substantivas</span>
+                            <span class="text-indigo-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+                        </summary>
+                        <div class="p-3 pt-0 text-xs text-slate-400 space-y-2 border-t border-slate-800/30">
+                            <p>Funcionam como um substantivo na frase. Substitua por <strong>"ISSO"</strong> para testar!</p>
+                            <ul class="list-disc pl-4 space-y-1 text-[11px]">
+                                <li><strong>Subjetiva:</strong> Funciona como sujeito.</li>
+                                <li><strong>Obj. Direta:</strong> Funciona como objeto direto.</li>
+                                <li><strong>Completiva Nominal:</strong> Completa um nome (com preposição).</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="group bg-slate-900/50 rounded-xl border border-slate-800/80 overflow-hidden">
+                        <summary class="p-3 text-xs font-semibold text-slate-300 cursor-pointer hover:bg-slate-900 flex justify-between items-center transition">
+                            <span>Orações Adjetivas</span>
+                            <span class="text-indigo-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+                        </summary>
+                        <div class="p-3 pt-0 text-xs text-slate-400 space-y-2 border-t border-slate-800/30">
+                            <p>Modificam um substantivo antecedente através de um pronome relativo (*que*, *cujo*).</p>
+                            <ul class="list-disc pl-4 space-y-1 text-[11px]">
+                                <li><strong>Restritiva:</strong> Sem vírgulas. Limita o significado.</li>
+                                <li><strong>Explicativa:</strong> Com vírgulas. Explica ou generaliza.</li>
+                            </ul>
+                        </div>
+                    </details>
+
+                    <details class="group bg-slate-900/50 rounded-xl border border-slate-800/80 overflow-hidden">
+                        <summary class="p-3 text-xs font-semibold text-slate-300 cursor-pointer hover:bg-slate-900 flex justify-between items-center transition">
+                            <span>Orações Adverbiais</span>
+                            <span class="text-indigo-400 group-open:rotate-180 transition-transform duration-200">▼</span>
+                        </summary>
+                        <div class="p-3 pt-0 text-xs text-slate-400 space-y-2 border-t border-slate-800/30">
+                            <p>Indicam circunstâncias lógicas do acontecimento principal.</p>
+                            <ul class="list-disc pl-4 space-y-1 text-[11px]">
+                                <li><strong>Causal:</strong> O motivo gerador (*porque*, *visto que*).</li>
+                                <li><strong>Condicional:</strong> A hipótese essencial (*se*, *caso*).</li>
+                                <li><strong>Concessiva:</strong> Oposição ou quebra de expectativa (*embora*).</li>
+                            </ul>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+            <!-- Analogia Yeshiva / Gemara -->
+            <div class="bg-gradient-to-br from-indigo-950/40 to-slate-950 border border-indigo-900/40 rounded-2xl p-6">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-xl">📚</span>
+                    <h4 class="text-sm font-bold text-indigo-300">A Sintaxe na Chavruta</h4>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    No estudo tradicional, as frases longas das fontes contêm teses e objeções intrincadas. Isolar a <strong>Oração Principal</strong> permite decifrar a tese nuclear, enquanto as <strong>Orações Subordinadas</strong> expõem os limites, as provas e as condições que estruturam a verdade lógica.
+                </p>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Modal de Vitória/Conclusão -->
+    <div id="victory-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-md w-full text-center relative overflow-hidden">
+            <div class="absolute -top-10 -left-10 h-32 w-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-10 -right-10 h-32 w-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
+            
+            <div class="h-16 w-16 bg-gradient-to-tr from-indigo-500 to-violet-500 rounded-2xl flex items-center justify-center mx-auto text-3xl mb-6 shadow-xl shadow-indigo-500/20">
+                🏆
+            </div>
+            
+            <h2 class="text-2xl font-extrabold text-white">Sintaxe Decodificada!</h2>
+            <p class="text-sm text-slate-400 mt-2">
+                Demonstrou uma excelente disciplina intelectual ao dominar as relações de subordinação sintática.
+            </p>
+
+            <div class="my-6 bg-slate-950 p-4 rounded-2xl border border-slate-800 text-left">
+                <div class="flex justify-between items-center text-xs text-slate-400 mb-2">
+                    <span>Pontuação Final:</span>
+                    <span id="modal-score" class="font-bold text-indigo-400 text-sm">0 pts</span>
+                </div>
+                <div class="flex justify-between items-center text-xs text-slate-400">
+                    <span>Precisão Analítica:</span>
+                    <span class="font-bold text-emerald-400 text-sm">100%</span>
+                </div>
+            </div>
+
+            <button onclick="resetSimulator()" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition-all shadow-lg shadow-indigo-600/25">
+                Estudar Novamente
+            </button>
+        </div>
+    </div>
+
+    <!-- Rodapé -->
+    <footer class="border-t border-slate-800/60 bg-slate-950 py-6 px-4 mt-auto">
+        <div class="max-w-7-xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+            <p>© 2026 SintaxeLab. Desenvolvido para Excelência Educativa.</p>
+            <p>Língua Portuguesa & Práticas Analíticas de Estudo</p>
+        </div>
+    </footer>
+
+    <!-- Lógica de Funcionamento do Simulador -->
+    <script>
+        // Estrutura de dados das frases didáticas
+        const sentencesDataset = [
+            {
+                // Frase 1
+                text: "O aluno estudou até tarde porque o mestre explicou a premissa complexa.",
+                segments: [
+                    { text: "O aluno estudou até tarde", type: "OP", id: 0 },
+                    { text: "porque", type: "CONECTOR", id: 1 },
+                    { text: "o mestre explicou a premissa complexa.", type: "OS", id: 2 }
+                ],
+                connector: "porque",
+                clauseType: "Adverbial Causal",
+                analogy: "Assim como a causa gera o efeito na vida real, a oração causal providencia o argumento lógico para o comportamento do estudante na Yeshiva.",
+                substitution: {
+                    original: "porque o mestre explicou a premissa complexa",
+                    replacement: "por causa da explicação",
+                    instruction: "As orações adverbiais funcionam como adjuntos adverbiais de causa. Substitua a oração subordinada por uma locução adverbial nominal equivalente:"
+                }
+            },
+            {
+                // Frase 2
+                text: "É fundamental que a equipa debata a contradição do texto.",
+                segments: [
+                    { text: "É fundamental", type: "OP", id: 0 },
+                    { text: "que", type: "CONECTOR", id: 1 },
+                    { text: "a equipa debata a contradição do texto.", type: "OS", id: 2 }
+                ],
+                connector: "que",
+                clauseType: "Substantiva Subjetiva",
+                analogy: "Nesta construção, a oração subordinada atua como o próprio sujeito do verbo da oração principal. É a base ativa da afirmação.",
+                substitution: {
+                    original: "que a equipa debata a contradição do texto",
+                    replacement: "isso",
+                    instruction: "Para testar se uma oração é substantiva, substitua toda a oração subordinada pelo pronome neutro:"
+                }
+            },
+            {
+                // Frase 3
+                text: "Os alunos que estudam diariamente superam as dificuldades teóricas.",
+                segments: [
+                    { text: "Os alunos", type: "OP_PART1", id: 0 },
+                    { text: "que", type: "CONECTOR", id: 1 },
+                    { text: "estudam diariamente", type: "OS", id: 2 },
+                    { text: "superam as dificuldades teóricas.", type: "OP_PART2", id: 3 }
+                ],
+                connector: "que",
+                clauseType: "Adjetiva Restritiva",
+                analogy: "As orações adjetivas restritivas funcionam como filtros específicos. Elas não explicam o grupo inteiro, apenas delimitam os que cumprem a condição descrita.",
+                substitution: {
+                    original: "que estudam diariamente",
+                    replacement: "estudiosos",
+                    instruction: "Substitua a oração adjetiva por um adjetivo simples equivalente para revelar a sua função de modificador nominal:"
+                }
+            },
+            {
+                // Frase 4 (Focada em Reduzidas)
+                text: "Ao concluir o debate sobre a lei, os sábios sorriram.",
+                segments: [
+                    { text: "Ao concluir o debate sobre a lei,", type: "OS", id: 0 },
+                    { text: "os sábios", type: "OP_PART1", id: 1 },
+                    { text: "sorriram.", type: "OP_PART2", id: 2 }
+                ],
+                connector: "Ao",
+                clauseType: "Adverbial Temporal (Reduzida de Infinitivo)",
+                analogy: "As orações reduzidas guardam a força da circunstância sem carregar a conjunção explícita. Elas aceleram a leitura preservando o rigor do tempo.",
+                substitution: {
+                    original: "Ao concluir o debate sobre a lei",
+                    replacement: "Quando concluíram o debate sobre a lei",
+                    instruction: "Desenvolva a oração reduzida de infinitivo utilizando a conjunção temporal apropriada:"
+                }
+            },
+            {
+                // Frase 5
+                text: "A verdade é que todos desejamos compreender o manuscrito.",
+                segments: [
+                    { text: "A verdade é", type: "OP", id: 0 },
+                    { text: "que", type: "CONECTOR", id: 1 },
+                    { text: "todos desejamos compreender o manuscrito.", type: "OS", id: 2 }
+                ],
+                connector: "que",
+                clauseType: "Substantiva Predicativa",
+                analogy: "O predicativo atribui uma qualidade ou estado ao sujeito. Aqui, a verdade é definida na totalidade pela oração subordinada subordinada.",
+                substitution: {
+                    original: "que todos desejamos compreender o manuscrito",
+                    replacement: "esta",
+                    instruction: "Substitua a oração predicativa por um pronome demonstrativo adequado para testar a estrutura:"
+                }
+            }
+        ];
+
+        // Estado da Aplicação
+        let state = {
+            currentSentenceIndex: 0,
+            currentPhase: 1, // Fases de 1 a 4
+            score: 0,
+            phaseSelectedId: null, // Guardar seleção do utilizador
+            phaseCompleted: false
+        };
+
+        // Inicialização
+        window.onload = function() {
+            renderActiveSentence();
+            updateUI();
+        };
+
+        // Reinicia o Simulador
+        function resetSimulator() {
+            state.currentSentenceIndex = 0;
+            state.currentPhase = 1;
+            state.score = 0;
+            state.phaseSelectedId = null;
+            state.phaseCompleted = false;
+            
+            document.getElementById("victory-modal").classList.add("hidden");
+            renderActiveSentence();
+            updateUI();
+            resetStepIndicators();
+        }
+
+        // Renderiza a frase atual dependendo da fase ativa
+        function renderActiveSentence() {
+            const sentence = sentencesDataset[state.currentSentenceIndex];
+            const container = document.getElementById("sentence-container");
+            container.innerHTML = "";
+            state.phaseSelectedId = null;
+            state.phaseCompleted = false;
+
+            // Esconder o painel de feedback ao mudar de estado/fase
+            document.getElementById("feedback-panel").classList.add("hidden");
+
+            // Instruções e Títulos de acordo com a Fase Ativa
+            const phaseBadge = document.getElementById("phase-badge");
+            const phaseInstruction = document.getElementById("phase-instruction");
+            const dynamicZone = document.getElementById("dynamic-action-zone");
+            dynamicZone.innerHTML = "";
+
+            if (state.currentPhase === 1) {
+                phaseBadge.textContent = "Fase 1: Isolamento do Núcleo";
+                phaseInstruction.innerHTML = "Identifique e clique no segmento que representa a <strong class='text-indigo-400'>Oração Principal (OP)</strong>.";
+                
+                // Renderizar segmentos como botões clicáveis
+                sentence.segments.forEach(seg => {
+                    const btn = document.createElement("button");
+                    btn.className = "px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500 hover:bg-slate-850 text-slate-200 transition text-sm sm:text-base cursor-pointer";
+                    btn.textContent = seg.text;
+                    btn.onclick = () => selectSegmentPhase1(seg.id, btn);
+                    container.appendChild(btn);
+                });
+
+                // Botão de validação
+                dynamicZone.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-slate-500">Selecione o segmento e clique em Validar.</span>
+                        <button onclick="validatePhase1()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition">
+                            Validar Oração Principal
+                        </button>
+                    </div>
+                `;
+
+            } else if (state.currentPhase === 2) {
+                phaseBadge.textContent = "Fase 2: O Sinal de Subordinação";
+                phaseInstruction.innerHTML = "Clique no segmento ou palavra que funciona como <strong class='text-indigo-400'>Conector / Sinal de Subordinação</strong>.";
+
+                sentence.segments.forEach(seg => {
+                    const btn = document.createElement("button");
+                    btn.className = "px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500 hover:bg-slate-850 text-slate-200 transition text-sm sm:text-base cursor-pointer";
+                    btn.textContent = seg.text;
+                    btn.onclick = () => selectSegmentPhase2(seg.id, btn);
+                    container.appendChild(btn);
+                });
+
+                dynamicZone.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-slate-500">O conector estabelece a ligação hierárquica na frase.</span>
+                        <button onclick="validatePhase2()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition">
+                            Confirmar Conector
+                        </button>
+                    </div>
+                `;
+
+            } else if (state.currentPhase === 3) {
+                phaseBadge.textContent = "Fase 3: Classificação Lógica";
+                phaseInstruction.innerHTML = "Classifique corretamente a Oração Subordinada destacada abaixo:";
+
+                // Apresentar a frase com a subordinada em destaque visual
+                sentence.segments.forEach(seg => {
+                    const span = document.createElement("span");
+                    if (seg.type === "OS") {
+                        span.className = "px-2 py-1 rounded-md bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 font-semibold";
+                    } else {
+                        span.className = "text-slate-400 font-normal";
+                    }
+                    span.textContent = seg.text + " ";
+                    container.appendChild(span);
+                });
+
+                // Opções de Classificação Multi-escolha
+                const options = [
+                    "Substantiva Subjetiva",
+                    "Substantiva Predicativa",
+                    "Substantiva Completiva Nominal",
+                    "Adjetiva Restritiva",
+                    "Adverbial Causal",
+                    "Adverbial Temporal (Reduzida de Infinitivo)"
+                ];
+
+                // Misturar opções de forma semi-fixa para garantir que a resposta correta existe
+                let uniqueOptions = [...new Set([sentence.clauseType, ...options])].slice(0, 4);
+                // Baralhar as opções
+                uniqueOptions.sort(() => Math.random() - 0.5);
+
+                let optionsHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">`;
+                uniqueOptions.forEach(opt => {
+                    optionsHTML += `
+                        <button onclick="selectOptionPhase3('${opt}', this)" class="option-btn text-left p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500 hover:bg-slate-850 transition text-xs sm:text-sm text-slate-300 flex items-center justify-between">
+                            <span>${opt}</span>
+                            <span class="h-4 w-4 rounded-full border border-slate-700 flex items-center justify-center text-[10px] text-transparent">✓</span>
+                        </button>
+                    `;
+                });
+                optionsHTML += `</div>`;
+
+                dynamicZone.innerHTML = `
+                    <p class="text-xs text-slate-400 mb-3">Qual a classificação gramatical precisa da oração em destaque?</p>
+                    ${optionsHTML}
+                    <div class="flex justify-end">
+                        <button onclick="validatePhase3()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition">
+                            Submeter Classificação
+                        </button>
+                    </div>
+                `;
+
+            } else if (state.currentPhase === 4) {
+                phaseBadge.textContent = "Fase 4: Teste de Injeção Sintática";
+                phaseInstruction.innerHTML = "Aplique o método científico de substituição para provar a natureza da oração.";
+
+                // Mostrar a frase com a parte substituível em destaque
+                sentence.segments.forEach(seg => {
+                    const span = document.createElement("span");
+                    if (seg.type === "OS") {
+                        span.className = "px-2 py-1 rounded bg-rose-950/40 border border-rose-500/30 text-rose-300";
+                    } else {
+                        span.className = "text-slate-400";
+                    }
+                    span.textContent = seg.text + " ";
+                    container.appendChild(span);
+                });
+
+                // Área interativa para arrastar ou clicar e ver a substituição em tempo real
+                dynamicZone.innerHTML = `
+                    <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl mb-4">
+                        <h4 class="text-xs font-bold text-slate-300 mb-2 uppercase tracking-wide">Refatorador de Código Sintático</h4>
+                        <p class="text-xs text-slate-400 mb-4 leading-relaxed">${sentence.substitution.instruction}</p>
+                        
+                        <div class="flex flex-col sm:flex-row items-center gap-4 justify-between bg-slate-950 p-3 rounded-lg border border-slate-850">
+                            <div class="text-xs code-font text-slate-400">
+                                "${sentence.substitution.original}"
+                            </div>
+                            <div class="text-indigo-400 text-lg">➔</div>
+                            <button onclick="triggerInjection()" class="px-4 py-2 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 font-mono text-xs font-bold transition">
+                                Injetar: "${sentence.substitution.replacement}"
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-slate-500">Experimente injetar a palavra substituta para testar a gramática da frase.</span>
+                        <button id="finish-step-btn" disabled onclick="validatePhase4()" class="px-6 py-2.5 rounded-xl bg-slate-800 text-slate-500 font-semibold text-sm cursor-not-allowed transition">
+                            Validar Injeção
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // --- Seleção de Segmentos (Fase 1) ---
+        function selectSegmentPhase1(id, element) {
+            if (state.phaseCompleted) return;
+            
+            // Remover estilos selecionados de todos os botões do contentor
+            const btns = document.querySelectorAll("#sentence-container button");
+            btns.forEach(btn => {
+                btn.className = "px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500 hover:bg-slate-850 text-slate-200 transition text-sm sm:text-base cursor-pointer";
+            });
+
+            // Atribuir destaque ao selecionado
+            element.className = "px-3 py-1.5 rounded-lg bg-indigo-600/20 border-2 border-indigo-500 text-indigo-200 transition text-sm sm:text-base font-semibold glow-active";
+            state.phaseSelectedId = id;
+        }
+
+        // --- Validação da Oração Principal (Fase 1) ---
+        function validatePhase1() {
+            if (state.phaseSelectedId === null) {
+                showVisualAlert("Selecione um segmento primeiro!");
+                return;
+            }
+
+            const sentence = sentencesDataset[state.currentSentenceIndex];
+            const selectedSegment = sentence.segments.find(s => s.id === state.phaseSelectedId);
+            
+            // É oração principal? Nota: Algumas frases têm OP dividida em duas partes no array
+            const isOP = selectedSegment.type.startsWith("OP");
+
+            const feedbackPanel = document.getElementById("feedback-panel");
+            const feedbackIcon = document.getElementById("feedback-icon-container");
+            const feedbackTitle = document.getElementById("feedback-title");
+            const feedbackText = document.getElementById("feedback-text");
+            const feedbackAnalogy = document.getElementById("feedback-analogy");
+
+            feedbackPanel.classList.remove("hidden");
+
+            if (isOP) {
+                state.score += 25;
+                state.phaseCompleted = true;
+                feedbackPanel.className = "bg-slate-950 border border-emerald-500/30 rounded-2xl p-6 transition-all duration-300";
+                feedbackIcon.className = "h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 font-bold";
+                feedbackIcon.innerHTML = "✓";
+                feedbackTitle.textContent = "Excelente Identificação!";
+                feedbackTitle.className = "text-base font-bold text-emerald-400";
+                feedbackText.textContent = `Identificou corretamente a Oração Principal: "${selectedSegment.text}". Ela contém o verbo principal e rege a oração dependente.`;
+                feedbackAnalogy.textContent = "💡 Na chavruta de estudo, a oração principal equivale à afirmação principal (Tese/Mishná). Sem ela, os argumentos de apoio não têm suporte lógico.";
+            } else {
+                feedbackPanel.className = "bg-slate-950 border border-rose-500/30 rounded-2xl p-6 transition-all duration-300";
+                feedbackIcon.className = "h-10 w-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0 font-bold";
+                feedbackIcon.innerHTML = "✗";
+                feedbackTitle.textContent = "Análise Incorreta";
+                feedbackTitle.className = "text-base font-bold text-rose-400";
+                feedbackText.textContent = `O segmento "${selectedSegment.text}" não é a Oração Principal. É um elemento subordinado, pois necessita de contexto sintático prévio para fazer sentido.`;
+                feedbackAnalogy.textContent = "💡 Dica: Experimente isolar a frase. Se faltar o sujeito ou a causa básica, trata-se da oração subordinada!";
+            }
+
+            updateUI();
+        }
+
+        // --- Seleção de Segmentos (Fase 2) ---
+        function selectSegmentPhase2(id, element) {
+            if (state.phaseCompleted) return;
+
+            const btns = document.querySelectorAll("#sentence-container button");
+            btns.forEach(btn => {
+                btn.className = "px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-indigo-500 hover:bg-slate-850 text-slate-200 transition text-sm sm:text-base cursor-pointer";
+            });
+
+            element.className = "px-3 py-1.5 rounded-lg bg-amber-600/20 border-2 border-amber-500 text-amber-200 transition text-sm sm:text-base font-semibold glow-active";
+            state.phaseSelectedId = id;
+        }
+
+        // --- Validação do Conector (Fase 2) ---
+        function validatePhase2() {
+            if (state.phaseSelectedId === null) {
+                showVisualAlert("Selecione um segmento primeiro!");
+                return;
+            }
+
+            const sentence = sentencesDataset[state.currentSentenceIndex];
+            const selectedSegment = sentence.segments.find(s => s.id === state.phaseSelectedId);
+            const isConnector = selectedSegment.type === "CONECTOR" || selectedSegment.text.includes(sentence.connector);
+
+            const feedbackPanel = document.getElementById("feedback-panel");
+            const feedbackIcon = document.getElementById("feedback-icon-container");
+            const feedbackTitle = document.getElementById("feedback-title");
+            const feedbackText = document.getElementById("feedback-text");
+            const feedbackAnalogy = document.getElementById("feedback-analogy");
+
+            feedbackPanel.classList.remove("hidden");
+
+            if (isConnector) {
+                state.score += 25;
+                state.phaseCompleted = true;
+                feedbackPanel.className = "bg-slate-950 border border-emerald-500/30 rounded-2xl p-6 transition-all duration-300";
+                feedbackIcon.className = "h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 font-bold";
+                feedbackIcon.innerHTML = "✓";
+                feedbackTitle.textContent = "Conector Detetado!";
+                feedbackTitle.className = "text-base font-bold text-emerald-400";
+                feedbackText.textContent = `Correto! "${selectedSegment.text}" atua como conjunção subordinativa ou elemento de ligação gramatical que inicia a oração dependente.`;
+                feedbackAnalogy.textContent = `💡 O termo "${sentence.connector}" atua como o gatilho lógico que altera o rumo da oração principal, introduzindo a nova circunstância ou objeto de estudo.`;
+            } else {
+                feedbackPanel.className = "bg-slate-950 border border-rose-500/30 rounded-2xl p-6 transition-all duration-300";
+                feedbackIcon.className = "h-10 w-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0 font-bold";
+                feedbackIcon.innerHTML = "✗";
+                feedbackTitle.textContent = "Conector Não Detetado";
+                feedbackTitle.className = "text-base font-bold text-rose-400";
+                feedbackText.textContent = `O segmento "${selectedSegment.text}" não é o conector principal da subordinação.`;
+                feedbackAnalogy.textContent = `💡 Dica: Procure por pequenos conectores fundamentais de transição tais como "que", "porque", "se" ou locuções de infinitivo.`;
+            }
+
+            updateUI();
+        }
+
+        // --- Seleção de Classificação (Fase 3) ---
+        function selectOptionPhase3(option, element) {
+            if (state.phaseCompleted) return;
+
+            const btns = document.querySelectorAll(".option-btn");
+            btns.forEach(btn => {
+                btn.className = "option-btn text-left p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500 hover:bg-slate-850 transition text-xs sm:text-sm text-slate-300 flex items-center justify-between";
+                btn.querySelector("span:last-child").className = "h-4 w-4 rounded-full border border-slate-700 flex items-center justify-center text-[10px] text-transparent";
+            });
+
+            element.className = "option-btn text-left p-3.5 rounded-xl bg-indigo-600/10 border-2 border-indigo-500 transition text-xs sm:text-sm text-indigo-200 flex items-center justify-between glow-active";
+            element.querySelector("span:last-child").className = "h-4 w-4 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] text-white font-bold";
+            
+            state.phaseSelectedId = option;
+        }
+
+        // --- Validação da Classificação (Fase 3) ---
+        function validatePhase3() {
+            if (state.phaseSelectedId === null) {
+                showVisualAlert("Escolha uma classificação primeiro!");
+                return;
+            }
+
+            const sentence = sentencesDataset[state.currentSentenceIndex];
+            const isCorrect = state.phaseSelectedId === sentence.clauseType;
+
+            const feedbackPanel = document.getElementById("feedback-panel");
+            const feedbackIcon = document.getElementById("feedback-icon-container");
+            const feedbackTitle = document.getElementById("feedback-title");
+            const feedbackText = document.getElementById("feedback-text");
+            const feedbackAnalogy = document.getElementById("feedback-analogy");
+
+            feedbackPanel.classList.remove("hidden");
+
+            if (isCorrect) {
+                state.score += 25;
+                state.phaseCompleted = true;
+                feedbackPanel.className = "bg-slate-950 border border-emerald-500/30 rounded-2xl p-6 transition-all duration-300";
+                feedbackIcon.className = "h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 font-bold";
+                feedbackIcon.innerHTML = "✓";
+                feedbackTitle.textContent = "Classificação Exata!";
+                feedbackTitle.className = "text-base font-bold text-emerald-400";
+                feedbackText.textContent = `A oração subordinada é classificada como: "${sentence.clauseType}".`;
+                feedbackAnalogy.textContent = `💡 Analogia: ${sentence.analogy}`;
+            } else {
+                feedbackPanel.className = "bg-slate-950 border border-rose-500/30 rounded-2xl p-6 transition-all duration-300";
+                feedbackIcon.className = "h-10 w-10 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center shrink-0 font-bold";
+                feedbackIcon.innerHTML = "✗";
+                feedbackTitle.textContent = "Classificação Incorreta";
+                feedbackTitle.className = "text-base font-bold text-rose-400";
+                feedbackText.textContent = `Dedução incorreta. Pense na função lógica que este segmento desempenha em relação ao núcleo principal da mensagem.`;
+                feedbackAnalogy.textContent = `💡 Dica extra: Verifique se indica causa (porque), se é um adjetivo restritivo ou se completa o verbo como substantivo.`;
+            }
+
+            updateUI();
+        }
+
+        // --- Execução da Injeção Sintática (Fase 4) ---
+        function triggerInjection() {
+            const sentence = sentencesDataset[state.currentSentenceIndex];
+            const container = document.getElementById("sentence-container");
+            container.innerHTML = "";
+
+            // Substituir visualmente a oração subordinada pela sua versão mais curta
+            sentence.segments.forEach(seg => {
+                const span = document.createElement("span");
+                if (seg.type === "OS") {
+                    span.className = "px-2 py-1 rounded bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-semibold animate-pulse";
+                    span.textContent = `[ ${sentence.substitution.replacement} ]`;
+                } else {
+                    span.className = "text-slate-200";
+                    span.textContent = seg.text + " ";
+                }
+                container.appendChild(span);
+            });
+
+            // Ativar botão de validação final
+            const finishBtn = document.getElementById("finish-step-btn");
+            finishBtn.className = "px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition cursor-pointer";
+            finishBtn.removeAttribute("disabled");
+            
+            state.phaseSelectedId = "INJECTED";
+        }
+
+        // --- Validação da Injeção (Fase 4) ---
+        function validatePhase4() {
+            if (state.phaseSelectedId !== "INJECTED") return;
+
+            const sentence = sentencesDataset[state.currentSentenceIndex];
+            const feedbackPanel = document.getElementById("feedback-panel");
+            const feedbackIcon = document.getElementById("feedback-icon-container");
+            const feedbackTitle = document.getElementById("feedback-title");
+            const feedbackText = document.getElementById("feedback-text");
+            const feedbackAnalogy = document.getElementById("feedback-analogy");
+
+            state.score += 25;
+            state.phaseCompleted = true;
+            
+            feedbackPanel.classList.remove("hidden");
+            feedbackPanel.className = "bg-slate-950 border border-emerald-500/30 rounded-2xl p-6 transition-all duration-300";
+            feedbackIcon.className = "h-10 w-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 font-bold";
+            feedbackIcon.innerHTML = "✓";
+            feedbackTitle.textContent = "Excelente Refatoração Sintática!";
+            feedbackTitle.className = "text-base font-bold text-emerald-400";
+            feedbackText.textContent = `Conseguiu demonstrar como a oração complexa reduz-se à sua essência nominal ou adverbial através da injeção prática de "${sentence.substitution.replacement}".`;
+            feedbackAnalogy.textContent = "💡 Com este teste, provou empiricamente que o segmento dependente desempenha um papel essencial de expansão semântica e gramatical da frase principal.";
+
+            updateUI();
+        }
+
+        // --- Atualização Geral do Estado do Jogo / UI ---
+        function updateUI() {
+            document.getElementById("global-score").textContent = state.score;
+            document.getElementById("global-progress").textContent = `${state.currentSentenceIndex + 1} / ${sentencesDataset.length}`;
+
+            // Controlar a visibilidade do botão avançar no painel de feedback
+            const nextBtn = document.getElementById("next-btn");
+            if (state.phaseCompleted) {
+                nextBtn.style.display = "block";
+                nextBtn.onclick = handleNextStep;
+            } else {
+                nextBtn.style.display = "none";
+            }
+        }
+
+        // Avançar no percurso de aprendizagem (mudar fase ou mudar de frase)
+        function handleNextStep() {
+            if (state.currentPhase < 4) {
+                // Avançar para a próxima fase na mesma frase
+                state.currentPhase++;
+                updateStepIndicators();
+                renderActiveSentence();
+            } else {
+                // Chegou ao fim da frase 4, passar à próxima frase
+                if (state.currentSentenceIndex < sentencesDataset.length - 1) {
+                    state.currentSentenceIndex++;
+                    state.currentPhase = 1;
+                    resetStepIndicators();
+                    renderActiveSentence();
+                } else {
+                    // Jogo Completado com Sucesso!
+                    showVictoryModal();
+                }
+            }
+            updateUI();
+        }
+
+        // Altera visualmente os indicadores de passos/fases
+        function updateStepIndicators() {
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById(`step-${i}`);
+                if (i === state.currentPhase) {
+                    el.className = "py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 bg-indigo-600 text-white shadow";
+                } else if (i < state.currentPhase) {
+                    el.className = "py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 bg-emerald-950/60 text-emerald-400 border border-emerald-500/20";
+                } else {
+                    el.className = "py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 text-slate-500 hover:text-slate-400";
+                }
+            }
+        }
+
+        function resetStepIndicators() {
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById(`step-${i}`);
+                if (i === 1) {
+                    el.className = "py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 bg-indigo-600 text-white";
+                } else {
+                    el.className = "py-2.5 rounded-lg text-xs font-semibold transition-all duration-300 text-slate-400";
+                }
+            }
+        }
+
+        // Mostra o Modal de Vitória
+        function showVictoryModal() {
+            document.getElementById("modal-score").textContent = `${state.score} pts`;
+            document.getElementById("victory-modal").classList.remove("hidden");
+        }
+
+        // Helper para Alertas Personalizados Não Intrusivos
+        function showVisualAlert(msg) {
+            const alertBox = document.createElement("div");
+            alertBox.className = "fixed bottom-5 left-1/2 -translate-x-1/2 z-50 bg-rose-950 border border-rose-500 text-rose-200 px-6 py-3 rounded-xl shadow-lg shadow-rose-950/50 text-sm font-semibold animate-bounce";
+            alertBox.textContent = msg;
+            document.body.appendChild(alertBox);
+            setTimeout(() => {
+                alertBox.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

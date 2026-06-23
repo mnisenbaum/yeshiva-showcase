@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Interativo: A Crise de 1929</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons para ícones modernos -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .art-deco-title {
+            font-family: 'Cinzel', serif;
+        }
+        /* Estilização para barras de progresso e transições suaves */
+        .transition-all-300 {
+            transition: all 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-stone-900 text-stone-100 min-h-screen flex flex-col justify-between selection:bg-amber-600 selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-stone-800 bg-stone-950/80 backdrop-blur sticky top-0 z-50 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-amber-600/20 text-amber-500 rounded-lg border border-amber-600/30">
+                    <i data-lucide="trending-down" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="art-deco-title text-xl font-bold tracking-wider text-amber-500">O COLAPSO DE 1929</h1>
+                    <p class="text-xs text-stone-400">Simulador Histórico-Económico Interativo</p>
+                </div>
+            </div>
+            
+            <!-- Indicador de Fase e Progresso -->
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <div class="text-right hidden md:block">
+                    <span class="text-xs text-stone-500 block uppercase font-semibold">Progresso da Narrativa</span>
+                    <span id="fase-nome-header" class="text-xs text-amber-400 font-medium">Anos Loucos: A Expansão</span>
+                </div>
+                <div class="flex-1 sm:w-48 bg-stone-800 h-2 rounded-full overflow-hidden">
+                    <div id="barra-progresso" class="bg-amber-500 h-full w-1/5 transition-all duration-500"></div>
+                </div>
+                <span id="fase-numero" class="text-sm font-mono text-stone-400">1/5</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl w-full mx-auto p-4 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 my-4">
+        
+        <!-- Coluna Esquerda: Narrativa, Decisões e Diário de Bordo (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+            
+            <!-- Card da Fase Atual -->
+            <div class="bg-stone-950 border border-stone-800 rounded-2xl p-6 shadow-xl relative overflow-hidden flex-1 flex flex-col justify-between">
+                <!-- Marca d'água decorativa Art Déco -->
+                <div class="absolute -right-12 -bottom-12 opacity-[0.03] text-stone-400 pointer-events-none">
+                    <i data-lucide="line-chart" class="w-64 h-64"></i>
+                </div>
+
+                <div>
+                    <!-- Badge de Introdução -->
+                    <div class="flex justify-between items-start mb-4">
+                        <span id="fase-badge" class="px-3 py-1 bg-amber-600/10 text-amber-500 text-xs font-semibold rounded-full border border-amber-500/20 uppercase tracking-widest">Fase 1: O Otimismo</span>
+                        <span id="fase-ano" class="text-sm font-mono text-stone-400 bg-stone-900 px-3 py-1 rounded-md border border-stone-800">1920 - 1928</span>
+                    </div>
+
+                    <!-- Título Principal -->
+                    <h2 id="fase-titulo" class="art-deco-title text-2xl md:text-3xl font-bold text-stone-100 mb-4 tracking-wide leading-tight">Os "Anos Loucos" e a Grande Expansão</h2>
+                    
+                    <!-- Texto Descritivo -->
+                    <div id="fase-texto" class="text-stone-300 text-sm md:text-base leading-relaxed space-y-4 mb-6">
+                        <!-- Será inserido dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Painel de Ações / Escolhas -->
+                <div class="border-t border-stone-800/80 pt-6 mt-4">
+                    <h3 class="text-xs uppercase tracking-wider text-amber-500 font-semibold mb-4 flex items-center gap-2">
+                        <i data-lucide="check-square" class="w-4 h-4"></i> Tomada de Decisão Crucial
+                    </h3>
+                    <div id="opcoes-container" class="grid grid-cols-1 gap-3">
+                        <!-- Opções injetadas dinamicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Diário de Bordo e Crónicas do Período -->
+            <div class="bg-stone-950 border border-stone-800 rounded-2xl p-5 shadow-xl">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-semibold text-stone-300 flex items-center gap-2 uppercase tracking-wider">
+                        <i data-lucide="book-open" class="w-4 h-4 text-stone-400"></i> Diário Económico & Repercussões
+                    </h3>
+                    <button onclick="limparHistorico()" class="text-xs text-stone-500 hover:text-stone-300 transition">Limpar Histórico</button>
+                </div>
+                <div id="diario-bordo" class="space-y-3 max-h-48 overflow-y-auto pr-2 text-xs scrollbar-thin scrollbar-thumb-stone-800 scrollbar-track-transparent">
+                    <div class="p-2.5 bg-stone-900/50 rounded border border-stone-800 text-stone-400">
+                        <span class="text-amber-500 font-semibold">[Início]</span> O simulador iniciou nos prósperos Anos 20. O mercado está em alta exuberante. Como irá gerir o risco?
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Coluna Direita: Painel Económico de Variáveis (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- Painel de Indicadores Financeiros -->
+            <div class="bg-stone-950 border border-stone-800 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-stone-300 mb-5 flex items-center gap-2 uppercase tracking-wider">
+                        <i data-lucide="activity" class="w-4 h-4 text-amber-500"></i> Painel de Indicadores em Tempo Real
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <!-- Património / Capital -->
+                        <div class="bg-stone-900 border border-stone-800 p-4 rounded-xl">
+                            <span class="text-xs text-stone-500 block mb-1 font-medium">O Teu Capital</span>
+                            <span id="ind-capital" class="text-lg md:text-xl font-bold font-mono text-stone-100">$ 10.000</span>
+                        </div>
+                        
+                        <!-- Dívida / Alavancagem -->
+                        <div class="bg-stone-900 border border-stone-800 p-4 rounded-xl">
+                            <span class="text-xs text-stone-500 block mb-1 font-medium">Dívida Acumulada</span>
+                            <span id="ind-divida" class="text-lg md:text-xl font-bold font-mono text-red-400">$ 0</span>
+                        </div>
+
+                        <!-- Índice da Bolsa de NY -->
+                        <div class="bg-stone-900 border border-stone-800 p-4 rounded-xl">
+                            <span class="text-xs text-stone-500 block mb-1 font-medium">Bolsa de NY (Dow Jones)</span>
+                            <div class="flex items-baseline gap-2">
+                                <span id="ind-bolsa" class="text-lg md:text-xl font-bold font-mono text-emerald-400">380 pts</span>
+                                <span id="ind-bolsa-pct" class="text-xs font-mono text-emerald-400">+10%</span>
+                            </div>
+                        </div>
+
+                        <!-- Preço do Café (Saca no Brasil) -->
+                        <div class="bg-stone-900 border border-stone-800 p-4 rounded-xl">
+                            <span class="text-xs text-stone-500 block mb-1 font-medium">Preço do Café (Saca)</span>
+                            <div class="flex items-baseline gap-2">
+                                <span id="ind-cafe" class="text-lg md:text-xl font-bold font-mono text-amber-400">£ 4,50</span>
+                                <span id="ind-cafe-pct" class="text-xs font-mono text-stone-400">Estável</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Variáveis Sociais Globais -->
+                    <div class="space-y-4">
+                        <h4 class="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-2">Indicadores Macroeconómicos</h4>
+                        
+                        <!-- Confiança do Mercado -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-stone-400">Confiança do Mercado</span>
+                                <span id="pct-confianca" class="font-mono font-semibold text-emerald-400">95%</span>
+                            </div>
+                            <div class="w-full bg-stone-900 h-2 rounded-full overflow-hidden border border-stone-800">
+                                <div id="barra-confianca" class="bg-emerald-500 h-full w-[95%] transition-all duration-500"></div>
+                            </div>
+                        </div>
+
+                        <!-- Taxa de Desemprego -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-stone-400">Taxa de Desemprego Global</span>
+                                <span id="pct-desemprego" class="font-mono font-semibold text-stone-400">3,2%</span>
+                            </div>
+                            <div class="w-full bg-stone-900 h-2 rounded-full overflow-hidden border border-stone-800">
+                                <div id="barra-desemprego" class="bg-stone-500 h-full w-[3.2%] transition-all duration-500"></div>
+                            </div>
+                        </div>
+
+                        <!-- Estabilidade Social / Coesão -->
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-stone-400">Estabilidade Social</span>
+                                <span id="pct-estabilidade" class="font-mono font-semibold text-blue-400">90%</span>
+                            </div>
+                            <div class="w-full bg-stone-900 h-2 rounded-full overflow-hidden border border-stone-800">
+                                <div id="barra-estabilidade" class="bg-blue-500 h-full w-[90%] transition-all duration-500"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Linha do Comportamento da Bolsa (Custom SVG) -->
+                <div class="border-t border-stone-800/80 pt-6 mt-6">
+                    <span class="text-xs text-stone-400 font-semibold uppercase tracking-wider block mb-3">Gráfico Histórico: Bolsa vs Economia Real</span>
+                    <div class="bg-stone-900/60 border border-stone-800/80 rounded-xl p-2 relative h-40 flex flex-col justify-between">
+                        <!-- SVG para traçado dinâmico -->
+                        <svg class="absolute inset-0 w-full h-full p-2" viewBox="0 0 100 50" preserveAspectRatio="none">
+                            <!-- Grelha de Fundo -->
+                            <line x1="0" y1="12.5" x2="100" y2="12.5" stroke="#2e2a24" stroke-width="0.3" stroke-dasharray="2,2" />
+                            <line x1="0" y1="25" x2="100" y2="25" stroke="#2e2a24" stroke-width="0.3" stroke-dasharray="2,2" />
+                            <line x1="0" y1="37.5" x2="100" y2="37.5" stroke="#2e2a24" stroke-width="0.3" stroke-dasharray="2,2" />
+                            
+                            <!-- Curva da Bolsa -->
+                            <path id="grafico-bolsa" d="M 0 45 L 20 40" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" class="transition-all duration-1000"/>
+                            
+                            <!-- Curva da Produção Real / Café -->
+                            <path id="grafico-economia" d="M 0 45 L 20 43" fill="none" stroke="#f59e0b" stroke-width="1" stroke-dasharray="1,1" stroke-linecap="round" class="transition-all duration-1000"/>
+                        </svg>
+
+                        <!-- Legenda Lateral do Gráfico -->
+                        <div class="flex justify-between items-end w-full h-full z-10 pointer-events-none text-[9px] font-mono text-stone-500 px-1">
+                            <span>Início</span>
+                            <span>Anos 20</span>
+                            <span>Colapso</span>
+                            <span>Efeitos</span>
+                            <span>Recuperação</span>
+                        </div>
+                    </div>
+                    <div class="flex justify-center gap-4 mt-2 text-[10px]">
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-emerald-500 rounded-sm"></span> Bolsa de Valores (Especulação)</span>
+                        <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-amber-500 rounded-sm border border-dashed border-stone-900"></span> Economia Real / Café</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ajuda de Contexto Rápido -->
+            <div class="bg-amber-500/5 border border-amber-500/10 rounded-xl p-4 flex gap-3">
+                <i data-lucide="help-circle" class="w-5 h-5 text-amber-500 shrink-0 mt-0.5"></i>
+                <div class="text-xs text-stone-400 leading-relaxed">
+                    <strong class="text-stone-300 block mb-0.5">Como jogar?</strong>
+                    A cada etapa da narrativa, analise a conjuntura financeira e tome uma decisão. As suas escolhas influenciam diretamente a sua liquidez financeira, a estabilidade das instituições e o destino da economia brasileira!
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal para Relatório Final / Game Over -->
+    <div id="modal-fim" class="fixed inset-0 bg-stone-950/90 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="bg-stone-900 border border-amber-600/30 rounded-2xl p-6 md:p-8 max-w-2xl w-full shadow-2xl relative">
+            <div class="absolute -top-10 left-1/2 -translate-x-1/2 p-4 bg-amber-500 text-stone-950 rounded-full border-4 border-stone-900 shadow-xl">
+                <i data-lucide="award" class="w-8 h-8"></i>
+            </div>
+            
+            <div class="text-center mt-6">
+                <h3 class="art-deco-title text-2xl md:text-3xl font-bold text-amber-500 tracking-wider">Simulação Concluída</h3>
+                <p class="text-stone-400 text-sm mt-1">Veja as consequências das suas decisões no Grande Crash</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                <!-- Desempenho Financeiro -->
+                <div class="bg-stone-950 p-4 rounded-xl border border-stone-800">
+                    <h4 class="text-xs text-stone-500 uppercase font-semibold mb-2">O Seu Destino Financeiro</h4>
+                    <div id="fim-capital" class="text-2xl font-bold font-mono text-stone-200">$ 0</div>
+                    <div id="fim-divida" class="text-xs text-red-400 font-mono mt-1">Dívidas remanescentes: $ 0</div>
+                    <p id="fim-texto-financeiro" class="text-xs text-stone-400 mt-2 leading-relaxed">Avaliação do seu património após a crise.</p>
+                </div>
+
+                <!-- Desempenho Macroeconómico -->
+                <div class="bg-stone-950 p-4 rounded-xl border border-stone-800">
+                    <h4 class="text-xs text-stone-500 uppercase font-semibold mb-2">Impacto no Brasil & Sociedade</h4>
+                    <div id="fim-social" class="text-lg font-bold text-stone-200">Colapso Moderado</div>
+                    <div id="fim-indicadores-sociais" class="text-xs font-mono text-stone-400 mt-1">Estabilidade: 50% | Desemprego: 12%</div>
+                    <p id="fim-texto-social" class="text-xs text-stone-400 mt-2 leading-relaxed">Como as suas escolhas políticas de resposta moldaram o futuro institucional do país.</p>
+                </div>
+            </div>
+
+            <!-- Bloco de Reflexão Ética/Conservadora e Lições do Trabalho Escolar -->
+            <div class="bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 mb-6">
+                <h4 class="text-xs text-amber-500 font-semibold uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                    <i data-lucide="heart" class="w-3.5 h-3.5"></i> Solidariedade Tradicional & Lição Histórica
+                </h4>
+                <p id="fim-reflexao" class="text-xs text-stone-300 leading-relaxed">
+                    A crise demonstrou que, perante a fragilidade do crédito artificial, as redes tradicionais de apoio, a responsabilidade individual, a poupança prudente e as ações de solidariedade comunitária voluntária (como a tzedaká) foram cruciais para a subsistência das famílias muito antes da criação de grandes estruturas estatais centralizadas.
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="reiniciarSimulador()" class="flex-1 py-3 px-4 bg-amber-600 hover:bg-amber-700 active:bg-amber-800 text-stone-950 font-bold rounded-xl transition text-sm flex items-center justify-center gap-2">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Tentar Novamente
+                </button>
+                <button onclick="exportarRelatorio()" class="py-3 px-4 bg-stone-800 hover:bg-stone-700 active:bg-stone-600 text-stone-200 rounded-xl transition text-sm font-semibold flex items-center justify-center gap-2">
+                    <i data-lucide="download" class="w-4 h-4"></i> Guardar Relatório
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-stone-800 bg-stone-950 py-4 px-4 text-center">
+        <p class="text-xs text-stone-500">Desenvolvido como ferramenta de simulação pedagógica para o estudo crítico da Grande Depressão e dos seus impactos estruturais mundiais.</p>
+    </footer>
+
+    <script>
+        // Dados da Narrativa e Efeitos das Escolhas baseadas no Documento original
+        const fases = [
+            {
+                fase: 1,
+                badge: "Fase 1: O Otimismo e Expansão",
+                ano: "1920 - 1928",
+                titulo: "Os 'Anos Loucos' e a Grande Expansão",
+                texto: "<p>A economia dos Estados Unidos cresceu de forma estonteante na década de 1920. A produção industrial está ao rubro, novas tecnologias inundam as casas e as ações na Bolsa de Nova Iorque batem recordes diários. Há uma sensação geral de que a prosperidade durará para sempre.</p><p>No Brasil, a elite cafeeira lucra imenso exportando sacas de café a preços altos. A economia global está cada vez mais interligada, com o mercado de crédito e de capitais americano a funcionar como o motor do mundo.</p><p>Como investidor privado, como decide gerir o seu capital de $10.000 nesta fase dourada?</p>",
+                opcoes: [
+                    {
+                        texto: "Investir de forma conservadora: Manter a maioria do capital líquido e investir apenas 30% em ações seguras de utilidade pública.",
+                        efeito: { capital: 10900, divida: 0, bolsa: 380, cafe: 4.5, confianca: 95, desemprego: 3.2, estabilidade: 90 },
+                        diario: "Fase 1: Optou por uma postura prudente. Evitou contrair dívidas mas os seus lucros iniciais foram menores que os do mercado.",
+                        grafico: { bolsaY: 40, economiaY: 43 }
+                    },
+                    {
+                        texto: "Especular e Alavancar: Adquirir ações através de 'compra a margem' (empréstimo de 80% do valor), investindo um total de $50.000 em ações de alta tecnologia.",
+                        efeito: { capital: 14000, divida: 40000, bolsa: 410, cafe: 4.5, confianca: 98, desemprego: 3.0, estabilidade: 92 },
+                        diario: "Fase 1: Decidiu especular com dinheiro emprestado. Os seus lucros em papel dispararam, mas a sua dívida é enorme. Um risco alto!",
+                        grafico: { bolsaY: 35, economiaY: 43 }
+                    }
+                ]
+            },
+            {
+                fase: 2,
+                badge: "Fase 2: Mecanismos de Bolha",
+                ano: "Início de 1929",
+                titulo: "A Bolha Alimenta-se de Crédito",
+                texto: "<p>Os preços das ações já não refletem as realidades operacionais e lucros das empresas. O mercado acionista está altamente sobrevalorizado, impulsionado por esquemas de crédito fácil e pela total ausência de regulação financeira pública.</p><p>A concentração de riqueza aumenta nos EUA, limitando o consumo de bens industriais pelas massas que já dependem exclusivamente de cartões de crédito e financiamentos de curto prazo para continuar a comprar. Sinais de saturação industrial começam a surgir silenciosamente.</p><p>O que faz ao ver que o mercado continua a subir, mas que os fundamentos económicos começam a fraquejar?</p>",
+                opcoes: [
+                    {
+                        texto: "Reduzir a exposição: Vender parte significativa das ações, liquidar dívidas e focar em depósitos bancários seguros de longo prazo.",
+                        efeito: { capital: 12500, divida: 0, bolsa: 400, cafe: 4.4, confianca: 92, desemprego: 3.5, estabilidade: 88 },
+                        diario: "Fase 2: Retirou dinheiro de cima da mesa. A sua liquidez financeira está segura, observando a euforia de longe.",
+                        grafico: { bolsaY: 30, economiaY: 42 }
+                    },
+                    {
+                        texto: "Manter a aposta: O mercado sempre recupera! Continuar a reinvestir os dividendos na bolsa e incentivar o crédito fácil corporativo.",
+                        efeito: { capital: 18000, divida: 45000, bolsa: 450, cafe: 4.4, confianca: 99, desemprego: 3.4, estabilidade: 90 },
+                        diario: "Fase 2: Decidiu duplicar a aposta. O mercado atingiu o seu pico histórico absurdo. A sua carteira vale muito no papel, mas a volatilidade é extrema.",
+                        grafico: { bolsaY: 20, economiaY: 42 }
+                    }
+                ]
+            },
+            {
+                fase: 3,
+                badge: "Fase 3: O Grande Crash",
+                ano: "Outubro de 1929",
+                titulo: "Terça-Feira Negra: O Dia do Julgamento",
+                texto: "<p>O pânico instalou-se. No dia 24 de Outubro (Quinta-Feira Negra), as ordens de venda maciças entopem o sistema. No dia 29 de Outubro (Terça-Feira Negra), o castelo de cartas desmorona por completo. Corretoras liquidam posições à força para cobrir as margens de empréstimos não pagos, empurrando as cotações para o abismo.</p><p>Bancos que usaram os fundos dos depositantes para investir em ações começam a falir. As pessoas correm às agências para tentar levantar as suas poupanças antes que estas desapareçam. O crédito secou instantaneamente.</p><p>Como lida com a derrocada iminente do sistema?</p>",
+                opcoes: [
+                    {
+                        texto: "Minimizar Perdas Rápidas: Tentar vender imediatamente tudo o que possui a preço de saldo para garantir algum dinheiro físico vivo.",
+                        efeito: { capital: 6000, divida: 10000, bolsa: 150, cafe: 3.0, confianca: 30, desemprego: 12.0, estabilidade: 55 },
+                        diario: "Fase 3: Vendeu em pânico. Absorveu prejuízos gigantescos, mas conseguiu reter algum capital físico. O mercado desabou 60%.",
+                        grafico: { bolsaY: 45, economyY: 45 }
+                    },
+                    {
+                        texto: "Congelar e Aguentar: Recusar-se a vender com prejuízo e tentar renegociar o pagamento da dívida com o banco, acreditando numa recuperação de curto prazo.",
+                        efeito: { capital: 1500, divida: 42000, bolsa: 110, cafe: 3.0, confianca: 20, desemprego: 14.0, estabilidade: 50 },
+                        diario: "Fase 3: A sua carteira derreteu quase por completo. Os bancos exigem a liquidação imediata da dívida e a sua situação financeira tornou-se crítica.",
+                        grafico: { bolsaY: 48, economiaY: 45 }
+                    }
+                ]
+            },
+            {
+                fase: 4,
+                badge: "Fase 4: Propagação Global e o Café",
+                ano: "1930 - 1932",
+                titulo: "A Depressão atravessa o Atlântico: Impacto no Brasil",
+                texto: "<p>A quebra americana arrasta o comércio mundial para o fundo. Os EUA cortam as importações. No Brasil, o preço do café — motor absoluto da nossa economia — despenca verticalmente de £4,50 para menos de £1,50 a saca. Fazendeiros vão à falência, o desemprego atinge as cidades e o campo.</p><p>Este caos económico desestabiliza a República Velha dominada pelas oligarquias cafeeiras paulistas e mineiras, culminando na <strong>Revolução de 1930</strong> que leva Getúlio Vargas ao poder com uma agenda de centralização estatal e posterior industrialização substitutiva.</p><p>Como cidadão ou agente económico no Brasil, qual a sua postura perante a crise do café e a transição política?</p>",
+                opcoes: [
+                    {
+                        texto: "Apoiar a Diversificação e Reformas: Abandonar a dependência do café, apoiar a industrialização nacional emergente e a autossuficiência comunitária local.",
+                        efeito: { capital: 5500, divida: 8000, bolsa: 90, cafe: 1.8, confianca: 40, desemprego: 15.0, estabilidade: 65 },
+                        diario: "Fase 4: No Brasil, a aposta na substituição de importações e a busca por alternativas ao café protegem o mercado interno a médio prazo.",
+                        grafico: { bolsaY: 49, economiaY: 46 }
+                    },
+                    {
+                        texto: "Insistir no Café e no Protecionismo Setorial: Exigir que o governo compre e queime os stocks de café para manter o preço artificialmente alto e salvar os fazendeiros tradicionais.",
+                        efeito: { capital: 3000, divida: 15000, bolsa: 80, cafe: 1.2, confianca: 35, desemprego: 18.0, estabilidade: 58 },
+                        diario: "Fase 4: A queima massiva de café ordenada pelo governo gera estabilização temporária de preços, mas destrói riqueza real e gera pesados encargos públicos.",
+                        grafico: { bolsaY: 49, economiaY: 48 }
+                    }
+                ]
+            },
+            {
+                fase: 5,
+                badge: "Fase 5: O New Deal e Recuperação",
+                ano: "1933 - 1939",
+                titulo: "A Reconstrução das Regras do Jogo",
+                texto: "<p>Franklin D. Roosevelt assume a presidência dos EUA e lança o <strong>New Deal</strong>, um megaprograma de intervenção governamental para injetar dinheiro na economia, financiar obras públicas de grande escala e criar empregos artificiais.</p><p>Simultaneamente, são introduzidas regulamentações financeiras robustas (como a separação entre bancos de investimento e comerciais) e sistemas de proteção social (seguro de depósitos e fundos de pensões).</p><p>Do ponto de vista de longo prazo e de responsabilidade social, como deve ser financiada a estabilidade social?</p>",
+                opcoes: [
+                    {
+                        texto: "Foco na Responsabilidade Local e Regulação Financeira: Apoiar regulação bancária estrita para evitar fraudes, mas priorizar redes de solidariedade comunitárias, igrejas e associações de socorro mútuo locais para apoio aos desempregados.",
+                        efeito: { capital: 6000, divida: 5000, bolsa: 150, cafe: 2.2, confianca: 65, desemprego: 9.0, estabilidade: 78 },
+                        diario: "Fase 5: A combinação de regulação de mercado com solidariedade local voluntária evitou o endividamento estatal desenfreado e fortaleceu os laços sociais locais.",
+                        grafico: { bolsaY: 38, economiaY: 42 }
+                    },
+                    {
+                        texto: "Intervenção Estatal Total: Apoiar programas massivos de infraestruturas centralizadas financiados por défices fiscais públicos gigantescos, expandindo permanentemente a máquina do Estado.",
+                        efeito: { capital: 4500, divida: 2000, bolsa: 180, cafe: 2.5, confianca: 75, desemprego: 7.5, estabilidade: 85 },
+                        diario: "Fase 5: O desemprego recuou significativamente com as obras federais, mas o aumento da dependência estatal e o endividamento público tornaram-se problemas estruturais.",
+                        grafico: { bolsaY: 32, economiaY: 39 }
+                    }
+                ]
+            }
+        ];
+
+        // Estado do Simulador
+        let faseAtual = 0;
+        let historicoDecisoes = [];
+        let estadoEconomico = {
+            capital: 10000,
+            divida: 0,
+            bolsa: 380,
+            cafe: 4.5,
+            confianca: 95,
+            desemprego: 3.2,
+            estabilidade: 90
+        };
+
+        // Coordenadas para construção do Gráfico SVG
+        let pontosGraficoBolsa = [{x: 0, y: 45}, {x: 20, y: 40}];
+        let pontosGraficoEconomia = [{x: 0, y: 45}, {x: 20, y: 43}];
+
+        // Inicialização do Jogo
+        window.onload = function() {
+            // Inicializar os ícones Lucide
+            lucide.createIcons();
+            carregarFase(faseAtual);
+            atualizarIndicadores();
+            desenharGraficos();
+        };
+
+        function carregarFase(index) {
+            if (index >= fases.length) {
+                mostrarFimJogo();
+                return;
+            }
+
+            const fase = fases[index];
+
+            // Atualizar textos e badges
+            document.getElementById("fase-nome-header").innerText = fase.badge;
+            document.getElementById("fase-numero").innerText = `${index + 1}/${fases.length}`;
+            document.getElementById("fase-badge").innerText = fase.badge;
+            document.getElementById("fase-ano").innerText = fase.ano;
+            document.getElementById("fase-titulo").innerText = fase.titulo;
+            document.getElementById("fase-texto").innerHTML = fase.texto;
+
+            // Atualizar barra de progresso do cabeçalho
+            const progressoPct = ((index + 1) / fases.length) * 100;
+            document.getElementById("barra-progresso").style.width = `${progressoPct}%`;
+
+            // Construir as Opções de Botão
+            const containerOpcoes = document.getElementById("opcoes-container");
+            containerOpcoes.innerHTML = "";
+
+            fase.opcoes.forEach((opcao, opIdx) => {
+                const btn = document.createElement("button");
+                btn.className = "w-full text-left p-4 bg-stone-900 hover:bg-stone-800 border border-stone-800 hover:border-amber-600/50 rounded-xl transition-all-300 group flex items-start gap-3 active:scale-[0.99]";
+                btn.onclick = () => tomarDecisao(index, opIdx);
+
+                // Criar indicador visual do botão
+                const indicador = document.createElement("div");
+                indicador.className = "w-5 h-5 rounded-full border border-stone-600 group-hover:border-amber-500 group-hover:bg-amber-600/20 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold text-transparent group-hover:text-amber-400 transition-colors";
+                indicador.innerText = String.fromCharCode(65 + opIdx); // A, B, C...
+
+                const textoWrapper = document.createElement("div");
+                textoWrapper.className = "text-xs md:text-sm text-stone-300 group-hover:text-stone-100 transition-colors";
+                textoWrapper.innerText = opcao.texto;
+
+                btn.appendChild(indicador);
+                btn.appendChild(textoWrapper);
+                containerOpcoes.appendChild(btn);
+            });
+        }
+
+        function tomarDecisao(faseIdx, opcaoIdx) {
+            const fase = fases[faseIdx];
+            const escolha = fase.opcoes[opcaoIdx];
+
+            // 1. Atualizar Estado Económico
+            // Mesclar estado para simular o acumular de variações
+            estadoEconomico.capital = calcularNovoValor(estadoEconomico.capital, escolha.efeito.capital, "capital", faseIdx);
+            estadoEconomico.divida = escolha.efeito.divida;
+            estadoEconomico.bolsa = escolha.efeito.bolsa;
+            estadoEconomico.cafe = escolha.efeito.cafe;
+            estadoEconomico.confianca = escolha.efeito.confianca;
+            estadoEconomico.desemprego = escolha.efeito.desemprego;
+            estadoEconomico.estabilidade = escolha.efeito.estabilidade;
+
+            // 2. Registar no diário de bordo histórico
+            adicionarAoDiario(escolha.diario);
+            historicoDecisoes.push({
+                fase: fase.titulo,
+                escolha: escolha.texto,
+                resultado: escolha.diario
+            });
+
+            // 3. Atualizar Dados dos Gráficos Dinâmicos
+            const xCoord = (faseIdx + 1) * 20;
+            pontosGraficoBolsa.push({ x: xCoord, y: escolha.grafico.bolsaY || 45 });
+            pontosGraficoEconomia.push({ x: xCoord, y: escolha.grafico.economiaY || 45 });
+
+            // 4. Atualizar o Painel Visual
+            atualizarIndicadores();
+            desenharGraficos();
+
+            // Avançar de Fase
+            faseAtual++;
+            setTimeout(() => {
+                carregarFase(faseAtual);
+            }, 600);
+        }
+
+        // Função de inteligência para não repor simplesmente o capital mas criar dinâmica acumulativa realista
+        function calcularNovoValor(valorAtual, valorEfeito, tipo, faseIdx) {
+            if (tipo === "capital") {
+                // Se o utilizador acumulou muita dívida na fase 1 e 2, o crash da fase 3 penaliza exponencialmente
+                if (faseIdx === 2 && estadoEconomico.divida > 30000) {
+                    return Math.max(200, Math.round(valorAtual * 0.1)); // Perde 90% do valor real
+                }
+                return valorEfeito;
+            }
+            return valorEfeito;
+        }
+
+        function atualizarIndicadores() {
+            // Valores numéricos principais
+            document.getElementById("ind-capital").innerText = `$ ${estadoEconomico.capital.toLocaleString('pt')}`;
+            document.getElementById("ind-divida").innerText = `$ ${estadoEconomico.divida.toLocaleString('pt')}`;
+            
+            const bolsaElement = document.getElementById("ind-bolsa");
+            bolsaElement.innerText = `${estadoEconomico.bolsa} pts`;
+            
+            const bolsaPct = document.getElementById("ind-bolsa-pct");
+            if (estadoEconomico.bolsa > 350) {
+                bolsaElement.className = "text-lg md:text-xl font-bold font-mono text-emerald-400";
+                bolsaPct.className = "text-xs font-mono text-emerald-400";
+                bolsaPct.innerText = "Alta Exuberante";
+            } else if (estadoEconomico.bolsa > 150) {
+                bolsaElement.className = "text-lg md:text-xl font-bold font-mono text-amber-500";
+                bolsaPct.className = "text-xs font-mono text-amber-500";
+                bolsaPct.innerText = "Crash / Queda";
+            } else {
+                bolsaElement.className = "text-lg md:text-xl font-bold font-mono text-red-500";
+                bolsaPct.className = "text-xs font-mono text-red-500";
+                bolsaPct.innerText = "Depressão Crítica";
+            }
+
+            // Café
+            const cafeElement = document.getElementById("ind-cafe");
+            const cafePct = document.getElementById("ind-cafe-pct");
+            cafeElement.innerText = `£ ${estadoEconomico.cafe.toFixed(2)}`;
+            if (estadoEconomico.cafe >= 4.0) {
+                cafePct.innerText = "Excelente";
+                cafePct.className = "text-xs font-mono text-emerald-400";
+            } else if (estadoEconomico.cafe >= 2.0) {
+                cafePct.innerText = "Preço Baixo";
+                cafePct.className = "text-xs font-mono text-amber-400";
+            } else {
+                cafePct.innerText = "Colapso do Café";
+                cafePct.className = "text-xs font-mono text-red-500";
+            }
+
+            // Barras macroeconómicas
+            document.getElementById("pct-confianca").innerText = `${estadoEconomico.confianca}%`;
+            const barraConfianca = document.getElementById("barra-confianca");
+            barraConfianca.style.width = `${estadoEconomico.confianca}%`;
+            atualizarCorBarra(barraConfianca, estadoEconomico.confianca, true);
+
+            document.getElementById("pct-desemprego").innerText = `${estadoEconomico.desemprego}%`;
+            const barraDesemprego = document.getElementById("barra-desemprego");
+            barraDesemprego.style.width = `${Math.min(100, estadoEconomico.desemprego * 4)}%`; // Escalonado para visibilidade
+            atualizarCorBarra(barraDesemprego, estadoEconomico.desemprego, false); // No desemprego, valor alto é mau
+
+            document.getElementById("pct-estabilidade").innerText = `${estadoEconomico.estabilidade}%`;
+            const barraEstabilidade = document.getElementById("barra-estabilidade");
+            barraEstabilidade.style.width = `${estadoEconomico.estabilidade}%`;
+            atualizarCorBarra(barraEstabilidade, estadoEconomico.estabilidade, true);
+        }
+
+        function atualizarCorBarra(elemento, valor, positivo) {
+            if (positivo) {
+                if (valor > 70) {
+                    elemento.className = "bg-emerald-500 h-full transition-all duration-500";
+                } else if (valor > 40) {
+                    elemento.className = "bg-amber-500 h-full transition-all duration-500";
+                } else {
+                    elemento.className = "bg-red-500 h-full transition-all duration-500";
+                }
+            } else {
+                // Inverso para desemprego
+                if (valor < 5) {
+                    elemento.className = "bg-emerald-500 h-full transition-all duration-500";
+                } else if (valor < 12) {
+                    elemento.className = "bg-amber-500 h-full transition-all duration-500";
+                } else {
+                    elemento.className = "bg-red-500 h-full transition-all duration-500";
+                }
+            }
+        }
+
+        function desenharGraficos() {
+            // Bolsa de Valores SVG Path
+            let dStringBolsa = `M ${pontosGraficoBolsa[0].x} ${pontosGraficoBolsa[0].y}`;
+            for (let i = 1; i < pontosGraficoBolsa.length; i++) {
+                dStringBolsa += ` L ${pontosGraficoBolsa[i].x} ${pontosGraficoBolsa[i].y}`;
+            }
+            document.getElementById("grafico-bolsa").setAttribute("d", dStringBolsa);
+
+            // Economia Real SVG Path
+            let dStringEcon = `M ${pontosGraficoEconomia[0].x} ${pontosGraficoEconomia[0].y}`;
+            for (let i = 1; i < pontosGraficoEconomia.length; i++) {
+                dStringEcon += ` L ${pontosGraficoEconomia[i].x} ${pontosGraficoEconomia[i].y}`;
+            }
+            document.getElementById("grafico-economia").setAttribute("d", dStringEcon);
+        }
+
+        function adicionarAoDiario(texto) {
+            const container = document.getElementById("diario-bordo");
+            const log = document.createElement("div");
+            log.className = "p-2.5 bg-stone-900 border border-stone-800 rounded text-stone-300 transition-all duration-300 hover:border-amber-600/30";
+            log.innerHTML = `<span class="text-amber-500 font-semibold">[Notícias]</span> ${texto}`;
+            container.insertBefore(log, container.firstChild);
+        }
+
+        function limparHistorico() {
+            const container = document.getElementById("diario-bordo");
+            container.innerHTML = `
+                <div class="p-2.5 bg-stone-900/50 rounded border border-stone-800 text-stone-400">
+                    <span class="text-amber-500 font-semibold">[Histórico]</span> Os registos anteriores foram limpos para otimização da leitura.
+                </div>
+            `;
+        }
+
+        function mostrarFimJogo() {
+            const modal = document.getElementById("modal-fim");
+            modal.classList.remove("hidden");
+
+            // Atribuir dados de fim
+            document.getElementById("fim-capital").innerText = `$ ${estadoEconomico.capital.toLocaleString('pt')}`;
+            document.getElementById("fim-divida").innerText = `Dívidas remanescentes: $ ${estadoEconomico.divida.toLocaleString('pt')}`;
+
+            // Avaliação Financeira
+            const fimFin = document.getElementById("fim-texto-financeiro");
+            if (estadoEconomico.capital > 8000 && estadoEconomico.divida === 0) {
+                fimFin.innerText = "Excelente gestão patrimonial! Evitou a ganância desenfreada da alavancagem de crédito e protegeu a sua liquidez real. Terminou o pior choque financeiro moderno com integridade patrimonial.";
+                fimFin.className = "text-xs text-emerald-400 mt-2 leading-relaxed";
+            } else if (estadoEconomico.capital > 3000) {
+                fimFin.innerText = "Sobrevivência moderada. Embora tenha cedido temporariamente ao otimismo artificial do mercado, conseguiu estancar a hemorragia antes da falência total das suas posições.";
+                fimFin.className = "text-xs text-amber-400 mt-2 leading-relaxed";
+            } else {
+                fimFin.innerText = "Falência e Ruína Financeira. O apelo ao dinheiro fácil e à alavancagem por dívida desintegrou o seu património quando a bolha rebentou. Esta foi a dura realidade de milhões de investidores em 1929.";
+                fimFin.className = "text-xs text-red-400 mt-2 leading-relaxed";
+            }
+
+            // Avaliação Social e Impacto no Brasil
+            const fimSoc = document.getElementById("fim-social");
+            const fimIndSoc = document.getElementById("fim-indicadores-sociais");
+            const fimTextoSoc = document.getElementById("fim-texto-social");
+
+            fimIndSoc.innerText = `Estabilidade Social: ${estadoEconomico.estabilidade}% | Desemprego: ${estadoEconomico.desemprego}%`;
+
+            if (estadoEconomico.estabilidade >= 75) {
+                fimSoc.innerText = "Transição Estável e Foco Local";
+                fimSoc.className = "text-lg font-bold text-emerald-400";
+                fimTextoSoc.innerText = "As políticas adotadas priorizaram a diversificação económica saudável, a regulação prudente e o fortalecimento de redes de apoio local e comunitário voluntário. Evitou-se o autoritarismo de Estado e a dependência desmedida do crédito.";
+            } else {
+                fimSoc.innerText = "Dependência e Intervenção Massiva";
+                fimSoc.className = "text-lg font-bold text-amber-500";
+                fimTextoSoc.innerText = "O recurso a intervenções centralizadas, queima de café artificial e endividamento fiscal reduziu o desemprego imediato, mas criou as sementes de inflação futura e excessiva centralização burocrática estatal.";
+            }
+        }
+
+        function reiniciarSimulador() {
+            faseAtual = 0;
+            historicoDecisoes = [];
+            estadoEconomico = {
+                capital: 10000,
+                divida: 0,
+                bolsa: 380,
+                cafe: 4.5,
+                confianca: 95,
+                desemprego: 3.2,
+                estabilidade: 90
+            };
+            pontosGraficoBolsa = [{x: 0, y: 45}, {x: 20, y: 40}];
+            pontosGraficoEconomia = [{x: 0, y: 45}, {x: 20, y: 43}];
+
+            // Fechar modal
+            document.getElementById("modal-fim").classList.add("hidden");
+            
+            // Recomeçar
+            limparHistorico();
+            carregarFase(faseAtual);
+            atualizarIndicadores();
+            desenharGraficos();
+        }
+
+        function exportarRelatorio() {
+            let relatorio = `=== RELATÓRIO DE SIMULAÇÃO: A CRISE DE 1929 ===\n`;
+            relatorio += `Data do Relatório: ${new Date().toLocaleDateString('pt')}\n\n`;
+            relatorio += `--- DESEMPENHO ECONÓMICO FINAL ---\n`;
+            relatorio += `Capital Líquido: $ ${estadoEconomico.capital.toLocaleString('pt')}\n`;
+            relatorio += `Dívida Acumulada: $ ${estadoEconomico.divida.toLocaleString('pt')}\n`;
+            relatorio += `Índice de NY (Bolsa): ${estadoEconomico.bolsa} pts\n`;
+            relatorio += `Preço da saca de café: £ ${estadoEconomico.cafe.toFixed(2)}\n`;
+            relatorio += `Confiança do Mercado: ${estadoEconomico.confianca}%\n`;
+            relatorio += `Desemprego: ${estadoEconomico.desemprego}%\n`;
+            relatorio += `Estabilidade Social: ${estadoEconomico.estabilidade}%\n\n`;
+            
+            relatorio += `--- CRONOLOGIA DE DECISÕES ---\n`;
+            historicoDecisoes.forEach((d, index) => {
+                relatorio += `Fase ${index+1}: ${d.fase}\n`;
+                relatorio += `-> Decisão tomada: "${d.escolha}"\n`;
+                relatorio += `-> Consequência: ${d.resultado}\n\n`;
+            });
+
+            relatorio += `--- LIÇÃO ÉTICO-HISTÓRICA DE REFLEXÃO ---\n`;
+            relatorio += `A grande lição do choque de 1929 demonstra a impermanência e a ilusão das riquezas baseadas na expansão artificial de crédito e sem fundamentos reais de trabalho e produção física sólida. Demonstra também que as iniciativas de caridade comunitária voluntária, a responsabilidade individual financeira, a preservação da poupança honesta e a interdependência familiar são as redes de proteção social mais resilientes e éticas perante o colapso macroeconómico.`;
+
+            // Download do ficheiro de texto
+            const blob = new Blob([relatorio], { type: "text/plain;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Relatorio_Crise1929_Simulador.txt`;
+            link.click();
+        }
+    </script>
+</body>
+</html>

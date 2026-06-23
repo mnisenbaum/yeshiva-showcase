@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Triângulo Retângulo</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Customizações extras simples */
+        body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: #cbd5e1;
+            border-radius: 5px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #input-q::-webkit-slider-thumb { background: #3b82f6; }
+        #input-p::-webkit-slider-thumb { background: #22c55e; }
+        #input-q::-moz-range-thumb { background: #3b82f6; }
+        #input-p::-moz-range-thumb { background: #22c55e; }
+    </style>
+</head>
+<body class="min-h-screen bg-slate-50 text-slate-800 p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto">
+        
+        <!-- Header -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-900 mb-2">Relações Métricas no Triângulo Retângulo</h1>
+            <p class="text-slate-600">Explore visualmente as conexões numéricas derivadas do Teorema de Pitágoras.</p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="flex justify-center space-x-2 mb-6">
+            <button id="btn-explorer" onclick="switchTab('explorer')" class="flex items-center px-4 py-2 rounded-full font-medium transition-colors bg-indigo-600 text-white border border-transparent">
+                <i data-lucide="book-open" class="w-4 h-4 mr-2"></i>
+                Explorador Interativo
+            </button>
+            <button id="btn-quiz" onclick="switchTab('quiz')" class="flex items-center px-4 py-2 rounded-full font-medium transition-colors bg-white text-slate-600 hover:bg-indigo-50 border border-slate-200">
+                <i data-lucide="pen-tool" class="w-4 h-4 mr-2"></i>
+                Modo Desafio
+            </button>
+        </div>
+
+        <!-- Content - Explorer -->
+        <div id="tab-explorer" class="grid md:grid-cols-2 gap-6">
+            
+            <!-- Visualizer Panel -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-semibold mb-4 flex items-center">
+                    <i data-lucide="calculator" class="w-5 h-5 mr-2 text-indigo-500"></i>
+                    Visualização
+                </h2>
+                
+                <div class="mb-8" id="svg-container">
+                    <!-- SVG renderizado via JS -->
+                </div>
+
+                <div class="space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <p class="text-sm font-medium text-slate-500 mb-2">Ajuste as projeções dos catetos:</p>
+                    <div>
+                        <label class="flex justify-between text-sm mb-1 text-slate-700">
+                            <span>Projeção <strong>q</strong> (relativa ao cateto a)</span>
+                            <span id="lbl-q" class="font-bold text-blue-600">3.6</span>
+                        </label>
+                        <input type="range" id="input-q" min="1" max="15" step="0.1" value="3.6" oninput="updateExplorer()">
+                    </div>
+                    <div>
+                        <label class="flex justify-between text-sm mb-1 text-slate-700">
+                            <span>Projeção <strong>p</strong> (relativa ao cateto b)</span>
+                            <span id="lbl-p" class="font-bold text-green-600">6.4</span>
+                        </label>
+                        <input type="range" id="input-p" min="1" max="15" step="0.1" value="6.4" oninput="updateExplorer()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulas Panel -->
+            <div class="space-y-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Hipotenusa</h3>
+                    <div class="text-lg">
+                        <span class="font-mono bg-slate-100 px-2 py-1 rounded text-sm sm:text-base">c = p + q</span>
+                        <span class="mx-2 text-slate-400">→</span>
+                        <span class="text-sm sm:text-base">c = <span id="calc-c-p"></span> + <span id="calc-c-q"></span> = <strong id="res-c"></strong></span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Altura Relativa</h3>
+                    <div class="text-lg">
+                        <span class="font-mono bg-slate-100 px-2 py-1 rounded text-sm sm:text-base">h² = p · q</span>
+                        <span class="mx-2 text-slate-400">→</span>
+                        <span class="text-sm sm:text-base">h = √(<span id="calc-h-p"></span> · <span id="calc-h-q"></span>) = <strong id="res-h"></strong></span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Cateto Esquerdo (a)</h3>
+                    <div class="text-lg">
+                        <span class="font-mono bg-blue-50 text-blue-700 px-2 py-1 rounded text-sm sm:text-base">a² = c · q</span>
+                        <span class="mx-2 text-slate-400">→</span>
+                        <span class="text-sm sm:text-base">a = √(<span id="calc-a-c"></span> · <span id="calc-a-q"></span>) = <strong id="res-a"></strong></span>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-3">Cateto Direito (b)</h3>
+                    <div class="text-lg">
+                        <span class="font-mono bg-green-50 text-green-700 px-2 py-1 rounded text-sm sm:text-base">b² = c · p</span>
+                        <span class="mx-2 text-slate-400">→</span>
+                        <span class="text-sm sm:text-base">b = √(<span id="calc-b-c"></span> · <span id="calc-b-p"></span>) = <strong id="res-b"></strong></span>
+                    </div>
+                </div>
+                
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-xl">
+                    <p class="text-sm text-indigo-800">
+                        <strong>Dica:</strong> Experimente verificar a relação da área: <br/>
+                        <span class="font-mono">a · b = c · h</span><br/>
+                        <span id="res-area-left"></span> = <span id="res-area-right"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content - Quiz -->
+        <div id="tab-quiz" class="hidden max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-semibold flex items-center">
+                    <i data-lucide="pen-tool" class="w-5 h-5 mr-2 text-indigo-500"></i>
+                    Pratique seus Conhecimentos
+                </h2>
+                <button onclick="generateNewQuiz()" class="text-indigo-600 hover:bg-indigo-50 p-2 rounded-full transition-colors flex items-center" title="Novo Problema">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <p class="text-slate-600 mb-6">
+                Dado um triângulo retângulo onde os catetos medem <strong class="text-blue-600">a = <span id="quiz-qa"></span></strong> e <strong class="text-green-600">b = <span id="quiz-qb"></span></strong>. 
+                Calcule os valores abaixo (utilize ponto para decimais):
+            </p>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-700">Hipotenusa (c):</label>
+                    <input type="number" id="quiz-in-c" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Ex: 10">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-700">Projeção de a (q):</label>
+                    <input type="number" id="quiz-in-q" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Ex: 3.6">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-700">Projeção de b (p):</label>
+                    <input type="number" id="quiz-in-p" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Ex: 6.4">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-sm font-bold text-slate-700">Altura (h):</label>
+                    <input type="number" id="quiz-in-h" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Ex: 4.8">
+                </div>
+            </div>
+
+            <div id="quiz-feedback" class="hidden p-4 rounded-lg mb-6 flex items-start border">
+                <i id="quiz-feedback-icon" data-lucide="check-circle" class="w-5 h-5 mr-2 shrink-0 mt-0.5"></i>
+                <p id="quiz-feedback-text"></p>
+            </div>
+
+            <button onclick="checkAnswers()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm">
+                Verificar Respostas
+            </button>
+            
+            <!-- Dicas -->
+            <div class="mt-8 text-sm text-slate-500 border-t border-slate-100 pt-6">
+                <strong>Ordem recomendada para resolver:</strong>
+                <ol class="list-decimal pl-5 mt-2 space-y-1">
+                    <li>Use o Teorema de Pitágoras para achar <span class="font-mono">c</span> (<span class="font-mono">c² = a² + b²</span>).</li>
+                    <li>Use <span class="font-mono">a² = c · q</span> para achar <span class="font-mono">q</span>.</li>
+                    <li>Use <span class="font-mono">c = p + q</span> para achar <span class="font-mono">p</span>.</li>
+                    <li>Use <span class="font-mono">h² = p · q</span> (ou <span class="font-mono">a · b = c · h</span>) para achar <span class="font-mono">h</span>.</li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts da Lógica -->
+    <script>
+        // Inicializar os ícones
+        lucide.createIcons();
+
+        // --- Lógica das Tabs ---
+        const tabExplorer = document.getElementById('tab-explorer');
+        const tabQuiz = document.getElementById('tab-quiz');
+        const btnExplorer = document.getElementById('btn-explorer');
+        const btnQuiz = document.getElementById('btn-quiz');
+
+        const activeClass = ['bg-indigo-600', 'text-white', 'border-transparent'];
+        const inactiveClass = ['bg-white', 'text-slate-600', 'hover:bg-indigo-50', 'border-slate-200'];
+
+        function switchTab(tab) {
+            if (tab === 'explorer') {
+                tabExplorer.classList.remove('hidden');
+                tabQuiz.classList.add('hidden');
+                
+                btnExplorer.classList.remove(...inactiveClass);
+                btnExplorer.classList.add(...activeClass);
+                
+                btnQuiz.classList.remove(...activeClass);
+                btnQuiz.classList.add(...inactiveClass);
+            } else {
+                tabExplorer.classList.add('hidden');
+                tabQuiz.classList.remove('hidden');
+                
+                btnQuiz.classList.remove(...inactiveClass);
+                btnQuiz.classList.add(...activeClass);
+                
+                btnExplorer.classList.remove(...activeClass);
+                btnExplorer.classList.add(...inactiveClass);
+            }
+        }
+
+        // --- Lógica do Explorador ---
+        function updateExplorer() {
+            const p = parseFloat(document.getElementById('input-p').value);
+            const q = parseFloat(document.getElementById('input-q').value);
+
+            // Cálculos
+            const c = p + q;
+            const h = Math.sqrt(p * q);
+            const a = Math.sqrt(c * q);
+            const b = Math.sqrt(c * p);
+
+            // Atualizar UI dos sliders
+            document.getElementById('lbl-p').textContent = p.toFixed(1);
+            document.getElementById('lbl-q').textContent = q.toFixed(1);
+
+            // Atualizar valores nas fórmulas
+            document.getElementById('calc-c-p').textContent = p.toFixed(1);
+            document.getElementById('calc-c-q').textContent = q.toFixed(1);
+            document.getElementById('res-c').textContent = c.toFixed(2);
+
+            document.getElementById('calc-h-p').textContent = p.toFixed(1);
+            document.getElementById('calc-h-q').textContent = q.toFixed(1);
+            document.getElementById('res-h').textContent = h.toFixed(2);
+
+            document.getElementById('calc-a-c').textContent = c.toFixed(1);
+            document.getElementById('calc-a-q').textContent = q.toFixed(1);
+            document.getElementById('res-a').textContent = a.toFixed(2);
+
+            document.getElementById('calc-b-c').textContent = c.toFixed(1);
+            document.getElementById('calc-b-p').textContent = p.toFixed(1);
+            document.getElementById('res-b').textContent = b.toFixed(2);
+
+            document.getElementById('res-area-left').textContent = (a * b).toFixed(2);
+            document.getElementById('res-area-right').textContent = (c * h).toFixed(2);
+
+            // Atualizar o desenho em SVG
+            renderSVG(p, q, h, c, a, b);
+        }
+
+        function renderSVG(p, q, h, c, a, b) {
+            const svgWidth = 100;
+            const scale = svgWidth / c;
+            const heightScaled = h * scale;
+            const qScaled = q * scale;
+
+            const svgHTML = `
+            <svg viewBox="-5 -15 110 ${heightScaled + 25}" class="w-full h-auto drop-shadow-md">
+                <!-- Triângulo Esquerdo (Similar 1) -->
+                <polygon points="0,${heightScaled} ${qScaled},0 ${qScaled},${heightScaled}" fill="#dbeafe" stroke="#3b82f6" stroke-width="0.5" />
+                <!-- Triângulo Direito (Similar 2) -->
+                <polygon points="${qScaled},${heightScaled} ${qScaled},0 100,${heightScaled}" fill="#dcfce7" stroke="#22c55e" stroke-width="0.5" />
+                
+                <!-- Contorno Triângulo Principal -->
+                <polygon points="0,${heightScaled} 100,${heightScaled} ${qScaled},0" fill="none" stroke="#1e293b" stroke-width="1.2" />
+
+                <!-- Linha da Altura -->
+                <line x1="${qScaled}" y1="0" x2="${qScaled}" y2="${heightScaled}" stroke="#ef4444" stroke-width="1" stroke-dasharray="2,1" />
+
+                <!-- Símbolos de Ângulo Reto -->
+                <polyline points="${qScaled},${heightScaled-3} ${qScaled+3},${heightScaled-3} ${qScaled+3},${heightScaled}" fill="none" stroke="#64748b" stroke-width="0.5"/>
+                <polyline points="${qScaled},${heightScaled-3} ${qScaled-3},${heightScaled-3} ${qScaled-3},${heightScaled}" fill="none" stroke="#64748b" stroke-width="0.5"/>
+                
+                <g transform="translate(${qScaled}, 0)">
+                    <circle cx="0" cy="2" r="0.5" fill="#1e293b" />
+                </g>
+
+                <!-- Labels -->
+                <text x="${qScaled / 2 - 2}" y="${heightScaled / 2 - 2}" font-size="5" fill="#3b82f6" font-weight="bold">a=${a.toFixed(1)}</text>
+                <text x="${qScaled + (100 - qScaled) / 2 + 2}" y="${heightScaled / 2 - 2}" font-size="5" fill="#22c55e" font-weight="bold">b=${b.toFixed(1)}</text>
+                <text x="50" y="${heightScaled + 8}" font-size="5" fill="#1e293b" font-weight="bold">c=${c.toFixed(1)} (Hipotenusa)</text>
+                
+                <text x="${qScaled / 2}" y="${heightScaled - 2}" font-size="4" fill="#64748b">q=${q.toFixed(1)}</text>
+                <text x="${qScaled + (100 - qScaled) / 2}" y="${heightScaled - 2}" font-size="4" fill="#64748b">p=${p.toFixed(1)}</text>
+                
+                <text x="${qScaled + 1}" y="${heightScaled / 2}" font-size="4.5" fill="#ef4444" font-weight="bold">h=${h.toFixed(1)}</text>
+            </svg>
+            `;
+            document.getElementById('svg-container').innerHTML = svgHTML;
+        }
+
+
+        // --- Lógica do Quiz ---
+        const quizTriples = [
+            { qa: 6, qb: 8 },
+            { qa: 3, qb: 4 },
+            { qa: 9, qb: 12 },
+            { qa: 15, qb: 20 },
+            { qa: 12, qb: 16 }
+        ];
+        let quizIndex = 0;
+        let currentQuiz = quizTriples[quizIndex];
+
+        function initQuiz() {
+            document.getElementById('quiz-qa').textContent = currentQuiz.qa;
+            document.getElementById('quiz-qb').textContent = currentQuiz.qb;
+            document.getElementById('quiz-in-c').value = '';
+            document.getElementById('quiz-in-h').value = '';
+            document.getElementById('quiz-in-p').value = '';
+            document.getElementById('quiz-in-q').value = '';
+            document.getElementById('quiz-feedback').classList.add('hidden');
+        }
+
+        function generateNewQuiz() {
+            let nextIndex = Math.floor(Math.random() * quizTriples.length);
+            if (nextIndex === quizIndex) nextIndex = (nextIndex + 1) % quizTriples.length;
+            quizIndex = nextIndex;
+            currentQuiz = quizTriples[quizIndex];
+            initQuiz();
+        }
+
+        function checkAnswers() {
+            const qc = Math.sqrt(currentQuiz.qa ** 2 + currentQuiz.qb ** 2);
+            const qq = (currentQuiz.qa ** 2) / qc;
+            const qp = (currentQuiz.qb ** 2) / qc;
+            const qh = (currentQuiz.qa * currentQuiz.qb) / qc;
+
+            const userC = parseFloat(document.getElementById('quiz-in-c').value.replace(',', '.'));
+            const userH = parseFloat(document.getElementById('quiz-in-h').value.replace(',', '.'));
+            const userP = parseFloat(document.getElementById('quiz-in-p').value.replace(',', '.'));
+            const userQ = parseFloat(document.getElementById('quiz-in-q').value.replace(',', '.'));
+
+            const feedbackDiv = document.getElementById('quiz-feedback');
+            const feedbackText = document.getElementById('quiz-feedback-text');
+            const feedbackIcon = document.getElementById('quiz-feedback-icon');
+
+            feedbackDiv.classList.remove('hidden', 'bg-green-50', 'text-green-800', 'border-green-200', 'bg-red-50', 'text-red-800', 'border-red-200');
+
+            if (userC === qc && userH === qh && userP === qp && userQ === qq) {
+                feedbackDiv.classList.add('bg-green-50', 'text-green-800', 'border-green-200');
+                feedbackText.textContent = 'Excelente! Você acertou todas as relações métricas.';
+                feedbackIcon.setAttribute('data-lucide', 'check-circle');
+            } else {
+                feedbackDiv.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
+                feedbackText.textContent = 'Alguns valores estão incorretos. Revise os cálculos usando as fórmulas!';
+                feedbackIcon.setAttribute('data-lucide', 'alert-circle');
+            }
+            lucide.createIcons();
+        }
+
+        // Inicia com os valores padrão
+        updateExplorer();
+        initQuiz();
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relações Métricas do Triângulo Retângulo</title>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/MathJax.js?config=TeX-mml-chtml"></script>
+    
+    <style>
+        :root {
+            --olive-dark: #3B4436;
+            --olive-medium: #556B2F;
+            --olive-light: #8FBC8F;
+            --olive-pale: #F4F7F4;
+            --text-dark: #2C3528;
+            --white: #FFFFFF;
+            --shadow: rgba(85, 107, 47, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--olive-pale);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--olive-light);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--olive-dark);
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .intro {
+            font-style: italic;
+            color: var(--olive-medium);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: var(--olive-dark);
+            font-size: 1.5rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--olive-medium);
+            padding-left: 10px;
+        }
+
+        h3 {
+            color: var(--olive-medium);
+            font-size: 1.2rem;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul {
+            list-style-type: none;
+            margin-bottom: 20px;
+        }
+
+        li {
+            position: relative;
+            padding-left: 25px;
+            margin-bottom: 10px;
+        }
+
+        li::before {
+            content: "✦";
+            position: absolute;
+            left: 0;
+            color: var(--olive-medium);
+        }
+
+        .step-list {
+            list-style-type: decimal;
+            padding-left: 20px;
+        }
+
+        .step-list li::before {
+            content: none;
+        }
+
+        .step-list li {
+            padding-left: 0;
+            margin-bottom: 12px;
+        }
+
+        .highlight-box {
+            background-color: #EDF2ED;
+            border-right: 4px solid var(--olive-light);
+            border-left: 4px solid var(--olive-light);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .formula-item {
+            background: #F9FAF9;
+            border: 1px solid #E2E8E2;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #E2E8E2;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--olive-medium);
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Relações métricas do triângulo retângulo</h1>
+        </header>
+
+        <section>
+            <p class="intro"><strong>Introdução:</strong> As relações métricas do triângulo retângulo mostram conexões numéricas entre os lados, a altura ao vértice do ângulo reto e as projeções dos catetos sobre a hipotenusa.</p>
+            <p>Essas relações são consequência direta da semelhança entre triângulos e do Teorema de Pitágoras.</p>
+            <p>Conhecê-las facilita resolver problemas em provas e em situações práticas de projeto e engenharia.</p>
+        </section>
+
+        <section>
+            <h2>Definições e elementos</h2>
+            <ul>
+                <li><strong>Triângulo retângulo:</strong> triângulo com um ângulo de \(90^\circ\).</li>
+                <li><strong>Cateto:</strong> lado que forma o ângulo reto (cada um dos dois lados perpendiculares entre si).</li>
+                <li><strong>Hipotenusa:</strong> lado oposto ao ângulo reto (o maior lado).</li>
+                <li><strong>Altura relativa à hipotenusa:</strong> segmento traçado do vértice do ângulo reto até a hipotenusa, formando um ângulo reto com ela.</li>
+                <li><strong>Projeções dos catetos sobre a hipotenusa:</strong> os dois segmentos em que a altura divide a hipotenusa; denote-os por \(p\) e \(q\), com \(p + q = c\), onde \(c\) é a hipotenusa.</li>
+            </ul>
+        </section>
+
+        <section class="highlight-box">
+            <h2>Teorema de Pitágoras (base das relações)</h2>
+            <p><strong>Enunciado:</strong> em qualquer triângulo retângulo os quadrados dos comprimentos dos catetos somam o quadrado da hipotenusa.</p>
+            <p><strong>Fórmula:</strong> \(a^2 + b^2 = c^2\), sendo \(a\) e \(b\) os catetos e \(c\) a hipotenusa.</p>
+            <p><strong>Uso:</strong> primeiro passo para encontrar a hipotenusa a partir dos catetos, ou verificar consistência dos comprimentos dados.</p>
+        </section>
+
+        <section>
+            <h2>Semelhança de triângulos (motivo das fórmulas)</h2>
+            <p>A altura traçada ao lado da hipotenusa forma dois triângulos menores que são cada um semelhante ao triângulo original.</p>
+            <p>Da semelhança seguem proporções entre lados correspondentes, que geram as relações métricas entre catetos, hipotenusa, altitude e projeções.</p>
+        </section>
+
+        <section>
+            <h2>Principais relações métricas</h2>
+            
+            <h3>Projeção e cateto:</h3>
+            <p>Cada cateto ao quadrado é igual ao produto da hipotenusa pela projeção do cateto sobre a hipotenusa.</p>
+            <div class="formula-item">\(a^2 = c \cdot q\) (onde \(q\) é a projeção correspondente a \(a\)).</div>
+            <div class="formula-item">\(b^2 = c \cdot p\) (onde \(p\) é a projeção correspondente a \(b\)).</div>
+
+            <h3>Altura e projeções:</h3>
+            <p>O quadrado da altura é o produto das projeções.</p>
+            <div class="formula-item">\(h^2 = p \cdot q\), onde \(h\) é a altura relativa à hipotenusa.</div>
+
+            <h3>Área e produto catetos-altura:</h3>
+            <p>O produto dos catetos é igual ao produto da hipotenusa pela altura.</p>
+            <div class="formula-item">\(a \cdot b = c \cdot h\) (vem da importância das áreas calculadas de maneiras diferentes).</div>
+
+            <h3>Soma das projeções:</h3>
+            <div class="formula-item">\(p + q = c\).</div>
+
+            <p style="margin-top: 15px;"><strong>Verificações úteis:</strong> as relações métricas são compatíveis com o Teorema de Pitágoras; pode-se usar qualquer combinação delas para checar resultados.</p>
+        </section>
+
+        <section class="highlight-box">
+            <h2>Exemplo resolvido (passo a passo)</h2>
+            <p><strong>Problema:</strong> num triângulo retângulo, os catetos medem \(a = 6\) e \(b = 8\).</p>
+            <p>Determine \(c\), \(p\), \(q\) e \(h\).</p>
+            
+            <ol class="step-list">
+                <li><strong>Calcular a hipotenusa pela fórmula de Pitágoras:</strong><br>\(c = \sqrt{a^2 + b^2} = \sqrt{6^2 + 8^2} = \sqrt{36 + 64} = \sqrt{100} = 10\).</li>
+                <li><strong>Usar \(a^2 = c \cdot q\) para encontrar \(q\):</strong><br>\(q = \frac{a^2}{c} = \frac{36}{10} = 3,6\).</li>
+                <li><strong>Determinar \(p\) usando \(p + q = c\):</strong><br>\(p = c - q = 10 - 3,6 = 6,4\).</li>
+                <li><strong>Calcular a altura com \(h^2 = p \cdot q\):</strong><br>\(h = \sqrt{p \cdot q} = \sqrt{6,4 \cdot 3,6} = \sqrt{23,04} = 4,8\).</li>
+                <li><strong>Checagem rápida:</strong> verificar \(a \cdot b = c \cdot h\):<br>\(6 \cdot 8 = 48\) e \(10 \cdot 4,8 = 48\). Está consistente.</li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>Estratégias para resolver problemas</h2>
+            <ul>
+                <li>Desenhar o triângulo, marcar a altura e nomear \(a, b, c, p, q, h\); a figura orienta a escolha da relação correta.</li>
+                <li>Se faltam projeções \(p\) ou \(q\), usar \(a^2 = c \cdot q\) ou \(b^2 = c \cdot p\).</li>
+                <li>Quando falta \(h\), tentar \(h^2 = p \cdot q\) ou \(ab = ch\).</li>
+                <li>Em provas, comece por Pitágoras quando houver dois lados conhecidos; depois aplique relações métricas para obter segmentos menores.</li>
+                <li>Sempre conferir resultados com pelo menos duas relações diferentes (ex.: Pitágoras e \(ab = ch\)).</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p><strong>Conclusão:</strong> As relações métricas do triângulo retângulo sintetizam como catetos, hipotenusa, altura e projeções se relacionam por produtos e quadrados. Saber identificá-las e aplicá-las permite calcular segmentos desconhecidos, verificar consistência de dados e resolver problemas geométricos de forma rápida e segura.</p>
+        </footer>
+    </div>
+
+</body>
+</html>
