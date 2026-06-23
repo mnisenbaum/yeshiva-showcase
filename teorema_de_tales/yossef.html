@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Interativo do Teorema de Tales</title>
+    <!-- Tailwind CSS para um design moderno e limpo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #0f172a; /* Slate 900 */
+            color: #f1f5f9; /* Slate 100 */
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        /* Estilos personalizados para o canvas e controlos */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7); /* Slate 800 com opacidade */
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+
+    <!-- Cabeçalho -->
+    <header class="text-center max-w-3xl mb-6">
+        <h1 class="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+            O Teorema de Tales
+        </h1>
+        <p class="text-slate-400 text-sm md:text-base">
+            "Se um feixe de retas paralelas é cortado por duas retas transversais, os segmentos de reta correspondentes formados sobre as transversais são proporcionais."
+        </p>
+    </header>
+
+    <!-- Área Principal do Simulador -->
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch flex-grow">
+        
+        <!-- Painel do Canvas (Geometria Interativa) -->
+        <div class="lg:col-span-7 glass-panel rounded-2xl p-4 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-semibold uppercase tracking-wider text-cyan-400 flex items-center gap-1">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    Geometria Interativa
+                </span>
+                <span class="text-xs text-slate-400 hidden sm:inline">Arrasta os pontos brilhantes para mover as transversais</span>
+            </div>
+            
+            <!-- Contentor do Canvas para garantir responsividade -->
+            <div class="relative w-full flex-grow min-h-[300px] md:min-h-[450px] rounded-lg overflow-hidden bg-slate-950/80 border border-slate-800">
+                <canvas id="talesCanvas" class="absolute top-0 left-0 w-full h-full cursor-grab active:cursor-grabbing"></canvas>
+            </div>
+            
+            <div class="mt-2 text-xs text-slate-500 text-center sm:hidden">
+                Usa o toque para arrastar os pontos brilhantes nas extremidades.
+            </div>
+        </div>
+
+        <!-- Painel de Cálculos e Explicações (Matemática Viva) -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+            
+            <!-- Proporção Dinâmica -->
+            <div class="glass-panel rounded-2xl p-6 shadow-xl flex-grow flex flex-col justify-between">
+                <div>
+                    <h2 class="text-xl font-bold mb-4 text-purple-300 border-b border-slate-700 pb-2 flex items-center justify-between">
+                        <span>A Proporção</span>
+                        <span class="text-xs px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-normal">Tempo Real</span>
+                    </h2>
+
+                    <!-- Visualização das frações -->
+                    <div class="flex flex-col items-center justify-center my-6 gap-6">
+                        
+                        <!-- Expressão Simbólica -->
+                        <div class="flex items-center gap-4 text-lg md:text-xl font-mono text-slate-300">
+                            <div class="flex flex-col items-center">
+                                <span class="text-cyan-400 font-bold" id="lbl-segA">AB</span>
+                                <div class="w-12 h-[2px] bg-slate-500 my-1"></div>
+                                <span class="text-pink-400 font-bold" id="lbl-segB">BC</span>
+                            </div>
+                            <span class="text-2xl text-purple-400">=</span>
+                            <div class="flex flex-col items-center">
+                                <span class="text-emerald-400 font-bold" id="lbl-segD">DE</span>
+                                <div class="w-12 h-[2px] bg-slate-500 my-1"></div>
+                                <span class="text-amber-400 font-bold" id="lbl-segE">EF</span>
+                            </div>
+                        </div>
+
+                        <!-- Expressão Numérica Aplicada -->
+                        <div class="flex items-center gap-4 text-xl md:text-2xl font-mono font-bold bg-slate-900/50 p-4 rounded-xl border border-slate-800 w-full justify-center">
+                            <div class="flex flex-col items-center">
+                                <span class="text-cyan-400" id="val-A">0.00</span>
+                                <div class="w-16 h-[2.5px] bg-cyan-500/40 my-1"></div>
+                                <span class="text-pink-400" id="val-B">0.00</span>
+                            </div>
+                            <span class="text-3xl text-purple-400">=</span>
+                            <div class="flex flex-col items-center">
+                                <span class="text-emerald-400" id="val-D">0.00</span>
+                                <div class="w-16 h-[2.5px] bg-emerald-500/40 my-1"></div>
+                                <span class="text-amber-400" id="val-E">0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Resultados das Divisões (A Prova da Constante) -->
+                        <div class="w-full grid grid-cols-2 gap-4 text-center">
+                            <div class="p-3 bg-cyan-950/40 border border-cyan-800/30 rounded-xl">
+                                <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Razão Esquerda</div>
+                                <div class="text-xl font-mono font-black text-cyan-300" id="ratio-left">0.00</div>
+                            </div>
+                            <div class="p-3 bg-emerald-950/40 border border-emerald-800/30 rounded-xl">
+                                <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">Razão Direita</div>
+                                <div class="text-xl font-mono font-black text-emerald-300" id="ratio-right">0.00</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensagem de Constância -->
+                <div class="p-3 rounded-lg bg-slate-900/80 border border-slate-800 text-center text-xs md:text-sm text-slate-300">
+                    Repara que, embora os comprimentos individuais mudem, as <strong class="text-purple-300">razões são sempre iguais!</strong>
+                </div>
+            </div>
+
+            <!-- Painel Explicativo das Paralelas -->
+            <div class="glass-panel rounded-2xl p-4 flex flex-col justify-center gap-2">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Linhas de Referência</h3>
+                <div class="grid grid-cols-3 gap-2 text-xs font-mono">
+                    <div class="flex items-center gap-2 bg-slate-900/50 p-2 rounded border border-slate-800">
+                        <span class="w-3 h-[2px] bg-blue-500"></span>
+                        <span class="text-slate-300">Reta <em>r</em></span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-slate-900/50 p-2 rounded border border-slate-800">
+                        <span class="w-3 h-[2px] bg-purple-500"></span>
+                        <span class="text-slate-300">Reta <em>s</em></span>
+                    </div>
+                    <div class="flex items-center gap-2 bg-slate-900/50 p-2 rounded border border-slate-800">
+                        <span class="w-3 h-[2px] bg-pink-500"></span>
+                        <span class="text-slate-300">Reta <em>t</em></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="mt-6 text-center text-xs text-slate-500">
+        Desenvolvido com carinho para amantes da matemática e do belo.
+    </footer>
+
+    <!-- Lógica do Simulador -->
+    <script>
+        const canvas = document.getElementById('talesCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Valores de escala e estado da interação
+        let isDragging = false;
+        let dragTarget = null; // Guardará o ponto que está a ser arrastado
+        
+        // Definição das posições das 3 retas paralelas (Y constante)
+        let parallelY = {
+            r: 0,
+            s: 0,
+            t: 0
+        };
+
+        // Definição das transversais (pontos de controlo ajustáveis nas extremidades superior e inferior)
+        // Transversal 1 (Esquerda)
+        let trans1 = {
+            top: { x: 0, y: 0, color: '#38bdf8' },     // Cyan
+            bottom: { x: 0, y: 0, color: '#ec4899' }  // Pink
+        };
+
+        // Transversal 2 (Direita)
+        let trans2 = {
+            top: { x: 0, y: 0, color: '#10b981' },     // Emerald
+            bottom: { x: 0, y: 0, color: '#f59e0b' }  // Amber
+        };
+
+        // Raio de sensibilidade para cliques nas extremidades das retas
+        const HANDLE_RADIUS = 12;
+
+        // Inicializa as coordenadas dependendo do tamanho do canvas
+        function initDimensions() {
+            // Obter o tamanho visível real
+            const rect = canvas.parentNode.getBoundingClientRect();
+            
+            // Configurar resolução interna (multiplicar para ecrãs Retina de alta definição se necessário)
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Distribuir as retas paralelas uniformemente na vertical
+            parallelY.r = h * 0.20;
+            parallelY.s = h * 0.50;
+            parallelY.t = h * 0.80;
+
+            // Configurar posições iniciais padrão para as transversais (ângulo elegante)
+            trans1.top.x = w * 0.25;
+            trans1.top.y = h * 0.10;
+            trans1.bottom.x = w * 0.40;
+            trans1.bottom.y = h * 0.90;
+
+            trans2.top.x = w * 0.75;
+            trans2.top.y = h * 0.10;
+            trans2.bottom.x = w * 0.55;
+            trans2.bottom.y = h * 0.90;
+        }
+
+        // Função de interseção entre duas linhas infinitas:
+        // Linha Paralela (horizontal Y) e a Transversal definida por (x1, y1) a (x2, y2)
+        function getIntersection(yLine, p1, p2) {
+            // Se for vertical perfeita
+            if (p2.x === p1.x) {
+                return { x: p1.x, y: yLine };
+            }
+            // Equação da reta y = mx + c  => x = (y - c) / m
+            const m = (p2.y - p1.y) / (p2.x - p1.x);
+            const c = p1.y - m * p1.x;
+            const targetX = (yLine - c) / m;
+            return { x: targetX, y: yLine };
+        }
+
+        // Calcula a distância euclidiana simples
+        function distance(p1, p2) {
+            return Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+        }
+
+        // Desenhar no Canvas
+        function draw() {
+            // Limpeza
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 1. Desenhar grelha subtil de fundo para estilo moderno
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+            ctx.lineWidth = 1;
+            const gridSize = 30;
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+
+            // 2. Calcular pontos de interseção de cada transversal com as paralelas r, s, t
+            const p1A = getIntersection(parallelY.r, trans1.top, trans1.bottom); // Ponto A
+            const p1B = getIntersection(parallelY.s, trans1.top, trans1.bottom); // Ponto B
+            const p1C = getIntersection(parallelY.t, trans1.top, trans1.bottom); // Ponto C
+
+            const p2D = getIntersection(parallelY.r, trans2.top, trans2.bottom); // Ponto D
+            const p2E = getIntersection(parallelY.s, trans2.top, trans2.bottom); // Ponto E
+            const p2F = getIntersection(parallelY.t, trans2.top, trans2.bottom); // Ponto F
+
+            // 3. Desenhar Retas Paralelas (r, s, t)
+            ctx.lineWidth = 2;
+            
+            // Reta r
+            ctx.strokeStyle = 'rgba(59, 130, 246, 0.4)'; // Blue
+            ctx.beginPath(); ctx.moveTo(0, parallelY.r); ctx.lineTo(canvas.width, parallelY.r); ctx.stroke();
+            ctx.font = 'italic bold 12px sans-serif';
+            ctx.fillStyle = '#60a5fa';
+            ctx.fillText('reta r', 15, parallelY.r - 8);
+
+            // Reta s
+            ctx.strokeStyle = 'rgba(168, 85, 247, 0.4)'; // Purple
+            ctx.beginPath(); ctx.moveTo(0, parallelY.s); ctx.lineTo(canvas.width, parallelY.s); ctx.stroke();
+            ctx.fillStyle = '#c084fc';
+            ctx.fillText('reta s', 15, parallelY.s - 8);
+
+            // Reta t
+            ctx.strokeStyle = 'rgba(236, 72, 153, 0.4)'; // Pink
+            ctx.beginPath(); ctx.moveTo(0, parallelY.t); ctx.lineTo(canvas.width, parallelY.t); ctx.stroke();
+            ctx.fillStyle = '#f472b6';
+            ctx.fillText('reta t', 15, parallelY.t - 8);
+
+            // 4. Desenhar os segmentos das retas transversais estendidos (linha guia cinzenta escura)
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 5]);
+            // Transversal 1 guia
+            ctx.beginPath(); ctx.moveTo(trans1.top.x, trans1.top.y); ctx.lineTo(trans1.bottom.x, trans1.bottom.y); ctx.stroke();
+            // Transversal 2 guia
+            ctx.beginPath(); ctx.moveTo(trans2.top.x, trans2.top.y); ctx.lineTo(trans2.bottom.x, trans2.bottom.y); ctx.stroke();
+            ctx.setLineDash([]); // Reset do tracejado
+
+            // 5. Desenhar e destacar os segmentos de proporção formados pelas interseções
+            // Segmento AB (Azul/Ciano neon)
+            ctx.strokeStyle = '#06b6d4';
+            ctx.lineWidth = 5;
+            ctx.beginPath(); ctx.moveTo(p1A.x, p1A.y); ctx.lineTo(p1B.x, p1B.y); ctx.stroke();
+
+            // Segmento BC (Rosa neon)
+            ctx.strokeStyle = '#ec4899';
+            ctx.lineWidth = 5;
+            ctx.beginPath(); ctx.moveTo(p1B.x, p1B.y); ctx.lineTo(p1C.x, p1C.y); ctx.stroke();
+
+            // Segmento DE (Verde neon)
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 5;
+            ctx.beginPath(); ctx.moveTo(p2D.x, p2D.y); ctx.lineTo(p2E.x, p2E.y); ctx.stroke();
+
+            // Segmento EF (Laranja/Amarelo neon)
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 5;
+            ctx.beginPath(); ctx.moveTo(p2E.x, p2E.y); ctx.lineTo(p2F.x, p2F.y); ctx.stroke();
+
+            // 6. Desenhar os Pontos de Interseção (Vértices com etiquetas)
+            const pts = [
+                {p: p1A, label: 'A', fill: '#0f172a', border: '#06b6d4'},
+                {p: p1B, label: 'B', fill: '#0f172a', border: '#a855f7'},
+                {p: p1C, label: 'C', fill: '#0f172a', border: '#ec4899'},
+                {p: p2D, label: 'D', fill: '#0f172a', border: '#10b981'},
+                {p: p2E, label: 'E', fill: '#0f172a', border: '#a855f7'},
+                {p: p2F, label: 'F', fill: '#0f172a', border: '#f59e0b'}
+            ];
+
+            pts.forEach(item => {
+                ctx.beginPath();
+                ctx.arc(item.p.x, item.p.y, 6, 0, Math.PI * 2);
+                ctx.fillStyle = item.fill;
+                ctx.fill();
+                ctx.strokeStyle = item.border;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // Escrever etiquetas
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillStyle = '#f1f5f9';
+                ctx.shadowColor = 'black';
+                ctx.shadowBlur = 4;
+                ctx.fillText(item.label, item.p.x - 18, item.p.y - 10);
+                ctx.shadowBlur = 0; // Reset sombra
+            });
+
+            // 7. Desenhar Manípulos Interativos nas extremidades
+            const handles = [
+                { p: trans1.top, color: trans1.top.color },
+                { p: trans1.bottom, color: trans1.bottom.color },
+                { p: trans2.top, color: trans2.top.color },
+                { p: trans2.bottom, color: trans2.bottom.color }
+            ];
+
+            handles.forEach(h => {
+                // Brilho exterior
+                ctx.beginPath();
+                ctx.arc(h.p.x, h.p.y, HANDLE_RADIUS + 4, 0, Math.PI * 2);
+                ctx.fillStyle = h.color + '22'; // Opacidade baixa
+                ctx.fill();
+
+                // Corpo central do botão de arrasto
+                ctx.beginPath();
+                ctx.arc(h.p.x, h.p.y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                ctx.strokeStyle = h.color;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            });
+
+            // 8. Atualizar interface HTML com os dados dinâmicos das medidas
+            updateDashboard(p1A, p1B, p1C, p2D, p2E, p2F);
+        }
+
+        // Atualiza a tabela informativa e cálculos no painel lateral
+        function updateDashboard(p1A, p1B, p1C, p2D, p2E, p2F) {
+            // Comprimentos dos segmentos reais em pixels do canvas
+            const lenAB = distance(p1A, p1B);
+            const lenBC = distance(p1B, p1C);
+            const lenDE = distance(p2D, p2E);
+            const lenEF = distance(p2E, p2F);
+
+            // Escalonar valores puramente para tornar os números esteticamente apelativos (ex: escala de 1 para 10)
+            const scale = 0.05;
+            const valAB = (lenAB * scale).toFixed(2);
+            const valBC = (lenBC * scale).toFixed(2);
+            const valDE = (lenDE * scale).toFixed(2);
+            const valEF = (lenEF * scale).toFixed(2);
+
+            // Proporções
+            const ratio1 = (parseFloat(valAB) / parseFloat(valBC)).toFixed(3);
+            const ratio2 = (parseFloat(valDE) / parseFloat(valEF)).toFixed(3);
+
+            // Atualizar ecrãs
+            document.getElementById('val-A').innerText = valAB;
+            document.getElementById('val-B').innerText = valBC;
+            document.getElementById('val-D').innerText = valDE;
+            document.getElementById('val-E').innerText = valEF;
+
+            document.getElementById('ratio-left').innerText = ratio1;
+            document.getElementById('ratio-right').innerText = ratio2;
+        }
+
+        // Tratar interações do rato e toque
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            // Suporta cliques no computador e eventos touch em dispositivos móveis
+            const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+            const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function checkClickOnHandles(pos) {
+            const targets = [
+                { ref: trans1.top, name: 'trans1_top' },
+                { ref: trans1.bottom, name: 'trans1_bottom' },
+                { ref: trans2.top, name: 'trans2_top' },
+                { ref: trans2.bottom, name: 'trans2_bottom' }
+            ];
+
+            for (let target of targets) {
+                if (distance(pos, target.ref) < HANDLE_RADIUS + 10) {
+                    return target.ref;
+                }
+            }
+            return null;
+        }
+
+        // Listeners de Eventos
+        function onMouseDown(e) {
+            const pos = getMousePos(e);
+            dragTarget = checkClickOnHandles(pos);
+            if (dragTarget) {
+                isDragging = true;
+                e.preventDefault();
+            }
+        }
+
+        function onMouseMove(e) {
+            if (!isDragging || !dragTarget) return;
+
+            const pos = getMousePos(e);
+
+            // Impedir que os pontos saiam das margens visíveis do canvas
+            const padding = 15;
+            dragTarget.x = Math.max(padding, Math.min(canvas.width - padding, pos.x));
+            dragTarget.y = Math.max(padding, Math.min(canvas.height - padding, pos.y));
+
+            draw();
+            e.preventDefault();
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+            dragTarget = null;
+        }
+
+        // Registar todos os eventos (Rato & Toque)
+        canvas.addEventListener('mousedown', onMouseDown);
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+
+        canvas.addEventListener('touchstart', onMouseDown, { passive: false });
+        window.addEventListener('touchmove', onMouseMove, { passive: false });
+        window.addEventListener('touchend', onMouseUp);
+
+        // Responsividade ao redimensionar a janela
+        window.addEventListener('resize', () => {
+            initDimensions();
+            draw();
+        });
+
+        // Inicialização Primária ao carregar a página
+        window.onload = function() {
+            initDimensions();
+            draw();
+        };
+    </script>
+</body>
+</html>

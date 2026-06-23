@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Chute Perfeito - Roberto Carlos 1997</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  background:linear-gradient(135deg,#0a1628,#1a2a4a);
+  color:#e8e8e8;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center
+}
+header{
+  text-align:center;
+  padding:1.8rem 1rem 1rem;
+  width:100%;
+  max-width:960px
+}
+header h1{
+  font-size:clamp(1.4rem,4vw,2.4rem);
+  font-weight:800;
+  background:linear-gradient(135deg,#f5d442,#009c3b,#002776);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text
+}
+header .subtitle{
+  margin-top:.3rem;
+  font-size:clamp(.8rem,2vw,1rem);
+  color:#8899bb
+}
+header .context{
+  margin-top:1rem;
+  display:flex;
+  gap:1rem;
+  justify-content:center;
+  flex-wrap:wrap;
+  font-size:.85rem;
+  color:#aab8d0
+}
+header .context span{
+  background:rgba(255,255,255,.08);
+  padding:.3rem .8rem;
+  border-radius:20px
+}
+main{
+  width:100%;
+  max-width:960px;
+  padding:0 1rem 1rem;
+  flex:1
+}
+.simulator-wrapper{
+  background:rgba(255,255,255,.05);
+  border-radius:20px;
+  padding:1rem;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 8px 32px rgba(0,0,0,.4)
+}
+.canvas-container{
+  position:relative;
+  width:100%;
+  aspect-ratio:4/3;
+  border-radius:12px;
+  overflow:hidden;
+  background:#1b5e20;
+  cursor:crosshair
+}
+.canvas-container canvas{
+  width:100%;
+  height:100%;
+  display:block;
+  touch-action:none
+}
+.controls-bar{
+  display:flex;
+  gap:.6rem;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  margin-top:.8rem;
+  padding:.6rem .2rem 0
+}
+.curve-group{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  flex:2;
+  min-width:200px
+}
+.curve-group label{
+  font-size:.8rem;
+  font-weight:600;
+  white-space:nowrap;
+  color:#aab8d0
+}
+.curve-group .curve-value{
+  font-size:.85rem;
+  font-weight:700;
+  color:#f5d442;
+  min-width:2.5rem;
+  text-align:center
+}
+.curve-slider-wrap{
+  flex:1;
+  position:relative;
+  height:28px;
+  display:flex;
+  align-items:center
+}
+.curve-slider-wrap input[type=range]{
+  width:100%;
+  height:4px;
+  -webkit-appearance:none;
+  appearance:none;
+  background:linear-gradient(90deg,#2979ff,#fff,#f44336);
+  border-radius:2px;
+  outline:none
+}
+.curve-slider-wrap input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:18px;
+  height:18px;
+  background:radial-gradient(circle,#fff 30%,#1a2a4a);
+  border:2px solid #f5d442;
+  border-radius:50%;
+  cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,.4)
+}
+.curve-slider-wrap input[type=range]::-moz-range-thumb{
+  width:18px;
+  height:18px;
+  background:radial-gradient(circle,#fff 30%,#1a2a4a);
+  border:2px solid #f5d442;
+  border-radius:50%;
+  cursor:pointer
+}
+.curve-labels{
+  display:flex;
+  justify-content:space-between;
+  font-size:.65rem;
+  color:#667799;
+  margin-top:.1rem;
+  padding:0 2px
+}
+.btn-group{
+  display:flex;
+  gap:.5rem;
+  flex-wrap:wrap
+}
+.btn{
+  padding:.5rem 1.2rem;
+  border:none;
+  border-radius:8px;
+  font-size:.85rem;
+  font-weight:700;
+  cursor:pointer;
+  transition:all .2s;
+  text-transform:uppercase;
+  letter-spacing:.5px
+}
+.btn:active{transform:scale(.95)}
+.btn-primary{
+  background:linear-gradient(135deg,#009c3b,#007a2e);
+  color:#fff;
+  box-shadow:0 2px 8px rgba(0,156,59,.3)
+}
+.btn-primary:hover{box-shadow:0 4px 16px rgba(0,156,59,.5)}
+.btn-primary:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+  box-shadow:none
+}
+.btn-secondary{
+  background:rgba(255,255,255,.1);
+  color:#aab8d0
+}
+.btn-secondary:hover{background:rgba(255,255,255,.18)}
+.btn-replay{
+  background:linear-gradient(135deg,#f5d442,#d4b530);
+  color:#1a2a4a
+}
+.btn-replay:hover{box-shadow:0 4px 16px rgba(245,212,66,.4)}
+.btn-danger{
+  background:linear-gradient(135deg,#f44336,#c62828);
+  color:#fff
+}
+.btn-danger:hover{box-shadow:0 4px 16px rgba(244,67,54,.4)}
+.stats-bar{
+  display:flex;
+  gap:1rem;
+  font-size:.8rem;
+  color:#aab8d0;
+  justify-content:center;
+  margin-top:.5rem
+}
+.stats-bar span strong{color:#f5d442}
+.instructions{
+  text-align:center;
+  margin-top:.8rem;
+  font-size:.85rem;
+  color:#8899bb;
+  padding:.4rem
+}
+.instructions .keys{
+  display:inline-flex;
+  gap:.3rem;
+  align-items:center
+}
+.instructions kbd{
+  background:rgba(255,255,255,.1);
+  padding:.1rem .5rem;
+  border-radius:4px;
+  font-size:.75rem;
+  font-family:inherit
+}
+.result-overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .4s
+}
+.result-overlay.show{
+  opacity:1;
+  pointer-events:auto
+}
+.result-overlay .result-text{
+  font-size:clamp(2rem,6vw,4rem);
+  font-weight:900;
+  text-shadow:0 4px 20px rgba(0,0,0,.6);
+  animation:pulseText 1s ease-in-out infinite
+}
+@keyframes pulseText{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+}
+.result-overlay .result-sub{
+  font-size:1rem;
+  color:#aab8d0;
+  margin-top:.3rem
+}
+.explanation{
+  margin-top:2rem;
+  width:100%;
+  max-width:960px;
+  padding:0 1rem 2rem
+}
+.explanation h2{
+  font-size:1.4rem;
+  margin-bottom:1rem;
+  color:#f5d442;
+  text-align:center
+}
+.explanation-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1rem
+}
+.explanation-card{
+  background:rgba(255,255,255,.05);
+  border-radius:16px;
+  padding:1.2rem;
+  border:1px solid rgba(255,255,255,.08);
+  transition:transform .2s
+}
+.explanation-card:hover{transform:translateY(-2px)}
+.explanation-card h3{
+  font-size:1rem;
+  color:#f5d442;
+  margin-bottom:.5rem;
+  display:flex;
+  align-items:center;
+  gap:.4rem
+}
+.explanation-card p{
+  font-size:.85rem;
+  line-height:1.6;
+  color:#b0c0d8
+}
+.explanation-card .highlight{
+  color:#fff;
+  font-weight:600
+}
+.explanation-card .formula{
+  background:rgba(0,0,0,.3);
+  border-radius:8px;
+  padding:.5rem .8rem;
+  margin:.5rem 0;
+  font-family:'Courier New',monospace;
+  font-size:.8rem;
+  text-align:center;
+  color:#f5d442
+}
+.diagram-box{
+  background:rgba(0,0,0,.25);
+  border-radius:8px;
+  height:60px;
+  margin:.5rem 0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:.75rem;
+  color:#667799;
+  position:relative;
+  overflow:hidden
+}
+.diagram-box canvas{
+  width:100%;
+  height:100%;
+  display:block
+}
+footer{
+  text-align:center;
+  padding:1.5rem;
+  font-size:.75rem;
+  color:#445566;
+  width:100%
+}
+@media(max-width:640px){
+  .controls-bar{flex-direction:column;align-items:stretch}
+  .btn-group{justify-content:center}
+  .curve-group{min-width:unset}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>⚽ O Chute Perfeito</h1>
+  <p class="subtitle">Roberto Carlos &mdash; Brasil vs França &middot; 3 de Junho de 1997</p>
+  <div class="context">
+    <span>📍 Torneio da França</span>
+    <span>🎯 35 metros de distância</span>
+    <span>🌀 Curva de 5,2 metros</span>
+    <span>🥅 Goleiro: Fabien Barthez</span>
+  </div>
+</header>
+
+<main>
+  <div class="simulator-wrapper">
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="fieldCanvas"></canvas>
+      <div class="result-overlay" id="resultOverlay">
+        <div class="result-text" id="resultText"></div>
+        <div class="result-sub" id="resultSub"></div>
+      </div>
+    </div>
+    <div class="controls-bar">
+      <div class="curve-group">
+        <label>🌀 CURVA</label>
+        <div class="curve-slider-wrap">
+          <input type="range" id="curveSlider" min="-10" max="10" value="0" step="0.5">
+        </div>
+        <span class="curve-value" id="curveDisplay">0</span>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="kickBtn">⚡ CHUTAR!</button>
+        <button class="btn btn-replay" id="replayBtn" style="display:none">⟳ REPLAY</button>
+        <button class="btn btn-secondary" id="resetBtn">↺ NOVO</button>
+      </div>
+    </div>
+    <div class="curve-labels">
+      <span>← Curva Esquerda</span>
+      <span>Curva Direita →</span>
+    </div>
+    <div class="stats-bar">
+      <span>⚽ Tentativas: <strong id="attemptsDisplay">0</strong></span>
+      <span>🥅 Gols: <strong id="goalsDisplay">0</strong></span>
+      <span>📊 Aproveitamento: <strong id="rateDisplay">0%</strong></span>
+    </div>
+    <div class="instructions">
+      <span>🖱️ <strong>Arraste</strong> a partir da bola para mirar &amp; ajustar a potência &mdash; use o <strong>slider</strong> para controlar a curva</span>
+      <span style="display:block;margin-top:.3rem;font-size:.8rem;color:#667799">
+        Pressione <kbd>R</kbd> para reset &middot; <kbd>Enter</kbd> para chutar &middot; <kbd>Espaço</kbd> pausa replay
+      </span>
+    </div>
+  </div>
+
+  <section class="explanation">
+    <h2>🔬 A Física por Trás do Chute</h2>
+    <div class="explanation-grid">
+
+      <div class="explanation-card">
+        <h3>🥇 Efeito Magnus</h3>
+        <p>
+          Quando a bola gira enquanto se move no ar, o spin cria uma diferença de velocidade do ar ao redor da superfície.
+          O lado da bola que gira <span class="highlight">a favor</span> do fluxo de ar acelera as partículas de ar; o lado que gira <span class="highlight">contra</span> desacelera.
+        </p>
+        <div class="diagram-box">
+          <canvas id="magnusDiagram" width="400" height="60"></canvas>
+        </div>
+        <p>
+          Isso gera uma força perpendicular à trajetória — a <span class="highlight">Força de Magnus</span> — que desvia a bola da linha reta.
+        </p>
+        <div class="formula">F<sub>M</sub> = C<sub>M</sub> · ρ · A · r · (ω × v)</div>
+        <p style="font-size:.75rem;color:#667799">
+          C<sub>M</sub> = coeficiente Magnus &middot; ρ = densidade do ar &middot; A = área frontal &middot; r = raio &middot; ω = spin &middot; v = velocidade
+        </p>
+      </div>
+
+      <div class="explanation-card">
+        <h3>🥇 Princípio de Bernoulli</h3>
+        <p>
+          O princípio de Bernoulli afirma que, em um fluido em movimento, <span class="highlight">quanto maior a velocidade, menor a pressão</span>.
+          No chute com efeito, o ar passa mais rápido no lado da bola que gira a favor do movimento.
+        </p>
+        <div class="diagram-box">
+          <canvas id="bernoulliDiagram" width="400" height="60"></canvas>
+        </div>
+        <p>
+          A diferença de pressão entre os dois lados empurra a bola para o lado de <span class="highlight">menor pressão</span>, criando a curva característica.
+        </p>
+        <div class="formula">P + ½ρv² + ρgh = constante</div>
+        <p style="font-size:.75rem;color:#667799">
+          Onde a pressão estática (P) diminui quando a velocidade (v) aumenta.
+        </p>
+      </div>
+
+      <div class="explanation-card">
+        <h3>🥇 O Chute de Roberto Carlos</h3>
+        <p>
+          No dia 3 de junho de 1997, Roberto Carlos cobrou uma falta de <span class="highlight">35 metros</span> contra a França.
+          Ele acertou a bola com a <span class="highlight">parte externa do pé</span>, gerando um forte spin anti-horário (visto de cima).
+        </p>
+        <p>
+          A bola saiu em direção à direita do gol, parecendo que iria sair pela lateral — mas o <span class="highlight">Efeito Magnus</span> a curvou bruscamente para a esquerda,
+          enganando o goleiro Barthez, que ficou paralisado.
+        </p>
+        <p>
+          Estima-se que a bola viajou a <span class="highlight">~136 km/h</span> com uma rotação de <span class="highlight">~10 voltas/segundo</span>,
+          gerando uma curva lateral de aproximadamente <span class="highlight">5,2 metros</span> — uma das maiores já registradas.
+        </p>
+        <div class="formula" style="font-size:.85rem">
+          "A bola ia para a bandeirinha de escanteio e voltou para o gol."<br>
+          <span style="font-size:.7rem;color:#667799">— Narração lendária</span>
+        </div>
+      </div>
+
+      <div class="explanation-card" style="grid-column:1/-1">
+        <h3>🧠 Como a Física se Aplica ao Simulador</h3>
+        <p>
+          Neste simulador, cada chute é calculado frame a frame usando as leis reais da física:
+        </p>
+        <ul style="font-size:.85rem;line-height:1.8;color:#b0c0d8;padding-left:1.2rem;margin-top:.5rem">
+          <li>A <strong>direção e potência</strong> do seu arrasto definem o vetor velocidade inicial da bola</li>
+          <li>O <strong>slider de curva</strong> define o spin (rotação) da bola em torno do eixo vertical</li>
+          <li>A <strong>Força de Magnus</strong> desvia a bola lateralmente: F<sub>M</sub> ∝ ω × v</li>
+          <li>A <strong>resistência do ar</strong> desacelera a bola gradualmente</li>
+          <li>A trajetória prevista (linha tracejada) é calculada pela mesma simulação física em tempo real</li>
+          <li>No <strong>modo replay</strong>, você pode ver os vetores de velocidade e força Magnus atuando sobre a bola em câmera lenta</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>Simulador educacional baseado no chute histórico de Roberto Carlos &mdash; 1997</p>
+  <p style="margin-top:.3rem">Física: Efeito Magnus &middot; Princípio de Bernoulli &middot; Mecânica dos Fluidos</p>
+</footer>
+
+<script>
+const canvas = document.getElementById('fieldCanvas');
+const ctx = canvas.getContext('2d');
+const container = document.getElementById('canvasContainer');
+
+let W, H, dpr;
+function resize() {
+  const rect = container.getBoundingClientRect();
+  dpr = window.devicePixelRatio || 1;
+  W = rect.width;
+  H = rect.height;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.scale(dpr, dpr);
+}
+window.addEventListener('resize', resize);
+
+// ---- CONSTANTS ----
+const MAX_POWER = 750;
+const SPIN_SCALE = 5;
+const MAGNUS_COEFF = 0.00028;
+const DRAG_COEFF = 0.0008;
+const SPIN_DECAY = 0.993;
+const BALL_RADIUS = 10;
+const GOAL_WIDTH = 0.25;
+const GOAL_Y_RATIO = 0.035;
+const GOAL_POST_W = 3;
+const BARREIRA_Y = 0.58;
+const BARREIRA_COUNT = 4;
+const DT = 1/60;
+const TRAJECTORY_STEPS = 300;
+const MAX_DIST_RATIO = 0.85;
+const KICK_DELAY = 300;
+
+// ---- STATE ----
+let state = 'idle'; // idle | aiming | flying | result | replay
+let ball = {x:0, y:0, vx:0, vy:0, spin:0, radius:BALL_RADIUS};
+let aimData = {angle:0, power:0, spin:0, mouseX:0, mouseY:0};
+let isDragging = false;
+let mouseX = 0, mouseY = 0;
+let recordedFrames = [];
+let replayFrame = 0;
+let replayPaused = false;
+let replayAnimId = null;
+let flyAnimId = null;
+let stats = {attempts:0, goals:0};
+let trajectory = [];
+let kickTimer = null;
+let goalScored = false;
+
+// DOM refs
+const curveSlider = document.getElementById('curveSlider');
+const curveDisplay = document.getElementById('curveDisplay');
+const kickBtn = document.getElementById('kickBtn');
+const replayBtn = document.getElementById('replayBtn');
+const resetBtn = document.getElementById('resetBtn');
+const attemptsD = document.getElementById('attemptsDisplay');
+const goalsD = document.getElementById('goalsDisplay');
+const rateD = document.getElementById('rateDisplay');
+const resultOverlay = document.getElementById('resultOverlay');
+const resultText = document.getElementById('resultText');
+const resultSub = document.getElementById('resultSub');
+
+// ---- FIELD LAYOUT ----
+function fieldX(p){return p*W}
+function fieldY(p){return p*H}
+function goalY(){return fieldY(GOAL_Y_RATIO)}
+function goalLeft(){return W/2 - GOAL_WIDTH*W/2}
+function goalRight(){return W/2 + GOAL_WIDTH*W/2}
+function barreiraY(){return fieldY(BARREIRA_Y)}
+
+function initPositions() {
+  ball.x = W/2;
+  ball.y = H - 40;
+  ball.vx = 0;
+  ball.vy = 0;
+  ball.spin = 0;
+  goalScored = false;
+}
+
+// ---- DRAWING ----
+function drawField() {
+  ctx.save();
+
+  const grassColors = ['#1b5e20','#2e7d32'];
+  for(let i=0;i<40;i++){
+    ctx.fillStyle = grassColors[i%2];
+    ctx.fillRect(0, i*H/40, W, H/40+1);
+  }
+
+  ctx.strokeStyle = 'rgba(255,255,255,.3)';
+  ctx.lineWidth = 2;
+
+  const gy = goalY();
+  const gl = goalLeft();
+  const gr = goalRight();
+
+  ctx.strokeStyle = 'rgba(255,255,255,.25)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6,6]);
+
+  const paTop = gy - 15;
+  const paBottom = gy + H*0.2;
+  const paLeft = gl - H*0.08;
+  const paRight = gr + H*0.08;
+  ctx.strokeRect(paLeft, paTop, paRight-paLeft, paBottom-paTop);
+
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = 'rgba(255,255,255,.12)';
+  ctx.fillRect(gl, gy-2, gr-gl, 4);
+
+  ctx.strokeStyle = 'rgba(255,255,255,.8)';
+  ctx.lineWidth = GOAL_POST_W;
+  ctx.beginPath();
+  ctx.moveTo(gl-6, gy-8);
+  ctx.lineTo(gl-6, gy+10);
+  ctx.moveTo(gr+6, gy-8);
+  ctx.lineTo(gr+6, gy+10);
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(255,255,255,.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for(let y=gy-5; y<gy+20; y+=5){
+    let spread = (y-gy+5)*0.8;
+    ctx.moveTo(gl-6-spread, y);
+    ctx.lineTo(gr+6+spread, y);
+  }
+  ctx.stroke();
+
+  ctx.strokeStyle = 'rgba(255,255,255,.3)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(W/2, H-40, 60, 0, Math.PI*2);
+  ctx.stroke();
+
+  const barY = barreiraY();
+  ctx.fillStyle = 'rgba(255,87,34,.7)';
+  for(let i=0;i<BARREIRA_COUNT;i++){
+    const bx = W/2 + (i - (BARREIRA_COUNT-1)/2)*26;
+    ctx.beginPath();
+    ctx.arc(bx, barY, 11, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.06)';
+  }
+  ctx.fillStyle = 'rgba(255,87,34,.7)';
+  for(let i=0;i<BARREIRA_COUNT;i++){
+    const bx = W/2 + (i - (BARREIRA_COUNT-1)/2)*26;
+    ctx.fillStyle = 'rgba(255,255,255,.2)';
+    ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#fff';
+    ctx.fillText(i+1, bx, barY);
+    ctx.fillStyle = 'rgba(255,87,34,.7)';
+  }
+
+  ctx.restore();
+}
+
+function drawBall(x, y, radius, spin) {
+  if(!radius) radius = BALL_RADIUS;
+  ctx.save();
+  ctx.translate(x, y);
+
+  const grad = ctx.createRadialGradient(-radius*0.3, -radius*0.3, 0, 0, 0, radius);
+  grad.addColorStop(0, '#f0f0f0');
+  grad.addColorStop(0.6, '#ddd');
+  grad.addColorStop(1, '#999');
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(0,0,0,.15)';
+  ctx.lineWidth = 1;
+  for(let i=0;i<5;i++){
+    const a = (i/5)*Math.PI*2 + (spin || 0)*0.5;
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.lineTo(Math.cos(a)*radius*0.8, Math.sin(a)*radius*0.8);
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle = 'rgba(0,0,0,.1)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius*0.5, 0, Math.PI*2);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawTrajectory(traj, isPreview) {
+  if(!traj || traj.length<2) return;
+  ctx.save();
+  if(isPreview){
+    ctx.strokeStyle = 'rgba(255,255,100,.5)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5,5]);
+  } else {
+    ctx.strokeStyle = 'rgba(255,255,100,.8)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([]);
+  }
+  ctx.beginPath();
+  ctx.moveTo(traj[0].x, traj[0].y);
+  for(let i=1;i<traj.length;i++){
+    ctx.lineTo(traj[i].x, traj[i].y);
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawAimArrow(x1, y1, angle, power) {
+  const len = Math.min(power/MAX_POWER, 1) * Math.min(W, H) * 0.35;
+  const x2 = x1 + Math.cos(angle)*len;
+  const y2 = y1 + Math.sin(angle)*len;
+
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,.6)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4,4]);
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  const headSize = 8;
+  const headAngle = 0.4;
+  ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - Math.cos(angle-headAngle)*headSize, y2 - Math.sin(angle-headAngle)*headSize);
+  ctx.lineTo(x2 - Math.cos(angle+headAngle)*headSize, y2 - Math.sin(angle+headAngle)*headSize);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawSpinIndicators(x, y, spin) {
+  if(Math.abs(spin) < 0.5) return;
+  ctx.save();
+  ctx.translate(x, y);
+  const r = BALL_RADIUS + 10;
+  ctx.strokeStyle = spin > 0 ? 'rgba(100,200,255,.6)' : 'rgba(255,100,100,.6)';
+  ctx.lineWidth = 2;
+  const dir = spin > 0 ? 1 : -1;
+  for(let i=0;i<3;i++){
+    const a = Math.PI/2 + i*Math.PI*0.25*dir;
+    const tip = r + 8;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(a)*r, Math.sin(a)*r);
+    ctx.lineTo(Math.cos(a)*tip, Math.sin(a)*tip);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawVector(x, y, vx, vy, color, label) {
+  const len = Math.sqrt(vx*vx + vy*vy);
+  if(len < 1) return;
+  const scale = 50;
+  const ex = vx/len*scale;
+  const ey = vy/len*scale;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x,y);
+  ctx.lineTo(x+ex, y+ey);
+  ctx.stroke();
+
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  const hs = 5;
+  const a = Math.atan2(ey, ex);
+  ctx.moveTo(x+ex, y+ey);
+  ctx.lineTo(x+ex-Math.cos(a-0.5)*hs, y+ey-Math.sin(a-0.5)*hs);
+  ctx.lineTo(x+ex-Math.cos(a+0.5)*hs, y+ey-Math.sin(a+0.5)*hs);
+  ctx.closePath();
+  ctx.fill();
+
+  if(label){
+    ctx.font = '11px sans-serif';
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.fillText(label, x+ex/2, y+ey/2-8);
+  }
+  ctx.restore();
+}
+
+function drawReplayVectors() {
+  if(state !== 'replay' || !recordedFrames.length) return;
+  const idx = Math.min(Math.floor(replayFrame), recordedFrames.length-1);
+  const f = recordedFrames[idx];
+  if(!f) return;
+
+  const sx = 0.3;
+  drawVector(f.x, f.y, f.vx*sx, f.vy*sx, 'rgba(100,255,100,.8)', 'velocidade');
+  drawVector(f.x, f.y, f.fmx*2, f.fmy*2, 'rgba(255,200,50,.8)', 'Magnus');
+  drawVector(f.x, f.y, f.dx*3, f.dy*3, 'rgba(255,100,100,.5)', 'arrasto');
+}
+
+// ---- PHYSICS ----
+function physicsStep(b, dt) {
+  const speed = Math.sqrt(b.vx*b.vx + b.vy*b.vy);
+  if(speed < 0.01) {
+    b.vx = 0; b.vy = 0;
+    return;
+  }
+
+  const magnusX = MAGNUS_COEFF * b.spin * b.vy;
+  const magnusY = -MAGNUS_COEFF * b.spin * b.vx;
+
+  const dragX = -DRAG_COEFF * speed * b.vx;
+  const dragY = -DRAG_COEFF * speed * b.vy;
+
+  b.vx += (magnusX + dragX) * dt;
+  b.vy += (magnusY + dragY) * dt;
+
+  b.spin *= Math.pow(SPIN_DECAY, dt*60);
+  if(Math.abs(b.spin) < 0.01) b.spin = 0;
+
+  b.x += b.vx * dt;
+  b.y += b.vy * dt;
+
+  return {fmx:magnusX, fmy:magnusY, dx:dragX, dy:dragY};
+}
+
+function simulatePreview(ballState, steps) {
+  const b = {...ballState};
+  const pts = [{x:b.x, y:b.y}];
+  const maxSteps = steps || TRAJECTORY_STEPS;
+  const bw = GOAL_WIDTH*W;
+  const gl = W/2 - bw/2;
+  const gr = W/2 + bw/2;
+  const gy = goalY();
+
+  for(let i=0;i<maxSteps;i++){
+    const spd = Math.sqrt(b.vx*b.vx + b.vy*b.vy);
+    if(spd < 0.5) break;
+
+    const magnusX = MAGNUS_COEFF * b.spin * b.vy;
+    const magnusY = -MAGNUS_COEFF * b.spin * b.vx;
+    const dragX = -DRAG_COEFF * spd * b.vx;
+    const dragY = -DRAG_COEFF * spd * b.vy;
+
+    b.vx += (magnusX + dragX) * DT;
+    b.vy += (magnusY + dragY) * DT;
+    b.spin *= Math.pow(SPIN_DECAY, 1);
+
+    b.x += b.vx * DT;
+    b.y += b.vy * DT;
+
+    pts.push({x:b.x, y:b.y});
+
+    if(b.y < gy-5){
+      if(b.x > gl && b.x < gr) break;
+      break;
+    }
+    if(b.x < -50 || b.x > W+50 || b.y < -50 || b.y > H+50) break;
+  }
+  return pts;
+}
+
+// ---- KICK EXECUTION ----
+function executeKick() {
+  if(state === 'flying') return;
+
+  const power = aimData.power;
+  if(power < 20) return;
+
+  ball.x = W/2;
+  ball.y = H - 40;
+  ball.vx = Math.cos(aimData.angle) * power;
+  ball.vy = Math.sin(aimData.angle) * power;
+  ball.spin = aimData.spin * SPIN_SCALE;
+
+  state = 'flying';
+  kickBtn.disabled = true;
+  replayBtn.style.display = 'none';
+  recordedFrames = [];
+  goalScored = false;
+  trajectory = [{x:ball.x, y:ball.y}];
+  recordedFrames.push({
+    x:ball.x, y:ball.y, vx:ball.vx, vy:ball.vy,
+    spin:ball.spin, fmx:0, fmy:0, dx:0, dy:0
+  });
+  stats.attempts++;
+  updateStats();
+  hideResult();
+
+  let frameCount = 0;
+  const bw = GOAL_WIDTH*W;
+  const gl = W/2 - bw/2;
+  const gr = W/2 + bw/2;
+  const gy = goalY();
+
+  function flyLoop() {
+    const spd = Math.sqrt(ball.vx*ball.vx + ball.vy*ball.vy);
+    if(spd < 0.5 || ball.x < -100 || ball.x > W+100 || ball.y < -100 || ball.y > H+100 || ball.y > H+50) {
+      finishKick();
+      return;
+    }
+
+    const result = physicsStep(ball, DT);
+    recordedFrames.push({
+      x:ball.x, y:ball.y, vx:ball.vx, vy:ball.vy,
+      spin:ball.spin,
+      fmx:result.fmx, fmy:result.fmy,
+      dx:result.dx, dy:result.dy
+    });
+
+    trajectory.push({x:ball.x, y:ball.y});
+
+    if(ball.y < gy && !goalScored) {
+      if(ball.x > gl && ball.x < gr) {
+        goalScored = true;
+        stats.goals++;
+        updateStats();
+        setTimeout(()=>{
+          showResult('⚽ GOL!', 'Roberto Carlos teria orgulho!');
+          render();
+        }, 200);
+      }
+    }
+
+    render();
+    frameCount++;
+    flyAnimId = requestAnimationFrame(flyLoop);
+  }
+
+  flyAnimId = requestAnimationFrame(flyLoop);
+}
+
+function finishKick() {
+  state = 'result';
+  kickBtn.disabled = false;
+  replayBtn.style.display = 'inline-block';
+  render();
+
+  if(!goalScored){
+    showResult('❌ ERROU', 'Tente novamente! Ajuste a mira e a curva.');
+  }
+}
+
+// ---- REPLAY ----
+function startReplay() {
+  if(!recordedFrames.length) return;
+  state = 'replay';
+  replayFrame = 0;
+  replayPaused = false;
+  replayBtn.textContent = '⏸ PAUSAR';
+  kickBtn.disabled = true;
+  hideResult();
+
+  if(replayAnimId) cancelAnimationFrame(replayAnimId);
+
+  function replayLoop() {
+    if(state !== 'replay') return;
+
+    if(!replayPaused) {
+      replayFrame += 0.35;
+    }
+
+    if(Math.floor(replayFrame) >= recordedFrames.length - 1) {
+      replayFrame = recordedFrames.length - 1;
+      replayPaused = true;
+      replayBtn.textContent = '▶ CONTINUAR';
+      drawReplayFrame();
+      replayAnimId = requestAnimationFrame(replayLoop);
+      return;
+    }
+
+    drawReplayFrame();
+    replayAnimId = requestAnimationFrame(replayLoop);
+  }
+
+  replayAnimId = requestAnimationFrame(replayLoop);
+}
+
+function drawReplayFrame() {
+  const idx = Math.min(Math.floor(replayFrame), recordedFrames.length-1);
+  const f = recordedFrames[idx];
+  if(!f) return;
+
+  ctx.clearRect(0, 0, W, H);
+  drawField();
+
+  for(let i=0;i<=idx;i++){
+    const p = recordedFrames[i];
+    if(!p) continue;
+    ctx.fillStyle = i === idx ? 'rgba(255,255,100,.6)' : 'rgba(255,255,200,.15)';
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, i===idx?4:2, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  drawBall(f.x, f.y, BALL_RADIUS, f.spin);
+  drawSpinIndicators(f.x, f.y, f.spin);
+  drawReplayVectors();
+
+  ctx.save();
+  ctx.fillStyle = 'rgba(0,0,0,.6)';
+  ctx.fillRect(8, 8, 130, 28);
+  ctx.fillStyle = '#fff';
+  ctx.font = '12px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  const pct = Math.round((idx/recordedFrames.length)*100);
+  ctx.fillText(`⏱ Replay ${pct}%`, 14, 13);
+  ctx.restore();
+}
+
+// ---- UI HELPERS ----
+function showResult(text, sub) {
+  resultText.textContent = text;
+  resultSub.textContent = sub || '';
+  resultOverlay.classList.add('show');
+}
+
+function hideResult() {
+  resultOverlay.classList.remove('show');
+}
+
+function updateStats() {
+  attemptsD.textContent = stats.attempts;
+  goalsD.textContent = stats.goals;
+  rateD.textContent = stats.attempts ? Math.round(stats.goals/stats.attempts*100)+'%' : '0%';
+}
+
+function resetAll() {
+  if(flyAnimId) cancelAnimationFrame(flyAnimId);
+  if(replayAnimId) cancelAnimationFrame(replayAnimId);
+  if(kickTimer) clearTimeout(kickTimer);
+
+  state = 'idle';
+  isDragging = false;
+  kickBtn.disabled = false;
+  replayBtn.style.display = 'none';
+  replayBtn.textContent = '⟳ REPLAY';
+  replayPaused = false;
+  recordedFrames = [];
+  trajectory = [];
+  hideResult();
+  initPositions();
+  aimData = {angle:-Math.PI/2, power:0, spin:0, mouseX:0, mouseY:0};
+  render();
+}
+
+// ---- MOUSE INTERACTION ----
+function getCanvasPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: (clientX - rect.left) * (canvas.width/rect.width/dpr),
+    y: (clientY - rect.top) * (canvas.height/rect.height/dpr)
+  };
+}
+
+function handleDown(e) {
+  e.preventDefault();
+  if(state === 'flying' || state === 'replay') return;
+
+  const pos = getCanvasPos(e);
+  const dx = pos.x - W/2;
+  const dy = pos.y - (H-40);
+  const dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(dist > 60) return;
+
+  isDragging = true;
+  mouseX = pos.x;
+  mouseY = pos.y;
+  state = 'aiming';
+}
+
+function handleMove(e) {
+  e.preventDefault();
+  const pos = getCanvasPos(e);
+  mouseX = pos.x;
+  mouseY = pos.y;
+
+  if(isDragging && state === 'aiming') {
+    updateAim();
+  }
+
+  if(state === 'idle' || state === 'aiming') {
+    render();
+  }
+}
+
+function handleUp(e) {
+  e.preventDefault();
+  if(isDragging && state === 'aiming') {
+    isDragging = false;
+    if(aimData.power > 20) {
+      executeKick();
+    } else {
+      state = 'idle';
+      render();
+    }
+  }
+}
+
+function updateAim() {
+  const dx = mouseX - W/2;
+  const dy = mouseY - (H-40);
+  const dist = Math.sqrt(dx*dx + dy*dy);
+  const maxDist = Math.min(W, H) * MAX_DIST_RATIO;
+
+  aimData.angle = Math.atan2(dy, dx);
+  aimData.power = Math.min(dist / maxDist, 1) * MAX_POWER;
+  aimData.spin = parseFloat(curveSlider.value);
+  aimData.mouseX = mouseX;
+  aimData.mouseY = mouseY;
+
+  const bState = {
+    x: W/2,
+    y: H-40,
+    vx: Math.cos(aimData.angle) * aimData.power,
+    vy: Math.sin(aimData.angle) * aimData.power,
+    spin: aimData.spin * SPIN_SCALE
+  };
+  trajectory = simulatePreview(bState, TRAJECTORY_STEPS);
+
+  render();
+}
+
+// ---- RENDER ----
+function render() {
+  ctx.clearRect(0, 0, W, H);
+  drawField();
+
+  if(state === 'idle') {
+    drawBall(W/2, H-40, BALL_RADIUS, 0);
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,255,255,.25)';
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('⬅ Clique e arraste a partir da bola', W/2, H-48);
+    ctx.restore();
+  }
+
+  if(state === 'aiming') {
+    drawBall(W/2, H-40, BALL_RADIUS, aimData.spin*0.5);
+    if(aimData.power > 5) {
+      drawAimArrow(W/2, H-40, aimData.angle, aimData.power);
+      drawTrajectory(trajectory, true);
+      drawSpinIndicators(W/2, H-40, aimData.spin);
+
+      ctx.save();
+      const speedKmh = (aimData.power/MAX_POWER)*136;
+      ctx.fillStyle = 'rgba(0,0,0,.5)';
+      ctx.fillRect(8, H-56, 140, 24);
+      ctx.fillStyle = '#fff';
+      ctx.font = '11px sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(`⚡ ${Math.round(aimData.power)} N · ${Math.round(speedKmh)} km/h`, 14, H-44);
+      ctx.restore();
+    }
+  }
+
+  if(state === 'flying' && trajectory.length) {
+    drawTrajectory(trajectory, false);
+    drawBall(ball.x, ball.y, BALL_RADIUS, ball.spin);
+    drawSpinIndicators(ball.x, ball.y, ball.spin);
+  }
+
+  if(state === 'result') {
+    if(trajectory.length){
+      drawTrajectory(trajectory, false);
+    }
+    drawBall(ball.x, ball.y, Math.max(BALL_RADIUS, BALL_RADIUS), ball.spin);
+
+    if(!goalScored){
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,80,80,.15)';
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, 30, 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  if(state === 'replay') {
+    // handled by drawReplayFrame
+  }
+}
+
+// ---- DIAGRAMS ----
+function drawMagnusDiagram() {
+  const c = document.getElementById('magnusDiagram');
+  const cx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  cx.clearRect(0,0,w,h);
+
+  const cy = h/2;
+  const bx = w/2;
+
+  cx.fillStyle = 'rgba(255,255,255,.8)';
+  cx.beginPath();
+  cx.arc(bx, cy, 18, 0, Math.PI*2);
+  cx.fill();
+
+  cx.strokeStyle = '#f5d442';
+  cx.lineWidth = 2;
+  for(let i=0;i<6;i++){
+    const a = (i/6)*Math.PI*2;
+    cx.beginPath();
+    cx.moveTo(bx+Math.cos(a)*14, cy+Math.sin(a)*14);
+    cx.lineTo(bx+Math.cos(a)*20, cy+Math.sin(a)*20);
+    cx.stroke();
+  }
+
+  const arrowY = cy-2;
+  cx.strokeStyle = '#4fc3f7';
+  cx.lineWidth = 2;
+  cx.beginPath();
+  cx.moveTo(bx-80, arrowY);
+  cx.lineTo(bx-22, arrowY);
+  cx.stroke();
+  cx.fillStyle = '#4fc3f7';
+  cx.beginPath();
+  cx.moveTo(bx-22, arrowY);
+  cx.lineTo(bx-28, arrowY-4);
+  cx.lineTo(bx-28, arrowY+4);
+  cx.closePath();
+  cx.fill();
+
+  cx.strokeStyle = '#ef5350';
+  cx.lineWidth = 2;
+  cx.beginPath();
+  cx.moveTo(bx+22, arrowY);
+  cx.lineTo(bx+80, arrowY);
+  cx.stroke();
+  cx.fillStyle = '#ef5350';
+  cx.beginPath();
+  cx.moveTo(bx+22, arrowY);
+  cx.lineTo(bx+28, arrowY-4);
+  cx.lineTo(bx+28, arrowY+4);
+  cx.closePath();
+  cx.fill();
+
+  cx.fillStyle = '#4fc3f7';
+  cx.font = '10px sans-serif';
+  cx.textAlign = 'center';
+  cx.fillText('ar mais rápido · pressão baixa', bx-50, cy-14);
+  cx.fillStyle = '#ef5350';
+  cx.fillText('ar mais lento · pressão alta', bx+50, cy-14);
+
+  cx.strokeStyle = '#f5d442';
+  cx.lineWidth = 1.5;
+  cx.setLineDash([3,3]);
+  cx.beginPath();
+  cx.moveTo(bx, cy-26);
+  cx.lineTo(bx, cy+26);
+  cx.stroke();
+  cx.setLineDash([]);
+  cx.fillStyle = '#f5d442';
+  cx.font = '9px sans-serif';
+  cx.fillText('Força Magnus →', bx+35, cy+18);
+}
+
+function drawBernoulliDiagram() {
+  const c = document.getElementById('bernoulliDiagram');
+  const cx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  cx.clearRect(0,0,w,h);
+
+  const cy = h/2;
+  const bx = w/2;
+
+  cx.fillStyle = 'rgba(255,255,255,.8)';
+  cx.beginPath();
+  cx.arc(bx, cy, 18, 0, Math.PI*2);
+  cx.fill();
+
+  cx.strokeStyle = '#f5d442';
+  cx.lineWidth = 2;
+  for(let i=0;i<6;i++){
+    const a = (i/6)*Math.PI*2;
+    cx.beginPath();
+    cx.moveTo(bx+Math.cos(a)*14, cy+Math.sin(a)*14);
+    cx.lineTo(bx+Math.cos(a)*20, cy+Math.sin(a)*20);
+    cx.stroke();
+  }
+
+  for(let side=-1; side<=1; side+=2){
+    const sx = bx + side*35;
+    for(let j=0;j<5;j++){
+      const by = cy + (j-2)*12;
+      cx.fillStyle = side === -1 ? 'rgba(255,80,80,.4)' : 'rgba(100,200,255,.4)';
+      cx.beginPath();
+      cx.arc(sx + (side===-1? -5 : 5), by, 3, 0, Math.PI*2);
+      cx.fill();
+    }
+  }
+
+  cx.fillStyle = '#4fc3f7';
+  cx.font = '10px sans-serif';
+  cx.textAlign = 'center';
+  cx.fillText('Moléculas mais espaçadas', bx-55, cy-22);
+  cx.fillStyle = '#ef5350';
+  cx.fillText('Moléculas mais compactas', bx+55, cy-22);
+  cx.fillStyle = '#4fc3f7';
+  cx.font = '9px sans-serif';
+  cx.fillText('↓ pressão', bx-35, cy+26);
+  cx.fillStyle = '#ef5350';
+  cx.fillText('↑ pressão', bx+35, cy+26);
+
+  cx.strokeStyle = '#f5d442';
+  cx.lineWidth = 1.5;
+  cx.setLineDash([3,3]);
+  cx.beginPath();
+  cx.moveTo(bx, cy-26);
+  cx.lineTo(bx, cy+26);
+  cx.stroke();
+  cx.setLineDash([]);
+  cx.fillStyle = '#f5d442';
+  cx.font = '9px sans-serif';
+  cx.fillText('Força Magnus ←', bx-55, cy+16);
+}
+
+// ---- EVENT LISTENERS ----
+canvas.addEventListener('mousedown', handleDown);
+canvas.addEventListener('mousemove', handleMove);
+canvas.addEventListener('mouseup', handleUp);
+canvas.addEventListener('mouseleave', (e) => {
+  if(isDragging && state==='aiming') handleUp(e);
+});
+
+canvas.addEventListener('touchstart', (e) => {e.preventDefault(); handleDown(e);}, {passive:false});
+canvas.addEventListener('touchmove', (e) => {e.preventDefault(); handleMove(e);}, {passive:false});
+canvas.addEventListener('touchend', (e) => {e.preventDefault(); handleUp(e);}, {passive:false});
+
+curveSlider.addEventListener('input', () => {
+  curveDisplay.textContent = curveSlider.value;
+  const val = parseFloat(curveSlider.value);
+  curveDisplay.textContent = val > 0 ? `+${val}` : `${val}`;
+  if(state === 'aiming') updateAim();
+  if(state === 'idle') render();
+});
+
+kickBtn.addEventListener('click', () => {
+  if(state === 'aiming' && aimData.power > 20) {
+    isDragging = false;
+    executeKick();
+  } else if(state === 'idle' || state === 'result') {
+    if(state === 'result') resetAll();
+  }
+});
+
+replayBtn.addEventListener('click', () => {
+  if(state === 'result' || state === 'replay') {
+    if(state === 'result') {
+      startReplay();
+    } else if(state === 'replay') {
+      replayPaused = !replayPaused;
+      replayBtn.textContent = replayPaused ? '▶ CONTINUAR' : '⏸ PAUSAR';
+    }
+  }
+});
+
+resetBtn.addEventListener('click', resetAll);
+
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'r' || e.key === 'R') resetAll();
+  if(e.key === 'Enter') {
+    if(state === 'aiming' && aimData.power > 20) {
+      isDragging = false;
+      executeKick();
+    }
+  }
+  if(e.key === ' ') {
+    e.preventDefault();
+    if(state === 'replay') {
+      replayPaused = !replayPaused;
+      replayBtn.textContent = replayPaused ? '▶ CONTINUAR' : '⏸ PAUSAR';
+    } else if(state === 'result') {
+      startReplay();
+    }
+  }
+});
+
+// ---- INIT ----
+function init() {
+  resize();
+  initPositions();
+  curveDisplay.textContent = '0';
+  drawMagnusDiagram();
+  drawBernoulliDiagram();
+  updateStats();
+  render();
+}
+
+window.addEventListener('resize', () => {
+  resize();
+  if(state === 'idle') render();
+});
+
+init();
+</script>
+</body>
+</html>

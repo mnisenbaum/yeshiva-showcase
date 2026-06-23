@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tales & Marco Aurélio - O Teorema da Proporção</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body class="bg-[#F4F1EA] text-[#2C2C2C] selection:bg-[#B59A5A] selection:text-white pb-12 min-h-screen">
+
+    <header class="bg-[#1F3024] text-[#F4F1EA] py-8 px-4 shadow-md border-b-4 border-[#B59A5A]">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-serif tracking-widest uppercase mb-4 text-[#E6DAC3]">
+                Teorema de Tales
+            </h1>
+            <div class="flex items-center justify-center space-x-2 text-[#B59A5A] italic">
+                <i data-lucide="quote" class="w-5 h-5"></i>
+                <p class="font-serif text-lg md:text-xl">
+                    "A harmonia do universo repousa sobre proporções perfeitas."
+                </p>
+            </div>
+            <p class="text-sm mt-2 opacity-80 uppercase tracking-widest">— O Caminho Estoico</p>
+        </div>
+    </header>
+
+    <nav class="flex justify-center mt-8 px-4">
+        <div class="inline-flex rounded-md shadow-sm" role="group">
+            <button id="btn-simulator" onclick="switchTab('simulator')" class="px-6 py-3 text-sm md:text-base font-serif tracking-wider border border-[#D4C3A3] rounded-l-lg transition-all flex items-center space-x-2 bg-[#B59A5A] text-white">
+                <i data-lucide="calculator" class="w-4 h-4"></i>
+                <span>A Calculadora Estoica</span>
+            </button>
+            <button id="btn-quiz" onclick="switchTab('quiz')" class="px-6 py-3 text-sm md:text-base font-serif tracking-wider border border-l-0 border-[#D4C3A3] rounded-r-lg transition-all flex items-center space-x-2 bg-[#FCFBF8] text-[#1F3024] hover:bg-[#F0EBE0]">
+                <i data-lucide="book-open" class="w-4 h-4"></i>
+                <span>O Desafio de Aurélio</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto mt-8 px-4">
+        
+        <div id="tab-simulator" class="p-8 rounded-xl shadow-lg border border-[#D4C3A3] bg-[#FCFBF8]">
+            <h2 class="text-3xl font-serif text-center mb-6 text-[#1F3024]">O Simulador de Tales</h2>
+            <p class="text-center italic text-[#6B6B6B] mb-8 font-serif">
+                "Se um feixe de retas paralelas é cortado por duas transversais, então as medidas dos segmentos correspondentes são proporcionais."
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="relative w-full aspect-square md:aspect-auto md:h-80 bg-[#F4F1EA] rounded-lg border border-[#D4C3A3] flex items-center justify-center p-4">
+                    <svg viewBox="0 0 300 300" class="w-full h-full drop-shadow-md">
+                        <line x1="20" y1="50" x2="280" y2="50" stroke="#1F3024" stroke-width="3" />
+                        <line x1="20" y1="150" x2="280" y2="150" stroke="#1F3024" stroke-width="3" />
+                        <line x1="20" y1="250" x2="280" y2="250" stroke="#1F3024" stroke-width="3" />
+                        <line x1="80" y1="20" x2="120" y2="280" stroke="#B59A5A" stroke-width="4" />
+                        <line x1="240" y1="20" x2="180" y2="280" stroke="#B59A5A" stroke-width="4" />
+                        <text id="svg-a" x="50" y="105" font-size="16" font-family="serif" font-weight="bold" fill="#1F3024">A</text>
+                        <text id="svg-b" x="65" y="205" font-size="16" font-family="serif" font-weight="bold" fill="#1F3024">B</text>
+                        <text id="svg-c" x="235" y="105" font-size="16" font-family="serif" font-weight="bold" fill="#1F3024">C</text>
+                        <text id="svg-d" x="215" y="205" font-size="16" font-family="serif" font-weight="bold" fill="#1F3024">D</text>
+                        <rect x="115" y="130" width="70" height="40" fill="#FCFBF8" rx="4" stroke="#D4C3A3" />
+                        <text x="150" y="155" font-size="16" font-family="serif" font-weight="bold" fill="#1F3024" text-anchor="middle">A/B = C/D</text>
+                    </svg>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="flex flex-col">
+                                <label class="font-serif text-[#1F3024] font-semibold mb-1">Segmento A</label>
+                                <input type="number" id="input-a" oninput="updateSVG()" class="p-3 border border-[#D4C3A3] rounded bg-[#F9F8F5] focus:ring-2 focus:ring-[#B59A5A] outline-none font-serif text-lg" placeholder="Ex: 4">
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-serif text-[#1F3024] font-semibold mb-1">Segmento B</label>
+                                <input type="number" id="input-b" oninput="updateSVG()" class="p-3 border border-[#D4C3A3] rounded bg-[#F9F8F5] focus:ring-2 focus:ring-[#B59A5A] outline-none font-serif text-lg" placeholder="Ex: 8">
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex flex-col">
+                                <label class="font-serif text-[#1F3024] font-semibold mb-1">Segmento C</label>
+                                <input type="number" id="input-c" oninput="updateSVG()" class="p-3 border border-[#D4C3A3] rounded bg-[#F9F8F5] focus:ring-2 focus:ring-[#B59A5A] outline-none font-serif text-lg" placeholder="Ex: 5">
+                            </div>
+                            <div class="flex flex-col">
+                                <label class="font-serif text-[#1F3024] font-semibold mb-1">Segmento D</label>
+                                <input type="number" id="input-d" oninput="updateSVG()" class="p-3 border border-[#D4C3A3] rounded bg-[#F9F8F5] focus:ring-2 focus:ring-[#B59A5A] outline-none font-serif text-lg" placeholder="Ex: ?">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-[#D4C3A3]">
+                        <p id="sim-message" class="text-center font-serif text-[#6B6B6B] mb-4 h-6">Deixe um campo vazio para encontrar a proporção.</p>
+                        <div class="flex space-x-4">
+                            <button onclick="calculateTales()" class="flex-1 py-3 rounded-lg font-serif font-bold uppercase tracking-wider transition-colors shadow-md bg-[#1F3024] text-[#F4F1EA] hover:bg-[#2C4A36]">
+                                Calcular
+                            </button>
+                            <button onclick="clearSimulator()" class="p-3 rounded-lg font-serif border border-[#D4C3A3] text-[#1F3024] hover:bg-[#F0EBE0] transition-colors" title="Limpar">
+                                <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-quiz" class="p-8 rounded-xl shadow-lg border border-[#D4C3A3] bg-[#FCFBF8] hidden">
+            <div id="quiz-game">
+                <div class="flex justify-between items-center mb-6 border-b pb-4 border-[#D4C3A3]">
+                    <h2 class="text-2xl font-serif text-[#1F3024]">O Desafio de Aurélio</h2>
+                    <span id="quiz-progress" class="font-serif font-bold text-[#B59A5A] bg-[#F4F1EA] px-4 py-1 rounded-full border border-[#D4C3A3]">
+                        Reflexão 1 de 4
+                    </span>
+                </div>
+                <div class="mb-8">
+                    <p id="quiz-question" class="text-xl font-serif text-[#2C2C2C] leading-relaxed mb-6"></p>
+                    <div id="quiz-options" class="space-y-3"></div>
+                </div>
+                <div id="quiz-feedback" class="mt-8 hidden flex flex-col md:flex-row justify-between items-center bg-[#F4F1EA] p-4 rounded border border-[#D4C3A3]">
+                    <p id="quiz-quote" class="italic font-serif text-[#6B6B6B] flex-1 mr-4 mb-4 md:mb-0"></p>
+                    <button onclick="nextQuestion()" class="px-6 py-2 rounded font-serif font-bold tracking-wider transition-colors shadow bg-[#B59A5A] text-white hover:bg-[#9E864A]">
+                        Avançar →
+                    </button>
+                </div>
+            </div>
+
+            <div id="quiz-result" class="text-center hidden">
+                <h2 class="text-4xl font-serif mb-6 text-[#B59A5A]">Julgamento Final</h2>
+                <div class="flex justify-center mb-6">
+                    <div class="w-32 h-32 rounded-full border-4 border-[#B59A5A] flex items-center justify-center bg-[#F4F1EA]">
+                        <span id="result-score" class="text-4xl font-serif font-bold text-[#1F3024]">0/4</span>
+                    </div>
+                </div>
+                <p id="result-text" class="text-xl font-serif mb-4 text-[#2C2C2C]"></p>
+                <button onclick="resetQuiz()" class="mt-6 px-8 py-3 rounded-lg font-serif font-bold uppercase tracking-wider transition-colors shadow-md bg-[#1F3024] text-[#F4F1EA] hover:bg-[#2C4A36]">
+                    Iniciar Novo Ciclo
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Inicializa os ícones do Lucide
+        lucide.createIcons();
+
+        // Gerenciamento de Abas
+        function switchTab(tab) {
+            const simTab = document.getElementById('tab-simulator');
+            const quizTab = document.getElementById('tab-quiz');
+            const btnSim = document.getElementById('btn-simulator');
+            const btnQuiz = document.getElementById('btn-quiz');
+
+            if (tab === 'simulator') {
+                simTab.classList.remove('hidden');
+                quizTab.classList.add('hidden');
+                btnSim.className = "px-6 py-3 text-sm md:text-base font-serif tracking-wider border border-[#D4C3A3] rounded-l-lg transition-all flex items-center space-x-2 bg-[#B59A5A] text-white";
+                btnQuiz.className = "px-6 py-3 text-sm md:text-base font-serif tracking-wider border border-l-0 border-[#D4C3A3] rounded-r-lg transition-all flex items-center space-x-2 bg-[#FCFBF8] text-[#1F3024] hover:bg-[#F0EBE0]";
+            } else {
+                simTab.classList.add('hidden');
+                quizTab.classList.remove('hidden');
+                btnSim.className = "px-6 py-3 text-sm md:text-base font-serif tracking-wider border border-[#D4C3A3] rounded-l-lg transition-all flex items-center space-x-2 bg-[#FCFBF8] text-[#1F3024] hover:bg-[#F0EBE0]";
+                btnQuiz.className = "px-6 py-3 text-sm md:text-base font-serif tracking-wider border border-l-0 border-[#D4C3A3] rounded-r-lg transition-all flex items-center space-x-2 bg-[#B59A5A] text-white";
+                initQuiz();
+            }
+        }
+
+        // Lógica do Simulador
+        function updateSVG() {
+            document.getElementById('svg-a').textContent = document.getElementById('input-a').value || 'A';
+            document.getElementById('svg-b').textContent = document.getElementById('input-b').value || 'B';
+            document.getElementById('svg-c').textContent = document.getElementById('input-c').value || 'C';
+            document.getElementById('svg-d').textContent = document.getElementById('input-d').value || 'D';
+        }
+
+        function calculateTales() {
+            let a = document.getElementById('input-a').value;
+            let b = document.getElementById('input-b').value;
+            let c = document.getElementById('input-c').value;
+            let d = document.getElementById('input-d').value;
+            const msg = document.getElementById('sim-message');
+
+            const parse = (v) => v === '' ? null : parseFloat(v);
+            const vals = [parse(a), parse(b), parse(c), parse(d)];
+            const missing = vals.filter(v => v === null).length;
+
+            if (missing !== 1) {
+                msg.textContent = "A virtude exige foco: deixe exatamente um valor desconhecido (vazio).";
+                return;
+            }
+
+            let [va, vb, vc, vd] = vals;
+
+            if (va === null) {
+                if(vb === 0 || vd === 0) return msg.textContent = "A divisão por zero não existe na natureza.";
+                document.getElementById('input-a').value = ((vc * vb) / vd).toFixed(2).replace('.00', '');
+            } else if (vb === null) {
+                if(va === 0 || vc === 0) return msg.textContent = "A divisão por zero não existe na natureza.";
+                document.getElementById('input-b').value = ((va * vd) / vc).toFixed(2).replace('.00', '');
+            } else if (vc === null) {
+                if(va === 0 || vb === 0) return msg.textContent = "A divisão por zero não existe na natureza.";
+                document.getElementById('input-c').value = ((va * vd) / vb).toFixed(2).replace('.00', '');
+            } else if (vd === null) {
+                if(vb === 0 || vc === 0) return msg.textContent = "A divisão por zero não existe na natureza.";
+                document.getElementById('input-d').value = ((vb * vc) / va).toFixed(2).replace('.00', '');
+            }
+
+            msg.textContent = "Cálculo realizado. A ordem matemática foi restaurada.";
+            updateSVG();
+        }
+
+        function clearSimulator() {
+            document.getElementById('input-a').value = '';
+            document.getElementById('input-b').value = '';
+            document.getElementById('input-c').value = '';
+            document.getElementById('input-d').value = '';
+            document.getElementById('sim-message').textContent = "O quadro foi limpo. Comece novamente sua reflexão.";
+            updateSVG();
+        }
+
+        // Dados e Lógica do Quiz
+        const questions = [
+            {
+                question: "De acordo com o Teorema de Tales, o que ocorre quando um feixe de retas paralelas é cortado por duas retas transversais?",
+                options: [
+                    "Formam-se triângulos equiláteros perfeitos.",
+                    "Os segmentos de reta formados sobre a primeira transversal são proporcionais aos formados sobre a segunda.",
+                    "As retas transversais se tornam paralelas entre si.",
+                    "A soma de todos os segmentos será sempre igual a 180."
+                ],
+                answer: 1,
+                quote: "A compreensão das proporções da natureza nos aproxima da verdade."
+            },
+            {
+                question: "Imagine que as provações da vida são as retas transversais. Se no lado esquerdo temos os segmentos A=3 e B=9, e no lado direito temos C=5. Qual deve ser o valor de D para manter a harmonia do Teorema?",
+                options: ["10", "15", "12", "27"],
+                answer: 1,
+                quote: "A razão deve guiar a emoção, assim como os números guiam a geometria."
+            },
+            {
+                question: "Em uma aplicação prática, o Teorema de Tales pode ser usado para:",
+                options: [
+                    "Calcular a altura de uma pirâmide usando a sombra projetada pelo sol.",
+                    "Encontrar a raiz quadrada de um número primo.",
+                    "Determinar o peso de um corpo em diferentes planetas.",
+                    "Nenhuma das alternativas."
+                ],
+                answer: 0,
+                quote: "O sábio usa as ferramentas disponíveis, assim como Tales mediu o que parecia inatingível."
+            },
+            {
+                question: "No estoicismo, busca-se o equilíbrio. No Teorema de Tales, se a proporção A/B é igual a 1/2, e o segmento C mede 10, qual o valor de D?",
+                options: ["5", "10", "20", "40"],
+                answer: 2,
+                quote: "Mantenha a mente firme; a lógica não se dobra aos caprichos do destino."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let isAnswered = false;
+
+        function initQuiz() {
+            if (currentQuestion >= questions.length) {
+                showResults();
+                return;
+            }
+
+            isAnswered = false;
+            document.getElementById('quiz-game').classList.remove('hidden');
+            document.getElementById('quiz-result').classList.add('hidden');
+            document.getElementById('quiz-feedback').classList.add('hidden');
+
+            document.getElementById('quiz-progress').textContent = `Reflexão ${currentQuestion + 1} de ${questions.length}`;
+            
+            const q = questions[currentQuestion];
+            document.getElementById('quiz-question').textContent = q.question;
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-lg font-serif transition-all border border-[#D4C3A3] hover:bg-[#F0EBE0] bg-[#F9F8F5]";
+                btn.innerHTML = `<span>${option}</span>`;
+                btn.onclick = () => selectOption(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(index, btn) {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const q = questions[currentQuestion];
+            const buttons = document.getElementById('quiz-options').children;
+
+            if (index === q.answer) {
+                score++;
+                btn.className = "w-full text-left p-4 rounded-lg font-serif transition-all border border-green-500 bg-green-100 text-green-900";
+            } else {
+                btn.className = "w-full text-left p-4 rounded-lg font-serif transition-all border border-red-500 bg-red-100 text-red-900";
+                buttons[q.answer].className = "w-full text-left p-4 rounded-lg font-serif transition-all border border-green-500 bg-green-100 text-green-900";
+            }
+
+            // Desativar e dar opacidade para os outros botões
+            for (let b of buttons) {
+                if (b !== btn && b !== buttons[q.answer]) {
+                    b.classList.add('opacity-60');
+                }
+                b.disabled = true;
+            }
+
+            document.getElementById('quiz-quote').textContent = `"${q.quote}"`;
+            document.getElementById('quiz-feedback').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            initQuiz();
+        }
+
+        function showResults() {
+            document.getElementById('quiz-game').classList.add('hidden');
+            document.getElementById('quiz-result').classList.remove('hidden');
+            
+            document.getElementById('result-score').textContent = `${score}/${questions.length}`;
+            
+            const percentage = (score / questions.length) * 100;
+            const resText = document.getElementById('result-text');
+            
+            if (percentage === 100) {
+                resText.textContent = "A sabedoria de Marco Aurélio flui em você. Uma mente perfeitamente lógica e equilibrada.";
+            } else if (percentage >= 50) {
+                resText.textContent = "Você demonstrou bom conhecimento. Continue cultivando a virtude do estudo.";
+            } else {
+                resText.textContent = "As provações são oportunidades de aprendizado. O Teorema exige mais contemplação.";
+            }
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            initQuiz();
+        }
+    </script>
+</body>
+</html>

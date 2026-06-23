@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador do Teorema de Tales (Modo de Respeito)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e24;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 { color: #ff9f1c; margin-bottom: 10px; text-shadow: 2px 2px #000; }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .controls {
+            background-color: #2a2a35;
+            padding: 20px;
+            border-radius: 12px;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .canvas-area {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            background-color: #111116;
+            border: 3px solid #ff9f1c;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #cbf3f0;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #ff9f1c;
+        }
+        .math-box {
+            background-color: #011627;
+            border-left: 5px solid #2ec4b6;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.1rem;
+        }
+        .philosopher-box {
+            background-color: #3a223c;
+            border: 2px dashed #e71d36;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 1160px;
+            position: relative;
+        }
+        .philosopher-title {
+            color: #e71d36;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        .philosopher-text {
+            font-style: italic;
+            color: #f4f1de;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📐 Teorema de Tales: O Simulador Supremo</h1>
+    <p>Mexa em tudo, gire o universo e tente quebrar a matemática (Spoiler: Você não vai conseguir).</p>
+
+    <div class="container">
+        <div class="controls">
+            <h3>⚙️ Configurações Cósmicas</h3>
+            
+            <div class="control-group">
+                <label id="lbl-h1">Distância Linha Topo - Centro: 100px</label>
+                <input type="range" id="h1" min="40" max="180" value="100">
+            </div>
+
+            <div class="control-group">
+                <label id="lbl-h2">Distância Linha Centro - Base: 100px</label>
+                <input type="range" id="h2" min="40" max="180" value="100">
+            </div>
+
+            <div class="control-group">
+                <label id="lbl-angle1">Inclinação da Transversal 1: 70°</label>
+                <input type="range" id="angle1" min="20" max="160" value="70">
+            </div>
+
+            <div class="control-group">
+                <label id="lbl-angle2">Inclinação da Transversal 2: 110°</label>
+                <input type="range" id="angle2" min="20" max="160" value="110">
+            </div>
+
+            <div class="control-group">
+                <label id="lbl-rotate">Rotação do Universo (Girar Tudo): 0°</label>
+                <input type="range" id="globalRotate" min="0" max="360" value="0">
+            </div>
+
+            <div class="math-box">
+                <h4>📊 Contas Sagradas (Em Tempo Real):</h4>
+                <div id="segments-display"></div>
+                <hr style="border-color: #2ec4b6;">
+                <div id="theorem-display" style="font-weight: bold; color: #ff9f1c;"></div>
+            </div>
+        </div>
+
+        <div class="canvas-area">
+            <canvas id="simCanvas" width="600" height="500"></canvas>
+        </div>
+    </div>
+
+    <div class="philosopher-box">
+        <div class="philosopher-title">🧙‍♂️ Tales de Mil Tretas diz:</div>
+        <div class="philosopher-text" id="philosopher-speech">Carregando a sabedoria da Grécia antiga...</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Elementos da UI
+        const inputs = ['h1', 'h2', 'angle1', 'angle2', 'globalRotate'];
+        const elements = {};
+        inputs.forEach(id => elements[id] = document.getElementById(id));
+
+        // Frases do filósofo baseadas em eventos
+        const quotes = [
+            "Olha para essas três linhas paralelas. Elas se amam, mas vivem separadas pelo destino. É a pura fofoca geométrica.",
+            "Você percebeu que pode girar o universo inteiro e a divisão continua dando o mesmo resultado? Eu não inventei isso, eu só estava bêbado de vinho grego e reparei.",
+            "Se você aumentar a distância de cima, o segmento da outra reta cresce junto de propósito. Parceria mais forte que Batman e Robin.",
+            "Dividir o pedaço de cima pelo de baixo de um lado... é EXATAMENTE IGUAL ao outro lado. Se isso não é feitiçaria, eu não sei o que é.",
+            "Pare de tentar quebrar meu teorema mudando os ângulos! A proporção é imutável, jovem gafanhoto! Eu sou inevitável."
+        ];
+
+        function getIntersection(y, xX, angleDeg) {
+            let angleRad = (angleDeg * Math.PI) / 180;
+            // x = x_origem + y / tan(angle)
+            let x = xX + (y / Math.tan(angleRad));
+            return { x: x, y: y };
+        }
+
+        function draw() {
+            // Pegar valores
+            const h1 = parseInt(elements.h1.value);
+            const h2 = parseInt(elements.h2.value);
+            const a1 = parseInt(elements.angle1.value);
+            const a2 = parseInt(elements.angle2.value);
+            const rG = parseInt(elements.globalRotate.value);
+
+            // Atualizar Labels
+            document.getElementById('lbl-h1').innerText = `Distância Linha Topo - Centro: ${h1}px`;
+            document.getElementById('lbl-h2').innerText = `Distância Linha Centro - Base: ${h2}px`;
+            document.getElementById('lbl-angle1').innerText = `Inclinação da Transversal 1: ${a1}°`;
+            document.getElementById('lbl-angle2').innerText = `Inclinação da Transversal 2: ${a2}°`;
+            document.getElementById('lbl-rotate').innerText = `Rotação do Universo (Girar Tudo): ${rG}°`;
+
+            // Limpar Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            // Centralizar a origem para rotacionar bonito
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate((rG * Math.PI) / 180);
+
+            // Definição das posições das paralelas verticais relativas ao centro (0,0)
+            const y1 = -h1;
+            const y2 = 0;
+            const y3 = h2;
+
+            // Origens das duas transversais na linha do centro (y2 = 0)
+            const x1_origin = -100;
+            const x2_origin = 100;
+
+            // Calcular pontos de interseção
+            const P11 = getIntersection(y1, x1_origin, a1);
+            const P12 = { x: x1_origin, y: y2 };
+            const P13 = getIntersection(y3, x1_origin, a1);
+
+            const P21 = getIntersection(y1, x2_origin, a2);
+            const P22 = { x: x2_origin, y: y2 };
+            const P23 = getIntersection(y3, x2_origin, a2);
+
+            // Desenhar Linhas Paralelas (Prolongadas)
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#4ea8de';
+            [-1, 0, 1].forEach((mult) => {
+                let currentY = mult === -1 ? y1 : (mult === 0 ? y2 : y3);
+                ctx.beginPath();
+                ctx.moveTo(-280, currentY);
+                ctx.lineTo(280, currentY);
+                ctx.stroke();
+            });
+
+            // Desenhar Transversal 1 (Vermelha)
+            ctx.strokeStyle = '#e71d36';
+            ctx.beginPath();
+            ctx.moveTo(P11.x - (P12.x - P11.x)*0.3, P11.y - 30);
+            ctx.lineTo(P13.x + (P13.x - P12.x)*0.3, P13.y + 30);
+            ctx.stroke();
+
+            // Desenhar Transversal 2 (Verde)
+            ctx.strokeStyle = '#2ec4b6';
+            ctx.beginPath();
+            ctx.moveTo(P21.x - (P22.x - P21.x)*0.3, P21.y - 30);
+            ctx.lineTo(P23.x + (P23.x - P22.x)*0.3, P23.y + 30);
+            ctx.stroke();
+
+            // Desenhar pontos de interseção para ficar profissa
+            ctx.fillStyle = '#ff9f1c';
+            [P11, P12, P13, P21, P22, P23].forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 6, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+
+            ctx.restore();
+
+            // --- CÁLCULOS DOS SEGMENTOS ---
+            const dist = (p1, p2) => Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+            
+            // Segmentos da Transversal 1
+            const segA = dist(P11, P12);
+            const segB = dist(P12, P13);
+            // Segmentos da Transversal 2
+            const segC = dist(P21, P22);
+            const segD = dist(P22, P23);
+
+            // Razões
+            const razao1 = segA / segB;
+            const razao2 = segC / segD;
+
+            // Mostrar na tela
+            document.getElementById('segments-display').innerHTML = `
+                Lado Esquerdo (Transversal Ruiva): <br>
+                &nbsp;&nbsp;Pedacinho de Cima (A) = ${segA.toFixed(1)} u.m.<br>
+                &nbsp;&nbsp;Pedacinho de Baixo (B) = ${segB.toFixed(1)} u.m.<br><br>
+                Lado Direito (Transversal Esmeralda): <br>
+                &nbsp;&nbsp;Pedacinho de Cima (C) = ${segC.toFixed(1)} u.m.<br>
+                &nbsp;&nbsp;Pedacinho de Baixo (D) = ${segD.toFixed(1)} u.m.
+            `;
+
+            document.getElementById('theorem-display').innerHTML = `
+                Relação de Tales:<br>
+                A / B &rarr; ${segA.toFixed(1)} / ${segB.toFixed(1)} = <span style="color:#2ec4b6">${razao1.toFixed(3)}</span><br>
+                C / D &rarr; ${segC.toFixed(1)} / ${segD.toFixed(1)} = <span style="color:#2ec4b6">${razao2.toFixed(3)}</span><br><br>
+                Status do Universo: ${razao1.toFixed(3)} === ${razao2.toFixed(3)} ? MATEMÁTICA FUNCIONA!
+            `;
+        }
+
+        // Mudar fala do filósofo de forma semi-aleatória quando mexer nos sliders
+        function updateSpeech() {
+            if (Math.random() < 0.15) {
+                const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                document.getElementById('philosopher-speech').innerText = randomQuote;
+            }
+        }
+
+        // Event Listeners para atualizar em tempo real
+        inputs.forEach(id => {
+            elements[id].addEventListener('input', () => {
+                draw();
+                updateSpeech();
+            });
+        });
+
+        // Inicializar primeiro frame
+        draw();
+        document.getElementById('philosopher-speech').innerText = quotes[0];
+    </script>
+</body>
+</html>
