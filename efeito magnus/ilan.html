@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Efeito Magnus — Ilan</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0f1a;
+      --surface: #161929;
+      --border: #252a42;
+      --accent: #6c63ff;
+      --text: #e8eaf6;
+      --muted: #8890b0;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 80px;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 40%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 75%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 35%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5%  50%, rgba(255,255,255,0.4) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .back {
+      position: relative;
+      z-index: 1;
+      align-self: flex-start;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s;
+    }
+    .back:hover { gap: 10px; }
+    article {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 48px;
+    }
+    .author-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 28px; line-height: 1.2; }
+    p { line-height: 1.75; margin-bottom: 16px; }
+    strong { color: #a89fff; }
+    ul { padding-left: 1.5em; margin-bottom: 16px; }
+    li { line-height: 1.75; margin-bottom: 8px; }
+    ul ul { margin-top: 6px; margin-bottom: 0; }
+    .signature {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+    footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    @media (max-width: 600px) { article { padding: 28px 20px; } }
+  </style>
+</head>
+<body>
+
+  <a class="back" href="index.html">← Voltar</a>
+
+  <article>
+    <div class="author-label">Ilan · Efeito Magnus</div>
+    <h1>🌀 O Efeito Magnus</h1>
+
+    <p>Quando uma bola é chutada ou lançada com rotação (giro), ela pega efeito por causa de um fenômeno da física chamado <strong>Efeito Magnus</strong>.</p>
+
+    <p>Aqui está o resumo de como isso acontece:</p>
+
+    <ul>
+      <li><strong>O Giro da Bola:</strong> Quando a bola gira no ar, ela "arrasta" o ar ao redor dela.</li>
+      <li><strong>Diferença de Pressão:</strong>
+        <ul>
+          <li>De um lado da bola, o giro vai na <strong>mesma direção</strong> do vento, fazendo o ar passar mais rápido. Ar rápido gera <strong>baixa pressão</strong>.</li>
+          <li>Do outro lado, o giro vai <strong>contra</strong> o vento, freando o ar. Ar lento gera <strong>alta pressão</strong>.</li>
+        </ul>
+      </li>
+      <li><strong>O Desvio:</strong> A alta pressão "empurra" a bola em direção à baixa pressão.</li>
+    </ul>
+
+    <p>É essa força invisível que faz a bola mudar de trajetória no meio do caminho, enganando o goleiro ou o adversário!</p>
+
+    <div class="signature">Ilan Bialek</div>
+  </article>
+
+  <footer>Efeito Magnus · Computação 2026</footer>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Efeito Magnus — Shmuel</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0f1a;
+      --surface: #161929;
+      --border: #252a42;
+      --accent: #6c63ff;
+      --text: #e8eaf6;
+      --muted: #8890b0;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 24px 80px;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 55% 40%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 75%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 35%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5%  50%, rgba(255,255,255,0.4) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .back {
+      position: relative;
+      z-index: 1;
+      align-self: flex-start;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 40px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s;
+    }
+    .back:hover { gap: 10px; }
+    article {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 48px;
+    }
+    .author-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 28px; line-height: 1.2; }
+    h3 { font-size: 1.1rem; font-weight: 700; margin: 28px 0 12px; }
+    p { line-height: 1.75; margin-bottom: 16px; }
+    strong { color: #a89fff; }
+    ul, ol { padding-left: 1.5em; margin-bottom: 16px; }
+    li { line-height: 1.75; margin-bottom: 8px; }
+    .signature {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-style: italic;
+    }
+    footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    @media (max-width: 600px) { article { padding: 28px 20px; } }
+  </style>
+</head>
+<body>
+
+  <a class="back" href="index.html">← Voltar</a>
+
+  <article>
+    <div class="author-label">Shmuel · Efeito Magnus</div>
+    <h1>🌀 O Efeito Magnus</h1>
+
+    <p>O <strong>Efeito Magnus</strong> é um fenômeno físico que explica por que uma bola (ou qualquer objeto esférico ou cilíndrico) desvia de sua trajetória original quando está girando enquanto se move pelo ar. Quando um jogador chuta uma bola e faz ela girar (o famoso chute "com efeito" ou "com curva"), o giro da bola modifica o fluxo de ar ao redor dela:</p>
+
+    <ul>
+      <li>De um lado da bola, o giro vai no mesmo sentido do vento, fazendo o ar passar mais rápido.</li>
+      <li>Do outro lado, o giro vai contra o vento, freando o ar.</li>
+    </ul>
+
+    <p>Pelas leis da física (especificamente o <strong>Princípio de Bernoulli</strong>), a diferença de velocidade do ar cria uma diferença de pressão. O lado com ar mais rápido tem menor pressão, e o lado com ar mais lento tem maior pressão. Essa força "empurra" a bola em direção ao lado de menor pressão, fazendo a trajetória curvar no ar.</p>
+
+    <h3>⚽ O Lendário Gol do Roberto Carlos (1997)</h3>
+
+    <p>O exemplo mais famoso da história do futebol para ilustrar o Efeito Magnus aconteceu no jogo entre <strong>Brasil e França, em 1997</strong>, pelo Torneio da França. Roberto Carlos cobrou uma falta de muito longe (cerca de 35 metros do gol). A física por trás daquele chute impressionante funciona assim:</p>
+
+    <ol>
+      <li><strong>A Batida (O Giro):</strong> Roberto Carlos chutou a bola com a parte externa do pé esquerdo (de trivela), aplicando uma força absurda e fazendo a bola girar violentamente no sentido horário (olhando de cima).</li>
+      <li><strong>A Trajetória Inicial:</strong> Devido à força do impacto, a bola saiu em altíssima velocidade em uma linha reta que parecia ir completamente para fora, passando muito longe da barreira — o que fez até o gandula se abaixar achando que a bola o acertaria.</li>
+      <li><strong>O Efeito Magnus em Ação:</strong> Conforme a bola avançava, a alta velocidade combinada com o giro intenso começou a criar a diferença de pressão no ar. O lado esquerdo da bola empurrava o ar para trás, enquanto o lado direito o freava.</li>
+      <li><strong>A Curva Impossível:</strong> Quando a velocidade da bola começou a diminuir por causa da resistência do ar, o Efeito Magnus se tornou ainda mais dominante. A bola sofreu uma força lateral violenta para a esquerda, mudando de direção repentinamente e entrando na gaveta do goleiro francês Fabien Barthez, que ficou completamente imóvel, sem entender o que tinha acontecido.</li>
+    </ol>
+
+    <p>Cientistas do mundo inteiro já estudaram esse gol e comprovaram que não foi sorte: foi uma combinação perfeita de força, ângulo e a aplicação exata das leis da física no futebol.</p>
+
+    <div class="signature">Shmuel Kaczala · feito com Gemini</div>
+  </article>
+
+  <footer>Efeito Magnus · Computação 2026</footer>
+
+</body>
+</html>

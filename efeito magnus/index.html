@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Produções dos Alunos — Computação 2026</title>
+  <title>Efeito Magnus — Computação 2026</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -16,8 +16,6 @@
       --accent3: #43e97b;
       --accent4: #f7b538;
       --accent5: #00c9ff;
-      --accent6: #f97316;
-      --accent7: #c084fc;
       --text: #e8eaf6;
       --muted: #8890b0;
     }
@@ -32,7 +30,6 @@
       align-items: center;
     }
 
-    /* ── STARS BACKGROUND ── */
     body::before {
       content: '';
       position: fixed;
@@ -50,12 +47,33 @@
       z-index: 0;
     }
 
+    /* ── NAV ── */
+    .nav {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 1100px;
+      padding: 28px 24px 0;
+    }
+
+    .back {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: gap 0.2s;
+    }
+    .back:hover { gap: 10px; }
+
     /* ── HEADER ── */
     header {
       position: relative;
       z-index: 1;
       text-align: center;
-      padding: 64px 24px 40px;
+      padding: 48px 24px 40px;
       max-width: 700px;
     }
 
@@ -117,32 +135,18 @@
       overflow: hidden;
     }
 
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      transition: opacity 0.25s ease;
-      border-radius: 16px;
-    }
-
     .card:hover {
       transform: translateY(-6px);
       box-shadow: 0 20px 60px rgba(0,0,0,0.4);
     }
 
     .card.purple:hover  { border-color: var(--accent);  box-shadow: 0 20px 60px rgba(108, 99,255,0.2); }
-    .card.pink:hover    { border-color: var(--accent2); box-shadow: 0 20px 60px rgba(255, 101,132,0.2); }
-    .card.green:hover   { border-color: var(--accent3); box-shadow: 0 20px 60px rgba( 67, 233,123,0.2); }
-    .card.gold:hover    { border-color: var(--accent4); box-shadow: 0 20px 60px rgba(247, 181, 56,0.2); }
-    .card.cyan:hover    { border-color: var(--accent5); box-shadow: 0 20px 60px rgba(  0, 201,255,0.2); }
-    .card.orange:hover  { border-color: var(--accent6); box-shadow: 0 20px 60px rgba(249, 115, 22,0.2); }
-    .card.violet:hover  { border-color: var(--accent7); box-shadow: 0 20px 60px rgba(192, 132,252,0.2); }
+    .card.pink:hover    { border-color: var(--accent2); box-shadow: 0 20px 60px rgba(255,101,132,0.2); }
+    .card.green:hover   { border-color: var(--accent3); box-shadow: 0 20px 60px rgba( 67,233,123,0.2); }
+    .card.gold:hover    { border-color: var(--accent4); box-shadow: 0 20px 60px rgba(247,181, 56,0.2); }
+    .card.cyan:hover    { border-color: var(--accent5); box-shadow: 0 20px 60px rgba(  0,201,255,0.2); }
 
-    .card-icon {
-      font-size: 2.4rem;
-      line-height: 1;
-    }
+    .card-icon { font-size: 2.4rem; line-height: 1; }
 
     .card-author {
       font-size: 0.72rem;
@@ -155,21 +159,10 @@
     .card.green  .card-author { color: var(--accent3); }
     .card.gold   .card-author { color: var(--accent4); }
     .card.cyan   .card-author { color: var(--accent5); }
-    .card.orange .card-author { color: var(--accent6); }
-    .card.violet .card-author { color: var(--accent7); }
 
-    .card-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      line-height: 1.3;
-    }
+    .card-title { font-size: 1.25rem; font-weight: 700; line-height: 1.3; }
 
-    .card-desc {
-      font-size: 0.9rem;
-      color: var(--muted);
-      line-height: 1.6;
-      flex: 1;
-    }
+    .card-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.6; flex: 1; }
 
     .card-cta {
       display: inline-flex;
@@ -186,8 +179,6 @@
     .card.green  .card-cta { color: var(--accent3); }
     .card.gold   .card-cta { color: var(--accent4); }
     .card.cyan   .card-cta { color: var(--accent5); }
-    .card.orange .card-cta { color: var(--accent6); }
-    .card.violet .card-cta { color: var(--accent7); }
 
     /* ── FOOTER ── */
     footer {
@@ -202,89 +193,71 @@
 </head>
 <body>
 
+  <div class="nav">
+    <a class="back" href="../index.html">← Voltar</a>
+  </div>
+
   <header>
-    <div class="badge">Computação · 2026</div>
-    <h1>Produções dos Alunos</h1>
-    <p>Projetos criados pelos alunos durante as aulas. Clique em um card para abrir o trabalho.</p>
+    <div class="badge">Física · 2026</div>
+    <h1>🌀 Efeito Magnus</h1>
+    <p>Por que a bola curva no ar? Os alunos explicam o fenômeno — e um deles até simulou.</p>
   </header>
 
   <div class="grid">
 
-    <!-- Schalom -->
-    <a class="card purple" href="schalom/simulador_do_universo.html">
-      <div class="card-icon">🌌</div>
-      <div class="card-author">Schalom</div>
-      <div class="card-title">Simulador Visual do Universo</div>
+    <!-- Ilan -->
+    <a class="card purple" href="ilan.html">
+      <div class="card-icon">📝</div>
+      <div class="card-author">Ilan</div>
+      <div class="card-title">O Efeito Magnus</div>
       <div class="card-desc">
-        Uma simulação interativa do cosmos — planetas, estrelas e física gravitacional animados em canvas.
+        O giro da bola, a diferença de pressão e o desvio da trajetória — explicados passo a passo.
       </div>
-      <div class="card-cta">Abrir projeto <span>→</span></div>
+      <div class="card-cta">Ler <span>→</span></div>
+    </a>
+
+    <!-- Schalom — texto -->
+    <a class="card pink" href="schalom.html">
+      <div class="card-icon">📖</div>
+      <div class="card-author">Schalom</div>
+      <div class="card-title">O Chute Perfeito</div>
+      <div class="card-desc">
+        Primeira Lei de Newton, Efeito Magnus e Princípio de Bernoulli explicam a curva de Roberto Carlos.
+      </div>
+      <div class="card-cta">Ler <span>→</span></div>
+    </a>
+
+    <!-- Schalom — simulador -->
+    <a class="card green" href="chute-perfeito-simulator-schalom.html">
+      <div class="card-icon">⚽</div>
+      <div class="card-author">Schalom — Chute Perfeito</div>
+      <div class="card-title">Simulador Interativo</div>
+      <div class="card-desc">
+        Experimente o efeito Magnus na prática — simule o ângulo, força e rotação da bola.
+      </div>
+      <div class="card-cta">Abrir simulador <span>→</span></div>
+    </a>
+
+    <!-- Shmuel -->
+    <a class="card gold" href="shmuel.html">
+      <div class="card-icon">🏆</div>
+      <div class="card-author">Shmuel</div>
+      <div class="card-title">O Gol de Roberto Carlos</div>
+      <div class="card-desc">
+        O Efeito Magnus e o lendário gol de 1997 contra a França — física e futebol juntos.
+      </div>
+      <div class="card-cta">Ler <span>→</span></div>
     </a>
 
     <!-- Yoni -->
-    <a class="card pink" href="yoni/index.html">
-      <div class="card-icon">✨</div>
+    <a class="card cyan" href="yoni.html">
+      <div class="card-icon">💨</div>
       <div class="card-author">Yoni</div>
-      <div class="card-title">Pincel Mágico de Partículas</div>
+      <div class="card-title">O Efeito Magnus</div>
       <div class="card-desc">
-        Mova o mouse pela tela e crie explosões de partículas coloridas. Arte generativa no browser.
+        Explicação direta sobre como o giro da bola cria diferença de pressão no ar.
       </div>
-      <div class="card-cta">Abrir projeto <span>→</span></div>
-    </a>
-
-    <!-- Yossef e Ilan -->
-    <a class="card green" href="yossef%20e%20ilan/simulador_copa_2026%20(1).html">
-      <div class="card-icon">⚽</div>
-      <div class="card-author">Yossef &amp; Ilan</div>
-      <div class="card-title">Simulador Copa 2026</div>
-      <div class="card-desc">
-        Simule a Copa do Mundo 2026 — grupos, confrontos e o caminho até o título.
-      </div>
-      <div class="card-cta">Abrir projeto <span>→</span></div>
-    </a>
-
-    <!-- Na Aula de Matemática -->
-    <a class="card cyan" href="na%20aula%20de%20matematica/simuldaor.html">
-      <div class="card-icon">📐</div>
-      <div class="card-author">Na Aula de Matemática</div>
-      <div class="card-title">Simulador — Aula de Matemática</div>
-      <div class="card-desc">
-        Simulação interativa criada durante a aula de matemática.
-      </div>
-      <div class="card-cta">Abrir projeto <span>→</span></div>
-    </a>
-
-    <!-- Todos Alunos -->
-    <a class="card gold" href="todos%20alunos/index.html">
-      <div class="card-icon">🧩</div>
-      <div class="card-author">Todos Alunos</div>
-      <div class="card-title">Projeto Coletivo</div>
-      <div class="card-desc">
-        Acesse a nova página com a produção colaborativa da turma.
-      </div>
-      <div class="card-cta">Abrir projeto <span>→</span></div>
-    </a>
-
-    <!-- Efeito Magnus -->
-    <a class="card orange" href="efeito%20magnus/index.html">
-      <div class="card-icon">🌀</div>
-      <div class="card-author">Física</div>
-      <div class="card-title">Efeito Magnus</div>
-      <div class="card-desc">
-        Por que a bola curva no ar? Os alunos explicam o fenômeno — e um deles até simulou.
-      </div>
-      <div class="card-cta">Ver trabalhos <span>→</span></div>
-    </a>
-
-    <!-- Teorema de Tales -->
-    <a class="card violet" href="teorema_de_tales/index.html">
-      <div class="card-icon">📐</div>
-      <div class="card-author">Geometria</div>
-      <div class="card-title">Teorema de Tales</div>
-      <div class="card-desc">
-        Simuladores interativos e explicações sobre proporcionalidade e retas paralelas.
-      </div>
-      <div class="card-cta">Ver trabalhos <span>→</span></div>
+      <div class="card-cta">Ler <span>→</span></div>
     </a>
 
   </div>
