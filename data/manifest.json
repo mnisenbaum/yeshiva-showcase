@@ -135,5 +135,113 @@
       "arquivo": "teorema_de_tales/yossef.html",
       "data": "2026-02-27T00:00:00.000Z"
     }
+    {
+      "id": "fis-sim-cinematica-yossef",
+      "aluno": "Yossef",
+      "materia": "fisica",
+      "titulo": "Cinemática — Simulador Virtual",
+      "descricao": "Laboratório virtual interativo de cinemática com gráficos e animações em canvas.",
+      "arquivo": "materiais/fisica-simulador-cinematica-yossef.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "fis-sim-newton-shalom",
+      "aluno": "Shalom",
+      "materia": "fisica",
+      "titulo": "Leis de Newton — Simulador Virtual",
+      "descricao": "Simulador interativo das Leis de Newton com experimentos visuais.",
+      "arquivo": "materiais/fisica-simulador-leis-de-newton-shalom.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "fis-texto-cinematica-yossef",
+      "aluno": "Yossef",
+      "materia": "fisica",
+      "titulo": "Cinemática — Texto de Apoio",
+      "descricao": "Material de apoio sobre cinemática: conceitos, fórmulas e exemplos.",
+      "arquivo": "materiais/fisica-texto-cinematica-yossef.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "fis-texto-newton-shalom",
+      "aluno": "Shalom",
+      "materia": "fisica",
+      "titulo": "Leis de Newton — Texto de Apoio",
+      "descricao": "Material de apoio sobre as Leis de Newton com exemplos práticos.",
+      "arquivo": "materiais/fisica-texto-leis-de-newton-shalom.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "hist-sim-crise29-ilan",
+      "aluno": "Ilan",
+      "materia": "historia",
+      "titulo": "Crise de 1929 — Simulador",
+      "descricao": "Simulação interativa dos eventos da Crise de 1929 e seus impactos.",
+      "arquivo": "materiais/historia-simulador-crise-29-ilan.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "hist-texto-crise29-ilan",
+      "aluno": "Ilan",
+      "materia": "historia",
+      "titulo": "Crise de 1929 — Texto de Apoio",
+      "descricao": "Material de apoio sobre a Crise de 1929: causas, desenvolvimento e consequências.",
+      "arquivo": "materiais/historia-texto-crise-29-ilan.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "ing-sim-time-yossi",
+      "aluno": "Yossi",
+      "materia": "ingles",
+      "titulo": "Time — Simulador Interativo",
+      "descricao": "Simulador interativo para aprender vocabulário e expressões sobre tempo em inglês.",
+      "arquivo": "materiais/ingles-simulador-time-yossi.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "ing-texto-time-yossi",
+      "aluno": "Yossi",
+      "materia": "ingles",
+      "titulo": "Time — Texto de Apoio",
+      "descricao": "Material de apoio sobre vocabulário e gramática relacionados a tempo em inglês.",
+      "arquivo": "materiais/ingles-texto-time-yossi.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "mat-sim-triangulo-yoni",
+      "aluno": "Yoni",
+      "materia": "matematica",
+      "titulo": "Triângulo Retângulo — Simulador",
+      "descricao": "Simulador interativo de triângulos retângulos com cálculo de seno, cosseno e tangente.",
+      "arquivo": "materiais/matematica-simulador-triangulo-retangulo-yoni.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "mat-texto-triangulo-yoni",
+      "aluno": "Yoni",
+      "materia": "matematica",
+      "titulo": "Triângulo Retângulo — Texto de Apoio",
+      "descricao": "Material de apoio sobre triângulos retângulos: teorema de Pitágoras e razões trigonométricas.",
+      "arquivo": "materiais/matematica-texto-triangulo-retangulo-yoni.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "por-sim-sintaxe-moises",
+      "aluno": "Moisés",
+      "materia": "portugues",
+      "titulo": "Sintaxe — Simulador",
+      "descricao": "Simulador interativo de análise sintática com exercícios práticos.",
+      "arquivo": "materiais/portugues-simulador-sintaxe-moises.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "por-texto-sintaxe-moises",
+      "aluno": "Moisés",
+      "materia": "portugues",
+      "titulo": "Sintaxe — Texto de Apoio",
+      "descricao": "Material de apoio sobre análise sintática: termos da oração e períodos.",
+      "arquivo": "materiais/portugues-texto-sintaxe-moises.html",
+      "data": "2026-06-20T00:00:00.000Z"
+    }
   ]
 }
