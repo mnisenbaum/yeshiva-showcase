@@ -1,0 +1,139 @@
+{
+  "submissoes": [
+    {
+      "id": "comp-schalom-universo",
+      "aluno": "Schalom",
+      "materia": "computacao",
+      "titulo": "Simulador Visual do Universo",
+      "descricao": "Simulação interativa do cosmos com planetas, estrelas e física gravitacional animados em canvas.",
+      "arquivo": "schalom/simulador_do_universo.html",
+      "data": "2026-03-15T00:00:00.000Z"
+    },
+    {
+      "id": "comp-yoni-pincel",
+      "aluno": "Yoni",
+      "materia": "computacao",
+      "titulo": "Pincel Mágico de Partículas",
+      "descricao": "Arte generativa: mova o mouse e crie explosões de partículas coloridas no navegador.",
+      "arquivo": "yoni/index.html",
+      "data": "2026-03-10T00:00:00.000Z"
+    },
+    {
+      "id": "comp-yossefilan-copa",
+      "aluno": "Yossef & Ilan",
+      "materia": "computacao",
+      "titulo": "Simulador Copa 2026",
+      "descricao": "Simule a Copa do Mundo 2026 — grupos, confrontos e o caminho até o título.",
+      "arquivo": "yossef e ilan/simulador_copa_2026 (1).html",
+      "data": "2026-03-08T00:00:00.000Z"
+    },
+    {
+      "id": "mat-turma-simulador",
+      "aluno": "Turma",
+      "materia": "matematica",
+      "titulo": "Simulador — Aula de Matemática",
+      "descricao": "Simulação interativa de ângulos inscritos e centrais na circunferência.",
+      "arquivo": "na aula de matematica/simuldaor.html",
+      "data": "2026-02-28T00:00:00.000Z"
+    },
+    {
+      "id": "mat-turma-triangulos",
+      "aluno": "Turma",
+      "materia": "matematica",
+      "titulo": "Projeto Coletivo — Semelhança de Triângulos",
+      "descricao": "Explorador interativo com critérios AA, LLL e LAL de semelhança de triângulos.",
+      "arquivo": "todos alunos/index.html",
+      "data": "2026-03-20T00:00:00.000Z"
+    },
+    {
+      "id": "fis-turma-efeito-magnus",
+      "aluno": "Turma",
+      "materia": "fisica",
+      "titulo": "Efeito Magnus",
+      "descricao": "Hub com explicações e simulações dos alunos sobre o fenômeno que faz a bola curvar no ar.",
+      "arquivo": "efeito magnus/index.html",
+      "data": "2026-03-05T00:00:00.000Z"
+    },
+    {
+      "id": "fis-schalom-chute",
+      "aluno": "Schalom",
+      "materia": "fisica",
+      "titulo": "Simulador do Chute Perfeito",
+      "descricao": "Simulador físico do Efeito Magnus com ajuste de curva, trajetória e vetores de força.",
+      "arquivo": "efeito magnus/chute-perfeito-simulator-schalom.html",
+      "data": "2026-03-06T00:00:00.000Z"
+    },
+    {
+      "id": "fis-ilan-efeito",
+      "aluno": "Ilan",
+      "materia": "fisica",
+      "titulo": "Efeito Magnus — Ilan",
+      "descricao": "Ensaio estudantil sobre o Efeito Magnus.",
+      "arquivo": "efeito magnus/ilan.html",
+      "data": "2026-03-04T00:00:00.000Z"
+    },
+    {
+      "id": "fis-schalom-efeito",
+      "aluno": "Schalom",
+      "materia": "fisica",
+      "titulo": "Efeito Magnus — Schalom",
+      "descricao": "Ensaio estudantil sobre o Efeito Magnus.",
+      "arquivo": "efeito magnus/schalom.html",
+      "data": "2026-03-04T00:00:00.000Z"
+    },
+    {
+      "id": "fis-shmuel-efeito",
+      "aluno": "Shmuel",
+      "materia": "fisica",
+      "titulo": "Efeito Magnus — Shmuel",
+      "descricao": "Ensaio estudantil sobre o Efeito Magnus.",
+      "arquivo": "efeito magnus/shmuel.html",
+      "data": "2026-03-04T00:00:00.000Z"
+    },
+    {
+      "id": "fis-yoni-efeito",
+      "aluno": "Yoni",
+      "materia": "fisica",
+      "titulo": "Efeito Magnus — Yoni",
+      "descricao": "Ensaio estudantil sobre o Efeito Magnus.",
+      "arquivo": "efeito magnus/yoni.html",
+      "data": "2026-03-04T00:00:00.000Z"
+    },
+    {
+      "id": "mat-turma-tales",
+      "aluno": "Turma",
+      "materia": "matematica",
+      "titulo": "Teorema de Tales",
+      "descricao": "Hub com simuladores e explicações sobre proporcionalidade e retas paralelas.",
+      "arquivo": "teorema_de_tales/index.html",
+      "data": "2026-02-25T00:00:00.000Z"
+    },
+    {
+      "id": "mat-schalom-tales",
+      "aluno": "Schalom",
+      "materia": "matematica",
+      "titulo": "Teorema de Tales — Schalom",
+      "descricao": "Simulador interativo com sliders e comentários filosóficos.",
+      "arquivo": "teorema_de_tales/schalom.html",
+      "data": "2026-02-26T00:00:00.000Z"
+    },
+    {
+      "id": "mat-yoni-tales",
+      "aluno": "Yoni",
+      "materia": "matematica",
+      "titulo": "Teorema de Tales — Yoni",
+      "descricao": "Calculadora de proporções com quiz estóico integrado.",
+      "arquivo": "teorema_de_tales/yoni.html",
+      "data": "2026-02-27T00:00:00.000Z"
+    },
+    {
+      "id": "mat-yossef-tales",
+      "aluno": "Yossef",
+      "materia": "matematica",
+      "titulo": "Teorema de Tales — Yossef",
+      "descricao": "Simulador com transversais arrastáveis e proporções em tempo real.",
+      "arquivo": "teorema_de_tales/yossef.html",
+      "data": "2026-02-27T00:00:00.000Z"
+    }
+  ]
+}

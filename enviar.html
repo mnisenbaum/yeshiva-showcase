@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enviar Trabalho — Yeshivá Showcase</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f1a;
+      --surface: #161929;
+      --surface-2: #1c1f35;
+      --border: #252a42;
+      --text: #e8eaf6;
+      --text-2: #8890b0;
+      --accent: #6c63ff;
+      --accent-hover: #7f78ff;
+      --success: #43e97b;
+      --error: #ff6584;
+      --radius: 12px;
+    }
+
+    [data-theme="light"] {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface-2: #f0f0f5;
+      --border: #e0e0e8;
+      --text: #1a1a2e;
+      --text-2: #666680;
+      --accent: #5a52e0;
+      --accent-hover: #4a42d0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      padding: 24px 20px 60px;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 32px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1.2rem;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .btn-back:hover {
+      border-color: var(--accent);
+      background: var(--surface-2);
+    }
+
+    .header h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .btn-theme {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .btn-theme:hover {
+      border-color: var(--accent);
+      background: var(--surface-2);
+    }
+
+    /* ── INSTRUCTIONS ── */
+    .instructions {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+      color: var(--text-2);
+      line-height: 1.6;
+    }
+
+    .instructions strong {
+      color: var(--text);
+    }
+
+    /* ── FORM ── */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text-2);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-group label .required {
+      color: var(--error);
+      margin-left: 2px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface-2);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238890b0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    select option {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    /* ── FILE INPUT ── */
+    .file-area {
+      position: relative;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .file-area:hover {
+      border-color: var(--accent);
+      background: rgba(108, 99, 255, 0.04);
+    }
+
+    .file-area.dragover {
+      border-color: var(--accent);
+      background: rgba(108, 99, 255, 0.08);
+    }
+
+    .file-area input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .file-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .file-label {
+      font-size: 0.9rem;
+      color: var(--text-2);
+    }
+
+    .file-label strong {
+      color: var(--accent);
+    }
+
+    .file-name {
+      display: none;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: var(--success);
+      font-weight: 600;
+    }
+
+    .file-name.show {
+      display: block;
+    }
+
+    /* ── SUBMIT ── */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── MESSAGE ── */
+    .message {
+      display: none;
+      margin-top: 20px;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.success {
+      background: rgba(67, 233, 123, 0.1);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .message.error {
+      background: rgba(255, 101, 132, 0.1);
+      border: 1px solid var(--error);
+      color: var(--error);
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      color: var(--text-2);
+      font-size: 0.8rem;
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .container { padding: 16px 16px 40px; }
+      .file-area { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-left">
+        <a href="/" class="btn-back" title="Voltar ao início">&larr;</a>
+        <h1>Enviar Trabalho</h1>
+      </div>
+      <button class="btn-theme" id="btnTheme" title="Alternar tema">🌙</button>
+    </div>
+
+    <div class="instructions">
+      <strong>Instruções:</strong> Preencha os campos abaixo e faça upload do seu arquivo <strong>.html</strong>.
+      O trabalho aparecerá no site principal em alguns segundos após o envio.
+    </div>
+
+    <form id="uploadForm">
+      <div class="form-group">
+        <label for="aluno">Seu nome <span class="required">*</span></label>
+        <input type="text" id="aluno" name="aluno" placeholder="Ex: Schalom" required />
+      </div>
+
+      <div class="form-group">
+        <label for="materia">Matéria <span class="required">*</span></label>
+        <select id="materia" name="materia" required>
+          <option value="">Selecione...</option>
+          <option value="computacao">Computação</option>
+          <option value="matematica">Matemática</option>
+          <option value="fisica">Física</option>
+          <option value="biologia">Biologia</option>
+          <option value="historia">História</option>
+          <option value="portugues">Português</option>
+          <option value="ingles">Inglês</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="titulo">Título do trabalho <span class="required">*</span></label>
+        <input type="text" id="titulo" name="titulo" placeholder="Ex: Simulador do Efeito Magnus" required />
+      </div>
+
+      <div class="form-group">
+        <label for="descricao">Descrição (opcional)</label>
+        <textarea id="descricao" name="descricao" placeholder="Uma breve descrição do seu trabalho..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>Arquivo .html <span class="required">*</span></label>
+        <div class="file-area" id="fileArea">
+          <input type="file" id="arquivo" name="arquivo" accept=".html" required />
+          <div class="file-icon">📄</div>
+          <div class="file-label">Arraste o arquivo ou <strong>clique para selecionar</strong></div>
+          <div class="file-name" id="fileName"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha <span class="required">*</span></label>
+        <input type="password" id="senha" name="senha" placeholder="Senha fornecida pelo professor" required />
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        Enviar Trabalho
+      </button>
+    </form>
+
+    <div class="message" id="message"></div>
+
+    <div class="footer">
+      <a href="/">&larr; Voltar para o showcase</a>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'yeshiva-theme';
+
+    function getTheme() {
+      return localStorage.getItem(STORAGE_KEY) || 'dark';
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem(STORAGE_KEY, theme);
+      document.getElementById('btnTheme').textContent = theme === 'dark' ? '🌙' : '☀️';
+    }
+
+    setTheme(getTheme());
+
+    document.getElementById('btnTheme').addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    const fileInput = document.getElementById('arquivo');
+    const fileArea = document.getElementById('fileArea');
+    const fileName = document.getElementById('fileName');
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        fileName.textContent = '✓ ' + fileInput.files[0].name;
+        fileName.classList.add('show');
+      } else {
+        fileName.classList.remove('show');
+      }
+    });
+
+    fileArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileArea.classList.add('dragover');
+    });
+
+    fileArea.addEventListener('dragleave', () => {
+      fileArea.classList.remove('dragover');
+    });
+
+    fileArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileArea.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) {
+        fileInput.files = e.dataTransfer.files;
+        const evt = new Event('change');
+        fileInput.dispatchEvent(evt);
+      }
+    });
+
+    const form = document.getElementById('uploadForm');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const messageEl = document.getElementById('message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      messageEl.classList.remove('show', 'success', 'error');
+
+      const aluno = document.getElementById('aluno').value.trim();
+      const materia = document.getElementById('materia').value;
+      const titulo = document.getElementById('titulo').value.trim();
+      const descricao = document.getElementById('descricao').value.trim();
+      const senha = document.getElementById('senha').value;
+      const arquivo = fileInput.files[0];
+
+      if (!aluno || !materia || !titulo || !senha || !arquivo) {
+        showMessage('Preencha todos os campos obrigatórios.', 'error');
+        return;
+      }
+
+      if (!arquivo.name.endsWith('.html')) {
+        showMessage('O arquivo precisa ser .html.', 'error');
+        return;
+      }
+
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Enviando...';
+
+      try {
+        const conteudo = await readFileAsText(arquivo);
+
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ aluno, materia, titulo, descricao, senha, conteudo }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          showMessage('Trabalho enviado com sucesso! Ele aparecerá no site em alguns segundos.', 'success');
+          form.reset();
+          fileName.classList.remove('show');
+        } else {
+          showMessage(data.error || 'Erro ao enviar. Tente novamente.', 'error');
+        }
+      } catch (err) {
+        showMessage('Erro de conexão. Verifique sua internet e tente novamente.', 'error');
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Enviar Trabalho';
+      }
+    });
+
+    function readFileAsText(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsText(file);
+      });
+    }
+
+    function showMessage(text, type) {
+      messageEl.textContent = text;
+      messageEl.className = 'message show ' + type;
+    }
+  </script>
+</body>
+</html>
