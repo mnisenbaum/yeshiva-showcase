@@ -242,6 +242,15 @@
       "descricao": "Material de apoio sobre análise sintática: termos da oração e períodos.",
       "arquivo": "materiais/portugues-texto-sintaxe-moises.html",
       "data": "2026-06-20T00:00:00.000Z"
+    },
+    {
+      "id": "fisica-moises-simulador-da-segunda-lei-de-newton-1782306818312",
+      "aluno": "Moises",
+      "materia": "fisica",
+      "titulo": "Simulador da segunda Lei de Newton",
+      "descricao": "Aprenda 2a lei de newton de forma divertida",
+      "arquivo": "conteudo/fisica/moises-simulador-da-segunda-lei-de-newton.html",
+      "data": "2026-06-24T13:13:37.093Z"
     }
   ]
 }
