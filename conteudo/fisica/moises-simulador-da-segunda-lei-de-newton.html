@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador: Segunda Lei de Newton</title>
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #212529;
+            --primary: #4a90e2;
+            --accent-force: #e74c3c;
+            --accent-mass: #f1c40f;
+            --accent-accel: #2ecc71;
+            --border-color: #e9ecef;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        /* Área de Física/Animação */
+        .simulation-canvas {
+            width: 100%;
+            height: 250px;
+            background-color: #f1f3f5;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background-color: #dee2e6;
+            border-top: 2px solid #ced4da;
+        }
+
+        #block {
+            position: absolute;
+            bottom: 40px;
+            left: 50px;
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: width 0.2s, height 0.2s;
+            transform-origin: bottom left;
+        }
+
+        /* Vetores (Setas) */
+        .vector-arrow {
+            position: absolute;
+            height: 8px;
+            background-color: var(--accent-force);
+            bottom: 80px;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .vector-arrow::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid var(--accent-force);
+            position: absolute;
+            right: -10px;
+        }
+
+        /* Painel de Controle e Feedback */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 600px) {
+            .dashboard { grid-template-columns: 1fr; }
+        }
+
+        .controls, .metrics {
+            background: #fdfdfd;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+        }
+
+        .formula-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f4fd;
+            border-radius: 8px;
+            color: #2b6cb0;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .btn-container {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-start { background-color: #2ecc71; color: white; }
+        .btn-start:hover { background-color: #27ae60; }
+        .btn-reset { background-color: #e74c3c; color: white; }
+        .btn-reset:hover { background-color: #c0392b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Dinâmica: Segunda Lei de Newton</h1>
+    <p class="subtitle">Altere os parâmetros para ver a influência da força e da massa na aceleração.</p>
+
+    <div class="simulation-canvas" id="canvas">
+        <div id="force-arrow" class="vector-arrow"></div>
+        <div id="block">Massa</div>
+        <div class="ground"></div>
+    </div>
+
+    <div class="dashboard">
+        <div class="controls">
+            <div class="control-group">
+                <label for="range-force">
+                    <span>Força Aplicada (<i>F</i>)</span>
+                    <span style="color: var(--accent-force);" id="val-force">50 N</span>
+                </label>
+                <input type="range" id="range-force" min="0" max="100" value="50">
+            </div>
+
+            <div class="control-group">
+                <label for="range-mass">
+                    <span>Massa do Bloco (<i>m</i>)</span>
+                    <span style="color: #b99309;" id="val-mass">5 kg</span>
+                </label>
+                <input type="range" id="range-mass" min="1" max="20" value="5">
+            </div>
+        </div>
+
+        <div class="metrics">
+            <div class="metric-row">
+                <span>Aceleração (<i>a = F / m</i>):</span>
+                <strong style="color: var(--accent-accel);" id="metric-accel">10.00 m/s²</strong>
+            </div>
+            <div class="metric-row">
+                <span>Velocidade (<i>v</i>):</span>
+                <strong id="metric-vel">0.00 m/s</strong>
+            </div>
+            <div class="metric-row">
+                <span>Posição (<i>x</i>):</span>
+                <strong id="metric-pos">0.00 m</strong>
+            </div>
+        </div>
+
+        <div class="formula-display">
+            <i>F = m &middot; a</i> &rarr; <span id="formula-calc">50 N = 5 kg &middot; 10.00 m/s²</span>
+        </div>
+
+        <div class="btn-container">
+            <button class="btn-start" id="btn-run">Simular</button>
+            <button class="btn-reset" id="btn-reset">Resetar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Elementos do DOM
+    const rangeForce = document.getElementById('range-force');
+    const rangeMass = document.getElementById('range-mass');
+    const valForce = document.getElementById('val-force');
+    const valMass = document.getElementById('val-mass');
+    const metricAccel = document.getElementById('metric-accel');
+    const metricVel = document.getElementById('metric-vel');
+    const metricPos = document.getElementById('metric-pos');
+    const formulaCalc = document.getElementById('formula-calc');
+    const block = document.getElementById('block');
+    const forceArrow = document.getElementById('force-arrow');
+    const btnRun = document.getElementById('btn-run');
+    const btnReset = document.getElementById('btn-reset');
+    const canvas = document.getElementById('canvas');
+
+    // Variáveis da Física (SI)
+    let força = parseFloat(rangeForce.value);
+    let massa = parseFloat(rangeMass.value);
+    let aceleração = força / massa;
+    let velocidade = 0;
+    let posiçãoVisual = 50; // px inicial
+    let posiçãoFísica = 0;   // metros simulados
+
+    // Estado da animação
+    let isRunning = false;
+    let lastTime = null;
+    let animationFrameId = null;
+
+    // Atualiza os valores matemáticos e visuais na UI
+    function updatePhysicsValues() {
+        força = parseFloat(rangeForce.value);
+        massa = parseFloat(rangeMass.value);
+        aceleração = força / massa;
+
+        // Atualiza textos
+        valForce.innerText = `${força} N`;
+        valMass.innerText = `${massa} kg`;
+        metricAccel.innerText = `${aceleração.toFixed(2)} m/s²`;
+        formulaCalc.innerHTML = `${força} N = ${massa} kg &middot; ${aceleração.toFixed(2)} m/s²`;
+
+        // Ajusta graficamente o tamanho do bloco baseado na massa (didático)
+        const dim = 60 + (massa * 3); 
+        block.style.width = `${dim}px`;
+        block.style.height = `${dim}px`;
+        block.innerText = `${massa} kg`;
+
+        // Ajusta a seta do vetor força
+        if (força > 0) {
+            forceArrow.style.display = 'block';
+            forceArrow.style.width = `${força * 1.5}px`;
+            // Posiciona a seta imediatamente à esquerda do bloco
+            forceArrow.style.left = `${posiçãoVisual - (força * 1.5) - 5}px`;
+            forceArrow.style.bottom = `${40 + (dim/2) - 4}px`; // centraliza no bloco
+        } else {
+            forceArrow.style.display = 'none';
+        }
+    }
+
+    // Loop de animação (Delta Time para precisão de clock)
+    function simulationLoop(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        let dt = (timestamp - lastTime) / 1000; // converte para segundos
+        lastTime = timestamp;
+
+        // Limita o dt máximo para evitar saltos enormes se a aba perder o foco
+        if (dt > 0.1) dt = 0.1;
+
+        // Equações horárias do MUV
+        velocidade += aceleração * dt;
+        posiçãoFísica += velocidade * dt;
+        
+        // Conversão de metros da simulação para escala de pixels na tela
+        const escalaPixelsPorMetro = 15; 
+        posiçãoVisual = 50 + (posiçãoFísica * escalaPixelsPorMetro);
+
+        // Checa limite do cenário técnico
+        const maxCanvasWidth = canvas.clientWidth - block.clientWidth - 20;
+
+        if (posiçãoVisual >= maxCanvasWidth) {
+            posiçãoVisual = maxCanvasWidth;
+            velocidade = 0; // Colisão hipotética no fim da pista
+            isRunning = false;
+            btnRun.innerText = 'Simular';
+            btnRun.style.backgroundColor = '#2ecc71';
+        }
+
+        // Renderiza elementos
+        block.style.left = `${posiçãoVisual}px`;
+        metricVel.innerText = `${velocidade.toFixed(2)} m/s`;
+        metricPos.innerText = `${posiçãoFísica.toFixed(2)} m`;
+
+        updatePhysicsValues();
+
+        if (isRunning) {
+            animationFrameId = requestAnimationFrame(simulationLoop);
+        }
+    }
+
+    // Ouvintes de eventos (Inputs)
+    rangeForce.addEventListener('input', () => {
+        updatePhysicsValues();
+    });
+
+    rangeMass.addEventListener('input', () => {
+        updatePhysicsValues();
+    });
+
+    // Botão Correr / Pausar
+    btnRun.addEventListener('click', () => {
+        if (!isRunning) {
+            isRunning = true;
+            btnRun.innerText = 'Pausar';
+            btnRun.style.backgroundColor = '#f39c12';
+            lastTime = null;
+            animationFrameId = requestAnimationFrame(simulationLoop);
+        } else {
+            isRunning = false;
+            btnRun.innerText = 'Simular';
+            btnRun.style.backgroundColor = '#2ecc71';
+            cancelAnimationFrame(animationFrameId);
+        }
+    });
+
+    // Botão Resetar
+    btnReset.addEventListener('click', () => {
+        isRunning = false;
+        cancelAnimationFrame(animationFrameId);
+        btnRun.innerText = 'Simular';
+        btnRun.style.backgroundColor = '#2ecc71';
+        
+        // Reseta física
+        velocidade = 0;
+        posiçãoFísica = 0;
+        posiçãoVisual = 50;
+        
+        // Render inicial
+        block.style.left = `${posiçãoVisual}px`;
+        metricVel.innerText = '0.00 m/s';
+        metricPos.innerText = '0.00 m';
+        
+        updatePhysicsValues();
+    });
+
+    // Inicialização da interface
+    updatePhysicsValues();
+</script>
+
+</body>
+</html>
